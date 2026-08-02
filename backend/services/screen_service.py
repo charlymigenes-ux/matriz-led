@@ -59,10 +59,11 @@ def get_config() -> Dict[str, Any]:
         # hay una guardada, para que el formulario avise "sin cambios" en
         # vez de mostrarla en claro.
         "has_password": bool(config.get("password")),
+        "auto_alerts": bool(config.get("auto_alerts", False)),
     }
 
 
-def save_config(ip: str, username: str, password: Optional[str]) -> Dict[str, Any]:
+def save_config(ip: str, username: str, password: Optional[str], auto_alerts: Optional[bool] = None) -> Dict[str, Any]:
     ip = (ip or "").strip()
     username = (username or "").strip()
     if not ip:
@@ -75,6 +76,7 @@ def save_config(ip: str, username: str, password: Optional[str]) -> Dict[str, An
         # el panel nunca la vuelve a mostrar, así que guardar sin tocar
         # ese campo no debe borrarla.
         "password": password if password else existing.get("password", ""),
+        "auto_alerts": bool(auto_alerts) if auto_alerts is not None else bool(existing.get("auto_alerts", False)),
     }
     _write_config(config)
     return get_config()
@@ -96,17 +98,47 @@ def _base_url() -> str:
     return f"http://{ip}"
 
 
+# Recuerda si la última vez que se consultó el estado la pantalla estaba
+# conectada -- para detectar la TRANSICIÓN a "recién conectada" y disparar
+# el saludo (ver _greet_if_just_connected). NOPAL no tiene un scheduler de
+# fondo para plugins (ver plugin_loader_service.py de NOPAL core), así que
+# get_status() -- que ya se sondea solo cada ~10s desde el navegador
+# mientras el dashboard esté abierto en cualquier pestaña, sin importar la
+# sección -- es el único lugar server-side donde hay chance de enterarse.
+_last_known_connected = False
+
+
+def _greet_if_just_connected(connected: bool) -> None:
+    """Requisito explícito, no cosmético: la pantalla SIEMPRE debe mostrar
+    el logo/nombre de NOPAL apenas queda conectada por BLE. Nunca debe
+    romper una consulta de estado -- si el saludo falla (pypixelcolor no
+    instalado, ack perdido), solo se loguea."""
+    global _last_known_connected
+    if connected and not _last_known_connected:
+        try:
+            result = send_text("NOPAL", color="22c55e")
+            if not result.get("success"):
+                logger.warning("Saludo NOPAL no confirmado: %s", result)
+        except Exception:
+            logger.exception("No se pudo mandar el saludo NOPAL a la pantalla")
+    _last_known_connected = connected
+
+
 def get_status() -> Dict[str, Any]:
     config = _read_config()
     if not config.get("ip"):
+        _greet_if_just_connected(False)
         return {"configured": False, "connected": False, "reason": "not_configured"}
     try:
         response = requests.get(f"{_base_url()}/api/ble/status", timeout=REQUEST_TIMEOUT_SECONDS)
         response.raise_for_status()
         data = response.json()
-        return {"configured": bool(data.get("configured")), "connected": bool(data.get("connected"))}
+        connected = bool(data.get("connected"))
+        _greet_if_just_connected(connected)
+        return {"configured": bool(data.get("configured")), "connected": connected}
     except requests.RequestException:
         logger.exception("No se pudo consultar el estado BLE del accesorio")
+        _greet_if_just_connected(False)
         return {"configured": True, "connected": False, "reason": "unreachable"}
 
 
@@ -140,6 +172,19 @@ def send_windows(windows: List[bytes]) -> Dict[str, Any]:
                 "detail": response.text,
             }
     return {"success": True, "windows_total": len(windows)}
+
+
+async def list_machines() -> List[Dict[str, Any]]:
+    """Snapshot normalizado de todas las máquinas (cualquier marca), para
+    que el propio JS del plugin detecte transiciones de estado (trabajo
+    terminado, error) sin que NOPAL core necesite saber que esta pantalla
+    existe. Reusa tunascreen_service -- el mismo contrato que ya consume
+    TUNA-Screen -- en vez de duplicar el polling por marca; import
+    absoluto porque este plugin corre en proceso con NOPAL core (mismo
+    criterio que backend.auth_deps en router.py)."""
+    from backend.services import tunascreen_service
+
+    return await tunascreen_service.list_machines()
 
 
 def send_text(

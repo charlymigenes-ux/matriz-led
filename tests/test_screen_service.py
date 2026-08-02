@@ -4,7 +4,9 @@ from .conftest import screen_service
 
 
 def test_get_config_empty_by_default():
-    assert screen_service.get_config() == {"ip": "", "username": "", "has_password": False}
+    assert screen_service.get_config() == {
+        "ip": "", "username": "", "has_password": False, "auto_alerts": False,
+    }
 
 
 def test_save_config_requires_ip():
@@ -17,8 +19,18 @@ def test_save_config_requires_ip():
 
 def test_save_config_persists_and_never_returns_password():
     result = screen_service.save_config("192.168.0.85", "nopal", "clave123")
-    assert result == {"ip": "192.168.0.85", "username": "nopal", "has_password": True}
+    assert result == {
+        "ip": "192.168.0.85", "username": "nopal", "has_password": True, "auto_alerts": False,
+    }
     assert screen_service._read_config()["password"] == "clave123"
+
+
+def test_save_config_sets_auto_alerts():
+    result = screen_service.save_config("192.168.0.85", "nopal", "clave123", auto_alerts=True)
+    assert result["auto_alerts"] is True
+    # Guardar de nuevo sin mandar auto_alerts (None) debe conservar el valor.
+    result = screen_service.save_config("192.168.0.85", "nopal", None, auto_alerts=None)
+    assert result["auto_alerts"] is True
 
 
 def test_save_config_keeps_previous_password_when_not_provided():
@@ -46,8 +58,46 @@ def test_get_status_reports_connected(monkeypatch):
             return {"configured": True, "connected": True}
 
     monkeypatch.setattr(screen_service.requests, "get", lambda *a, **k: FakeResponse())
+    monkeypatch.setattr(screen_service, "send_text", lambda *a, **k: {"success": True})
 
     assert screen_service.get_status() == {"configured": True, "connected": True}
+
+
+def test_get_status_greets_only_once_per_connection(monkeypatch):
+    """Requisito explícito: la pantalla debe saludar con "NOPAL" apenas
+    queda conectada -- pero solo en la transición, no en cada poll
+    mientras se mantiene conectada, y debe volver a saludar si se
+    desconecta y reconecta."""
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    greetings = []
+
+    def fake_send_text(text, color="ffffff", **kwargs):
+        greetings.append((text, color))
+        return {"success": True}
+
+    monkeypatch.setattr(screen_service, "send_text", fake_send_text)
+
+    connected = {"value": True}
+
+    class FakeResponse:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"configured": True, "connected": connected["value"]}
+
+    monkeypatch.setattr(screen_service.requests, "get", lambda *a, **k: FakeResponse())
+
+    screen_service.get_status()
+    screen_service.get_status()
+    screen_service.get_status()
+    assert greetings == [("NOPAL", "22c55e")]
+
+    connected["value"] = False
+    screen_service.get_status()
+    connected["value"] = True
+    screen_service.get_status()
+    assert greetings == [("NOPAL", "22c55e"), ("NOPAL", "22c55e")]
 
 
 def test_get_status_handles_unreachable_accessory(monkeypatch):

@@ -42,13 +42,26 @@ Además de instalar este plugin desde NOPAL, hace falta:
    "Matriz LED" del panel de NOPAL (mismas credenciales que ya usa NOPAL
    para hablarle a `/api/relay`, `/api/led`, etc. de ese accesorio).
 
-## Estado actual (v0.1.0)
+## Estado actual (v0.2.0)
 
 - Configuración del accesorio (IP + credenciales).
 - Estado de conexión BLE en vivo.
+- **Saludo automático**: apenas la pantalla queda conectada por BLE,
+  siempre muestra "NOPAL" en verde -- no es opcional, lo dispara el
+  backend solo (ver `_greet_if_just_connected` en `screen_service.py`) en
+  cuanto detecta la transición de desconectada a conectada. Requiere que
+  el dashboard de NOPAL esté abierto en alguna pestaña (sondea el estado
+  cada ~10s) -- no hay todavía un scheduler de fondo en NOPAL core que
+  permita hacerlo sin depender del navegador.
 - Envío de texto de prueba con color.
+- Catálogo de alertas rápidas (LISTO/ERROR/ATENCIÓN/EMERG.) de un clic.
+- Aviso automático opcional ("Avisar cuando un trabajo termine o falle"):
+  compara el estado normalizado de todas las máquinas
+  (`GET /api/plugins/matriz-led/machines`, que reusa `tunascreen_service`
+  de NOPAL core) contra el último visto, y manda LISTO/ERROR solo en la
+  transición.
 
-Pendiente: catálogo de alertas con ícono+texto por estado, animaciones
-(GIF), y automatizaciones que disparen mensajes solos según eventos reales
-de NOPAL (impresión terminada, material bajo en Spoolman, cámara grabando,
-etc.).
+Pendiente: catálogo de alertas con ícono+texto compuesto (imagen, no solo
+texto), animaciones (GIF) por estado, y automatizaciones más finas
+(escenas/macros/rutinas, por máquina en vez de global, integración con
+Spoolman/cámaras).

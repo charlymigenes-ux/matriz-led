@@ -2,9 +2,15 @@
 // LED BLE (tipo iPixel Color), conectada vía el relay del firmware
 // Nopal_FF.ino (ver backend/services/screen_service.py de este plugin).
 //
-// v0.1: funcional (configurar accesorio, ver estado, mandar texto de
-// prueba) -- todavía no incluye el catálogo de animaciones por estado ni
-// las automatizaciones (escenas/macros/rutinas), eso llega después.
+// El saludo "NOPAL" al conectar NO vive acá -- lo dispara el backend solo
+// (ver screen_service._greet_if_just_connected), como efecto de que este
+// mismo archivo ya sondea /status cada 10s sin importar qué sección del
+// dashboard esté abierta.
+//
+// v0.2: config + estado + mensaje de prueba + catálogo de alertas rápidas
+// + aviso automático cuando un trabajo termina o falla (comparando contra
+// /api/plugins/matriz-led/machines, sondeado acá mismo). Pendiente:
+// animaciones GIF y escenas/macros/rutinas completas.
 (() => {
     const PLUGIN_ID = 'matriz-led';
 
@@ -13,15 +19,31 @@
     }
 
     const API_BASE = '/api/plugins/matriz-led';
+    const MACHINES_POLL_MS = 8000;
+    const DONE_STATES = new Set(['complete', 'completed']);
+    const ERROR_STATES = new Set(['error']);
+
+    const ALERT_PRESETS = [
+        { id: 'ready', label: 'LISTO', text: 'LISTO', color: '22c55e' },
+        { id: 'error', label: 'ERROR', text: 'ERROR', color: 'ef4444' },
+        { id: 'warn', label: 'ATENCIÓN', text: 'ATN', color: 'f59e0b' },
+        { id: 'emergency', label: 'EMERG.', text: 'EMERG', color: 'ff0000' },
+    ];
 
     const state = {
-        config: { ip: '', username: '', has_password: false },
+        config: { ip: '', username: '', has_password: false, auto_alerts: false },
         status: { configured: false, connected: false },
         sending: false,
     };
 
     let root = null;
     let statusTimer = null;
+    let machinesTimer = null;
+    let alertQueue = Promise.resolve();
+    // id de máquina -> último estado visto, solo para detectar la
+    // TRANSICIÓN hacia "terminado"/"error" (no repetir la alerta en cada
+    // sondeo mientras el estado no cambia).
+    const lastMachineStates = new Map();
 
     function esc(value) {
         return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -74,10 +96,21 @@
                             <span id="mled-password-label">Contraseña</span>
                             <input type="password" id="mled-password" placeholder="•••••••••">
                         </label>
+                        <label class="mled-checkbox">
+                            <input type="checkbox" id="mled-auto-alerts">
+                            <span>Avisar solo cuando un trabajo termine o falle</span>
+                        </label>
                         <div class="mled-row">
                             <button type="button" class="mled-btn mled-btn-primary" id="mled-save-config-btn">Guardar</button>
                             <span class="mled-inline-msg" id="mled-config-msg"></span>
                         </div>
+                    </article>
+
+                    <article class="mled-card">
+                        <h2>Alertas rápidas</h2>
+                        <p class="mled-sub">Mensajes cortos listos para usar -- un clic, sin escribir nada.</p>
+                        <div class="mled-presets" id="mled-presets"></div>
+                        <span class="mled-inline-msg" id="mled-preset-msg"></span>
                     </article>
 
                     <article class="mled-card">
@@ -132,6 +165,7 @@
         if (!root) return;
         root.querySelector('#mled-ip').value = state.config.ip || '';
         root.querySelector('#mled-username').value = state.config.username || '';
+        root.querySelector('#mled-auto-alerts').checked = !!state.config.auto_alerts;
         const passwordInput = root.querySelector('#mled-password');
         passwordInput.value = '';
         passwordInput.placeholder = state.config.has_password ? '••••••••• (sin cambios)' : '•••••••••';
@@ -141,9 +175,10 @@
         try {
             state.config = await api('/config');
         } catch {
-            state.config = { ip: '', username: '', has_password: false };
+            state.config = { ip: '', username: '', has_password: false, auto_alerts: false };
         }
         fillConfigForm();
+        syncMachinePolling();
     }
 
     async function saveConfig() {
@@ -157,12 +192,14 @@
                     ip: root.querySelector('#mled-ip').value.trim(),
                     username: root.querySelector('#mled-username').value.trim(),
                     password: root.querySelector('#mled-password').value || null,
+                    auto_alerts: root.querySelector('#mled-auto-alerts').checked,
                 }),
             });
             fillConfigForm();
             msg.textContent = 'Guardado';
             msg.classList.add('mled-inline-msg-ok');
             refreshStatus();
+            syncMachinePolling();
         } catch (error) {
             msg.textContent = error.message || 'Error al guardar';
             msg.classList.add('mled-inline-msg-error');
@@ -197,9 +234,91 @@
         }
     }
 
+    // Encola envíos (de presets y de las alertas automáticas) en vez de
+    // dispararlos en paralelo -- la pantalla solo puede mostrar un mensaje
+    // a la vez, y dos ventanas BLE simultáneas pisándose entre sí es peor
+    // que una cola simple FIFO.
+    function enqueueSend(text, color) {
+        alertQueue = alertQueue
+            .catch(() => {}) // un envío fallido no debe frenar la cola
+            .then(() => api('/text', { method: 'POST', body: JSON.stringify({ text, color }) }));
+        return alertQueue;
+    }
+
+    function renderPresets() {
+        const container = root.querySelector('#mled-presets');
+        container.innerHTML = ALERT_PRESETS.map((preset) => (
+            `<button type="button" class="mled-btn mled-preset-btn" data-preset="${esc(preset.id)}" style="border-color:#${esc(preset.color)}">${esc(preset.label)}</button>`
+        )).join('');
+        container.querySelectorAll('[data-preset]').forEach((button) => {
+            button.addEventListener('click', () => sendPreset(button.dataset.preset));
+        });
+    }
+
+    async function sendPreset(presetId) {
+        const preset = ALERT_PRESETS.find((item) => item.id === presetId);
+        const msg = root.querySelector('#mled-preset-msg');
+        if (!preset || !msg) return;
+        msg.textContent = `Enviando "${preset.label}"…`;
+        msg.className = 'mled-inline-msg';
+        try {
+            await enqueueSend(preset.text, preset.color);
+            msg.textContent = `"${preset.label}" enviado`;
+            msg.classList.add('mled-inline-msg-ok');
+        } catch (error) {
+            msg.textContent = error.message || 'Error al enviar';
+            msg.classList.add('mled-inline-msg-error');
+        }
+    }
+
+    // Compara el estado de cada máquina contra el último visto y solo
+    // avisa en la TRANSICIÓN hacia terminado/error -- si no, cada sondeo
+    // (cada MACHINES_POLL_MS) volvería a mandar el mismo aviso mientras el
+    // trabajo siga en ese estado.
+    async function pollMachines() {
+        let machines;
+        try {
+            ({ machines } = await api('/machines'));
+        } catch {
+            return;
+        }
+        const seenIds = new Set();
+        for (const machine of machines) {
+            const id = machine.id;
+            const currentState = machine?.status?.state;
+            seenIds.add(id);
+            const previousState = lastMachineStates.get(id);
+            lastMachineStates.set(id, currentState);
+            if (previousState === currentState) continue;
+            if (DONE_STATES.has(currentState)) {
+                enqueueSend('LISTO', '22c55e').catch(() => {});
+            } else if (ERROR_STATES.has(currentState)) {
+                enqueueSend('ERROR', 'ef4444').catch(() => {});
+            }
+        }
+        // Máquinas que desaparecieron del snapshot (desconectadas/borradas)
+        // no deben quedar "recordadas" con un estado viejo para siempre.
+        for (const id of Array.from(lastMachineStates.keys())) {
+            if (!seenIds.has(id)) lastMachineStates.delete(id);
+        }
+    }
+
+    function syncMachinePolling() {
+        const shouldPoll = !!state.config.auto_alerts;
+        if (shouldPoll && !machinesTimer) {
+            lastMachineStates.clear();
+            pollMachines();
+            machinesTimer = window.setInterval(pollMachines, MACHINES_POLL_MS);
+        } else if (!shouldPoll && machinesTimer) {
+            window.clearInterval(machinesTimer);
+            machinesTimer = null;
+        }
+    }
+
     function bindEvents() {
         root.querySelector('#mled-save-config-btn').addEventListener('click', saveConfig);
         root.querySelector('#mled-send-btn').addEventListener('click', sendTestMessage);
+        renderPresets();
     }
 
     function mount() {
@@ -230,12 +349,16 @@
             window.clearInterval(statusTimer);
             statusTimer = null;
         }
+        if (machinesTimer) {
+            window.clearInterval(machinesTimer);
+            machinesTimer = null;
+        }
         document.querySelector(`[data-plugin-nav="${PLUGIN_ID}"]`)?.remove();
         document.getElementById(`${PLUGIN_ID}-section`)?.remove();
         root = null;
     }
 
     window.NopalPluginRegistry = window.NopalPluginRegistry || {};
-    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.1.0' };
+    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.2.0' };
     mount();
 })();

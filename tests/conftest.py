@@ -111,5 +111,9 @@ def as_operator(app):
 @pytest.fixture(autouse=True)
 def isolated_config(tmp_path, monkeypatch):
     """Aísla CONFIG_PATH a un directorio temporal por test -- sin esto los
-    tests pisarían data/plugins/matriz-led/config.json real."""
+    tests pisarían data/plugins/matriz-led/config.json real. También
+    resetea el flag de "ya saludó" (_last_known_connected) -- sin esto,
+    un test anterior que dejó la pantalla "conectada" haría que el
+    siguiente test no detecte la transición y no dispare el saludo."""
     monkeypatch.setattr(screen_service, "CONFIG_PATH", tmp_path / "config.json")
+    monkeypatch.setattr(screen_service, "_last_known_connected", False)

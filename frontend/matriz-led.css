@@ -104,6 +104,33 @@
     width: 60px;
 }
 
+.mled-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    cursor: pointer;
+}
+
+.mled-checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+.mled-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.mled-preset-btn {
+    border-width: 2px;
+}
+
 .mled-row {
     display: flex;
     align-items: center;

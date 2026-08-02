@@ -29,6 +29,7 @@ async def save_config_endpoint(payload: Dict[str, Any], user: dict = Depends(req
             str(payload.get("ip") or ""),
             str(payload.get("username") or ""),
             payload.get("password") or None,
+            payload.get("auto_alerts") if "auto_alerts" in payload else None,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -37,6 +38,14 @@ async def save_config_endpoint(payload: Dict[str, Any], user: dict = Depends(req
 @router.get("/api/plugins/matriz-led/status")
 async def get_status_endpoint(user: dict = Depends(require_auth)):
     return await asyncio.to_thread(screen_service.get_status)
+
+
+@router.get("/api/plugins/matriz-led/machines")
+async def list_machines_endpoint(user: dict = Depends(require_auth)):
+    """Snapshot normalizado de todas las máquinas -- el propio JS del
+    plugin lo consulta para detectar solo, del lado del navegador, cuándo
+    avisar (trabajo terminado/error). Ver screen_service.list_machines()."""
+    return {"machines": await screen_service.list_machines()}
 
 
 @router.post("/api/plugins/matriz-led/text")
