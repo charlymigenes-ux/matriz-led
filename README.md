@@ -1,0 +1,54 @@
+# Matriz LED
+
+Plugin de NOPAL para conectar una pantalla LED matriz BLE (probado contra
+una **iPixel Color 16x32**) y mandarle texto y animaciones según el estado
+de tus máquinas.
+
+## Cómo funciona
+
+La pantalla no se conecta directo a NOPAL ni a esta computadora -- BLE
+tiene alcance corto y NOPAL puede correr en un servidor sin radio
+Bluetooth. En cambio:
+
+1. Un accesorio **ESP32** corriendo el firmware
+   `firmware/nopal_accessory/Nopal_FF/Nopal_FF.ino` del repo de NOPAL (con
+   `NOPAL_BLE_SCREEN_MAC` configurado en su `secrets.h`) se conecta por BLE
+   a la pantalla y hace de **relay**: recibe bytes ya armados por HTTP
+   (`POST /api/ble/window`, en hexadecimal) y los reenvía tal cual por BLE.
+2. Este plugin arma esos bytes usando la librería
+   [pypixelcolor](https://github.com/lucagoc/pypixelcolor) (fuentes,
+   colores, animaciones, GIFs) y se los manda al ESP32 por Wi-Fi.
+
+Ningún lado de NOPAL habla BLE directo -- ver
+`backend/services/screen_service.py` y el bloque "PANTALLA LED BLE" del
+`.ino` para el detalle completo.
+
+## Instalación
+
+Además de instalar este plugin desde NOPAL, hace falta:
+
+1. Un accesorio ESP32 con `Nopal_FF.ino` (protocolo 4, firmware ≥4.4.0-ff)
+   flasheado, con `NOPAL_BLE_SCREEN_MAC` configurado en su `secrets.h`
+   apuntando a la MAC de tu pantalla.
+2. La librería `pypixelcolor` instalada **en el mismo entorno Python que
+   corre NOPAL** (no hay un mecanismo de dependencias por plugin todavía,
+   así que esto es manual):
+
+   ```bash
+   pip install pypixelcolor
+   ```
+
+3. Configura la IP y credenciales de ese accesorio desde la sección
+   "Matriz LED" del panel de NOPAL (mismas credenciales que ya usa NOPAL
+   para hablarle a `/api/relay`, `/api/led`, etc. de ese accesorio).
+
+## Estado actual (v0.1.0)
+
+- Configuración del accesorio (IP + credenciales).
+- Estado de conexión BLE en vivo.
+- Envío de texto de prueba con color.
+
+Pendiente: catálogo de alertas con ícono+texto por estado, animaciones
+(GIF), y automatizaciones que disparen mensajes solos según eventos reales
+de NOPAL (impresión terminada, material bajo en Spoolman, cámara grabando,
+etc.).
