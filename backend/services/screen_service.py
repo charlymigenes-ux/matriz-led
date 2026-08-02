@@ -28,11 +28,17 @@ logger = logging.getLogger(__name__)
 CONFIG_PATH = Path("data/plugins/matriz-led/config.json")
 REQUEST_TIMEOUT_SECONDS = 15
 
-# Confirmado en hardware real contra una pantalla iPixel Color 16x32 --
-# hasta que este plugin sepa leer las dimensiones reales del dispositivo
-# (requiere decodificar la respuesta de "device info", que el relay del
-# firmware todavía no expone), esta es la única resolución soportada.
+# Confirmado en hardware real contra una pantalla iPixel Color 16x32.
 DEFAULT_CHAR_HEIGHT = 16
+
+# Las 3 fuentes que trae pypixelcolor (CUSONG, SIMSUN, VCR_OSD_MONO) solo
+# definen métricas para estas 3 alturas -- pedir cualquier otro valor cae
+# al tamaño definido más cercano (ver FontConfig.get_metrics en la
+# librería), nunca falla, pero puede no ser el que uno esperaba. Nuestra
+# pantalla mide 16 píxeles de alto: 24 y 32 son MÁS ALTOS que la matriz
+# física, así que el texto puede recortarse -- quedan disponibles para
+# quien los quiera probar, pero 16 es el único confirmado en hardware.
+SUPPORTED_CHAR_HEIGHTS = (16, 24, 32)
 
 
 def _read_config() -> Dict[str, Any]:
@@ -193,6 +199,7 @@ def send_text(
     animation: int = 0,
     speed: int = 80,
     rainbow_mode: int = 0,
+    char_height: int = DEFAULT_CHAR_HEIGHT,
 ) -> Dict[str, Any]:
     # Import perezoso: pypixelcolor es una dependencia del plugin, no del
     # core de NOPAL -- así un NOPAL sin este plugin instalado (o sin la
@@ -207,7 +214,7 @@ def send_text(
 
     plan = build_send_text_plan(
         text=text,
-        char_height=DEFAULT_CHAR_HEIGHT,
+        char_height=char_height,
         color=color,
         animation=animation,
         speed=speed,

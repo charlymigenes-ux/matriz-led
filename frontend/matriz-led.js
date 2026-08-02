@@ -9,8 +9,11 @@
 //
 // v0.2: config + estado + mensaje de prueba + catálogo de alertas rápidas
 // + aviso automático cuando un trabajo termina o falla (comparando contra
-// /api/plugins/matriz-led/machines, sondeado acá mismo). Pendiente:
-// animaciones GIF y escenas/macros/rutinas completas.
+// /api/plugins/matriz-led/machines, sondeado acá mismo).
+// v0.2.1: selector de tamaño de letra en el mensaje de prueba (16/24/32,
+// ver SUPPORTED_CHAR_HEIGHTS en screen_service.py -- solo 16 confirmado en
+// la pantalla física de 16 filas). Pendiente: animaciones GIF y
+// escenas/macros/rutinas completas.
 (() => {
     const PLUGIN_ID = 'matriz-led';
 
@@ -34,6 +37,7 @@
         config: { ip: '', username: '', has_password: false, auto_alerts: false },
         status: { configured: false, connected: false },
         sending: false,
+        textSizes: { sizes: [16], recommended: 16 },
     };
 
     let root = null;
@@ -124,6 +128,10 @@
                             <span>Color</span>
                             <input type="color" id="mled-color" value="#ffffff">
                         </label>
+                        <label class="mled-field">
+                            <span>Tamaño de letra</span>
+                            <select id="mled-char-height"></select>
+                        </label>
                         <div class="mled-row">
                             <button type="button" class="mled-btn mled-btn-primary" id="mled-send-btn">Enviar a la pantalla</button>
                             <span class="mled-inline-msg" id="mled-send-msg"></span>
@@ -181,6 +189,19 @@
         syncMachinePolling();
     }
 
+    async function loadTextSizes() {
+        try {
+            state.textSizes = await api('/text-sizes');
+        } catch {
+            state.textSizes = { sizes: [16], recommended: 16 };
+        }
+        const select = root.querySelector('#mled-char-height');
+        select.innerHTML = state.textSizes.sizes.map((size) => (
+            `<option value="${esc(size)}">${esc(size)} px${size === state.textSizes.recommended ? ' (recomendado)' : ''}</option>`
+        )).join('');
+        select.value = String(state.textSizes.recommended);
+    }
+
     async function saveConfig() {
         const msg = root.querySelector('#mled-config-msg');
         msg.textContent = 'Guardando…';
@@ -219,10 +240,11 @@
         msg.textContent = 'Enviando… (puede tardar unos segundos)';
         msg.className = 'mled-inline-msg';
         const color = root.querySelector('#mled-color').value.replace('#', '');
+        const charHeight = Number(root.querySelector('#mled-char-height').value) || state.textSizes.recommended;
         try {
             const result = await api('/text', {
                 method: 'POST',
-                body: JSON.stringify({ text, color }),
+                body: JSON.stringify({ text, color, char_height: charHeight }),
             });
             msg.textContent = `Enviado (${result.windows_total ?? 1} ventana${(result.windows_total ?? 1) === 1 ? '' : 's'})`;
             msg.classList.add('mled-inline-msg-ok');
@@ -340,6 +362,7 @@
 
         bindEvents();
         loadConfig().then(refreshStatus);
+        loadTextSizes();
         statusTimer = window.setInterval(refreshStatus, 10000);
         window.applySidebarOrder?.();
     }
@@ -359,6 +382,6 @@
     }
 
     window.NopalPluginRegistry = window.NopalPluginRegistry || {};
-    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.2.0' };
+    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.2.1' };
     mount();
 })();

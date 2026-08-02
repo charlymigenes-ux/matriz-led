@@ -42,7 +42,7 @@ Además de instalar este plugin desde NOPAL, hace falta:
    "Matriz LED" del panel de NOPAL (mismas credenciales que ya usa NOPAL
    para hablarle a `/api/relay`, `/api/led`, etc. de ese accesorio).
 
-## Estado actual (v0.2.0)
+## Estado actual (v0.2.1)
 
 - Configuración del accesorio (IP + credenciales).
 - Estado de conexión BLE en vivo.
@@ -53,7 +53,10 @@ Además de instalar este plugin desde NOPAL, hace falta:
   el dashboard de NOPAL esté abierto en alguna pestaña (sondea el estado
   cada ~10s) -- no hay todavía un scheduler de fondo en NOPAL core que
   permita hacerlo sin depender del navegador.
-- Envío de texto de prueba con color.
+- Envío de texto de prueba con color y **tamaño de letra** (16/24/32 px --
+  la pantalla mide 16 filas de alto, así que 16 es el único tamaño
+  confirmado sin recorte; 24/32 quedan disponibles para quien los quiera
+  probar, ver `SUPPORTED_CHAR_HEIGHTS` en `screen_service.py`).
 - Catálogo de alertas rápidas (LISTO/ERROR/ATENCIÓN/EMERG.) de un clic.
 - Aviso automático opcional ("Avisar cuando un trabajo termine o falle"):
   compara el estado normalizado de todas las máquinas

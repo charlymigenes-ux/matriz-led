@@ -48,11 +48,27 @@ async def list_machines_endpoint(user: dict = Depends(require_auth)):
     return {"machines": await screen_service.list_machines()}
 
 
+@router.get("/api/plugins/matriz-led/text-sizes")
+async def list_text_sizes_endpoint(user: dict = Depends(require_auth)):
+    """Alturas de carácter soportadas por las fuentes de pypixelcolor, para
+    el selector de tamaño del panel -- ver el comentario de
+    SUPPORTED_CHAR_HEIGHTS en screen_service.py sobre por qué solo 16 está
+    confirmado en esta pantalla física."""
+    return {
+        "sizes": list(screen_service.SUPPORTED_CHAR_HEIGHTS),
+        "recommended": screen_service.DEFAULT_CHAR_HEIGHT,
+    }
+
+
 @router.post("/api/plugins/matriz-led/text")
 async def send_text_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
     text = str(payload.get("text") or "").strip()
     if not text:
         raise HTTPException(status_code=400, detail="Falta el texto a mostrar")
+
+    char_height = int(payload.get("char_height") or screen_service.DEFAULT_CHAR_HEIGHT)
+    if char_height <= 0:
+        raise HTTPException(status_code=400, detail="Tamaño de texto inválido")
 
     try:
         result = await asyncio.to_thread(
@@ -62,6 +78,7 @@ async def send_text_endpoint(payload: Dict[str, Any], user: dict = Depends(requi
             int(payload.get("animation") or 0),
             int(payload.get("speed") or 80),
             int(payload.get("rainbow_mode") or 0),
+            char_height,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
