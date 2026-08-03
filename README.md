@@ -42,7 +42,7 @@ Además de instalar este plugin desde NOPAL, hace falta:
    "Matriz LED" del panel de NOPAL (mismas credenciales que ya usa NOPAL
    para hablarle a `/api/relay`, `/api/led`, etc. de ese accesorio).
 
-## Estado actual (v0.2.1)
+## Estado actual (v0.3.0)
 
 - Configuración del accesorio (IP + credenciales).
 - Estado de conexión BLE en vivo.
@@ -53,15 +53,24 @@ Además de instalar este plugin desde NOPAL, hace falta:
   el dashboard de NOPAL esté abierto en alguna pestaña (sondea el estado
   cada ~10s) -- no hay todavía un scheduler de fondo en NOPAL core que
   permita hacerlo sin depender del navegador.
-- Envío de texto de prueba con color y **tamaño de letra** (16/24/32 px --
+- Envío de texto de prueba con color, **tamaño de letra** (16/24/32 px --
   la pantalla mide 16 filas de alto, así que 16 es el único tamaño
   confirmado sin recorte; 24/32 quedan disponibles para quien los quiera
-  probar, ver `SUPPORTED_CHAR_HEIGHTS` en `screen_service.py`).
-- Catálogo de alertas rápidas (LISTO/ERROR/ATENCIÓN/EMERG.) de un clic.
+  probar, ver `SUPPORTED_CHAR_HEIGHTS` en `screen_service.py`), velocidad
+  de animación y modo arcoíris.
+- Catálogo de alertas rápidas (Listo/Error/Atención/Emergencia) de un
+  clic, y 4 tarjetas de demo (temperatura baja/media/alta, idle) con sus
+  propios colores y animaciones.
+- **Editor de píxeles** (16x32): dibuja un patrón a mano, con vista previa
+  y borrador guardado en `localStorage` por preset, y mándalo tal cual a
+  la pantalla -- a diferencia del texto, esto no pasa por ninguna fuente
+  tipográfica: arma un PNG de 32x16 en memoria y lo manda con
+  `pypixelcolor.send_image_hex` (`POST /api/plugins/matriz-led/image`,
+  ver `send_matrix` en `screen_service.py`).
 - Aviso automático opcional ("Avisar cuando un trabajo termine o falle"):
   compara el estado normalizado de todas las máquinas
   (`GET /api/plugins/matriz-led/machines`, que reusa `tunascreen_service`
-  de NOPAL core) contra el último visto, y manda LISTO/ERROR solo en la
+  de NOPAL core) contra el último visto, y manda OK/ERR solo en la
   transición.
 
 Pendiente: catálogo de alertas con ícono+texto compuesto (imagen, no solo

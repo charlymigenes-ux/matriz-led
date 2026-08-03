@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+from io import BytesIO
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -39,6 +40,9 @@ DEFAULT_CHAR_HEIGHT = 16
 # física, así que el texto puede recortarse -- quedan disponibles para
 # quien los quiera probar, pero 16 es el único confirmado en hardware.
 SUPPORTED_CHAR_HEIGHTS = (16, 24, 32)
+
+MATRIX_ROWS = 16
+MATRIX_COLS = 32
 
 
 def _read_config() -> Dict[str, Any]:
@@ -220,5 +224,50 @@ def send_text(
         speed=speed,
         rainbow_mode=rainbow_mode,
     )
+    windows = [window.data for window in plan.windows]
+    return send_windows(windows)
+
+
+def _hex_to_rgb(color: str) -> tuple[int, int, int]:
+    color = (color or "").strip().lstrip("#") or "ffffff"
+    if len(color) != 6:
+        raise ValueError("El color debe ser hexadecimal de 6 dígitos (RRGGBB)")
+    try:
+        return (int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16))
+    except ValueError as exc:
+        raise ValueError("El color debe ser hexadecimal de 6 dígitos (RRGGBB)") from exc
+
+
+def send_matrix(matrix: List[List[bool]], color: str = "ffffff") -> Dict[str, Any]:
+    """Manda el patrón de píxeles dibujado en el editor de la pantalla tal
+    cual -- a diferencia de send_text, esto no pasa por ninguna fuente
+    tipográfica. Arma un PNG de exactamente MATRIX_COLS x MATRIX_ROWS en
+    memoria (sin tocar disco) y lo manda con pypixelcolor.send_image_hex;
+    al ya venir del tamaño exacto del panel, no hace falta un DeviceInfo
+    real (que solo existiría si este servicio hablara BLE directo, cosa
+    que no hace -- ver el docstring del módulo)."""
+    if len(matrix) != MATRIX_ROWS or any(len(row) != MATRIX_COLS for row in matrix):
+        raise ValueError(f"La matriz debe ser de {MATRIX_ROWS}x{MATRIX_COLS} píxeles")
+
+    try:
+        from PIL import Image
+        from pypixelcolor.commands.send_image import send_image_hex as build_send_image_plan
+    except ImportError as exc:
+        raise ValueError(
+            "Falta la librería pypixelcolor en el entorno de NOPAL -- instálala con "
+            "'pip install pypixelcolor' (ver README.md de este plugin)"
+        ) from exc
+
+    rgb = _hex_to_rgb(color)
+    image = Image.new("RGB", (MATRIX_COLS, MATRIX_ROWS), (0, 0, 0))
+    pixels = image.load()
+    for row_index, row in enumerate(matrix):
+        for col_index, is_on in enumerate(row):
+            if is_on:
+                pixels[col_index, row_index] = rgb
+
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    plan = build_send_image_plan(buffer.getvalue().hex(), ".png")
     windows = [window.data for window in plan.windows]
     return send_windows(windows)

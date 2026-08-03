@@ -158,3 +158,39 @@ def test_send_windows_stops_on_first_failure(monkeypatch):
     assert result["detail"] == "ERR:BLE_NO_ACK"
     # No debe intentar la segunda ventana si la primera falló.
     assert len(calls) == 1
+
+
+def test_send_matrix_rejects_wrong_shape():
+    try:
+        screen_service.send_matrix([[False] * 32] * 10)  # solo 10 filas, faltan 6
+        assert False, "debía rechazar una matriz que no sea 16x32"
+    except ValueError:
+        pass
+
+
+def test_send_matrix_rejects_bad_color():
+    matrix = [[False] * screen_service.MATRIX_COLS for _ in range(screen_service.MATRIX_ROWS)]
+    try:
+        screen_service.send_matrix(matrix, color="no-es-un-color")
+        assert False, "debía rechazar un color que no sea hex de 6 dígitos"
+    except ValueError:
+        pass
+
+
+def test_send_matrix_builds_one_window_per_pixel_pattern(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    captured = {}
+
+    def fake_send_windows(windows):
+        captured["windows"] = windows
+        return {"success": True, "windows_total": len(windows)}
+
+    monkeypatch.setattr(screen_service, "send_windows", fake_send_windows)
+
+    matrix = [[(row + col) % 4 == 0 for col in range(screen_service.MATRIX_COLS)] for row in range(screen_service.MATRIX_ROWS)]
+    result = screen_service.send_matrix(matrix, color="ff00aa")
+
+    assert result == {"success": True, "windows_total": 1}
+    assert len(captured["windows"]) == 1
+    assert isinstance(captured["windows"][0], bytes)
+    assert len(captured["windows"][0]) > 0

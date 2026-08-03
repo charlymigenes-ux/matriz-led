@@ -3,33 +3,47 @@
    para respetar el tema activo (claro/oscuro/verde/rojo/custom). */
 
 .mled-section {
+    width: 100%;
+    max-width: none;
     padding: 24px;
-    max-width: 980px;
+    min-height: 0;
+    overflow: auto;
+    box-sizing: border-box;
 }
 
-.mled-header {
+.mled-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.mled-hero {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    margin-bottom: 22px;
+    padding: 6px 2px;
 }
 
-.mled-header-copy h1 {
+.mled-hero-copy h1 {
     margin: 0 0 4px;
-    font-size: 22px;
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 700;
 }
 
-.mled-header-sub {
+.mled-hero-copy p {
+    margin: 0;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .mled-status-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 7px 14px;
+    padding: 8px 14px;
     border-radius: var(--radius-sm, 999px);
     border: 1px solid var(--border);
     background: var(--panel-bg);
@@ -49,10 +63,275 @@
 .mled-status-warn .mled-status-dot { background: var(--orange); }
 .mled-status-off .mled-status-dot { background: var(--text-muted); }
 
-.mled-grid {
+.mled-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.mled-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 16px 18px;
+}
+
+.mled-kpi-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(52, 245, 139, 0.12);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.mled-kpi-card strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 15px;
+}
+
+.mled-kpi-card small {
+    color: var(--text-secondary);
+}
+
+.mled-main-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(340px, 0.95fr);
+    gap: 18px;
+    align-items: start;
+    min-height: 0;
+    width: 100%;
+}
+
+.mled-primary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.mled-demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+
+.mled-demo-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+}
+
+.mled-demo-number {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(52, 245, 139, 0.15);
+    color: var(--green);
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.mled-demo-card h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mled-demo-display {
+    min-height: 116px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    padding: 12px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+}
+
+.demo-blue { color: var(--text); background: linear-gradient(180deg, rgba(37,211,102,.10), rgba(37,211,102,.04)); }
+.demo-green { color: var(--text); background: linear-gradient(180deg, rgba(37,211,102,.12), rgba(37,211,102,.04)); }
+.demo-red { color: var(--text); background: linear-gradient(180deg, rgba(239,68,68,.14), rgba(239,68,68,.04)); }
+.demo-purple { color: var(--text); background: linear-gradient(180deg, rgba(123,97,255,.14), rgba(123,97,255,.04)); }
+
+.mled-demo-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mled-demo-meta span {
+    font-weight: 700;
+}
+
+.mled-demo-meta small {
+    color: var(--text-secondary);
+}
+
+.mled-demo-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.mled-btn-small {
+    padding: 7px 10px;
+    font-size: 11px;
+}
+
+.mled-lower-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.mled-side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mled-side-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 20px;
+}
+
+.mled-side-card h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+}
+
+.mled-side-card p {
+    margin: 0 0 14px;
+    color: var(--text-secondary);
+}
+
+.mled-help-list {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text);
+}
+
+.mled-help-list li + li {
+    margin-top: 8px;
+}
+
+.mled-editor-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mled-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.mled-preview-display {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(5, 12, 20, 0.92), rgba(17, 24, 39, 0.94));
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.mled-preview-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.mled-preview-label,
+.mled-preview-stats {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.mled-preview-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.mled-preview-meta div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.mled-preview-meta span {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.mled-preview-meta strong {
+    font-size: 13px;
+}
+
+.mled-preview-grid,
+.mled-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+    gap: 2px;
+}
+
+.mled-preview-cell,
+.mled-matrix-cell {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+}
+
+.mled-preview-cell.is-on,
+.mled-matrix-cell.is-on {
+    background: var(--accent);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+}
+
+.mled-matrix-editor {
+    margin-top: 8px;
+}
+
+.mled-editor-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mled-field.compact span {
+    margin-bottom: 4px;
+}
+
+.mled-row.start {
+    justify-content: flex-start;
 }
 
 .mled-card {
@@ -87,7 +366,8 @@
     margin-bottom: 5px;
 }
 
-.mled-field input {
+.mled-field input,
+.mled-field select {
     width: 100%;
     box-sizing: border-box;
     padding: 9px 11px;
@@ -166,3 +446,33 @@
 
 .mled-inline-msg-ok { color: var(--green); }
 .mled-inline-msg-error { color: #ef4444; }
+
+@media (max-width: 1100px) {
+    .mled-main-layout,
+    .mled-lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mled-preview-meta {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .mled-section {
+        padding: 14px;
+    }
+
+    .mled-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mled-demo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mled-hero-copy h1 {
+        font-size: 26px;
+    }
+}

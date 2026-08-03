@@ -8,6 +8,7 @@ def test_config_endpoints_require_auth(client):
     assert client.post("/api/plugins/matriz-led/text", json={"text": "Hola"}).status_code == 401
     assert client.get("/api/plugins/matriz-led/machines").status_code == 401
     assert client.get("/api/plugins/matriz-led/text-sizes").status_code == 401
+    assert client.post("/api/plugins/matriz-led/image", json={"matrix": []}).status_code == 401
 
 
 def test_list_machines(client, as_admin, monkeypatch):
@@ -105,3 +106,42 @@ def test_list_text_sizes(client, as_admin):
         "sizes": list(screen_service.SUPPORTED_CHAR_HEIGHTS),
         "recommended": screen_service.DEFAULT_CHAR_HEIGHT,
     }
+
+
+def test_send_image_rejects_missing_matrix(client, as_admin):
+    response = client.post("/api/plugins/matriz-led/image", json={})
+    assert response.status_code == 400
+
+
+def test_send_image_rejects_bad_matrix_shape(client, as_admin, monkeypatch):
+    monkeypatch.setattr(
+        screen_service,
+        "send_matrix",
+        lambda *args, **kwargs: (_ for _ in ()).throw(ValueError("La matriz debe ser de 16x32 píxeles")),
+    )
+    response = client.post("/api/plugins/matriz-led/image", json={"matrix": [[True]]})
+    assert response.status_code == 400
+
+
+def test_send_image_forwards_matrix_and_color(client, as_admin, monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        screen_service,
+        "send_matrix",
+        lambda *args, **kwargs: calls.append(args) or {"success": True, "windows_total": 1},
+    )
+    matrix = [[False] * 32 for _ in range(16)]
+    response = client.post("/api/plugins/matriz-led/image", json={"matrix": matrix, "color": "ff00aa"})
+    assert response.status_code == 200
+    assert calls[0] == (matrix, "ff00aa")
+
+
+def test_send_image_reports_upstream_failure(client, as_admin, monkeypatch):
+    monkeypatch.setattr(
+        screen_service,
+        "send_matrix",
+        lambda *args, **kwargs: {"success": False, "window": 0, "windows_total": 1, "detail": "ERR:BLE_NO_ACK"},
+    )
+    matrix = [[False] * 32 for _ in range(16)]
+    response = client.post("/api/plugins/matriz-led/image", json={"matrix": matrix})
+    assert response.status_code == 502

@@ -86,3 +86,26 @@ async def send_text_endpoint(payload: Dict[str, Any], user: dict = Depends(requi
     if not result.get("success"):
         raise HTTPException(status_code=502, detail=result)
     return result
+
+
+@router.post("/api/plugins/matriz-led/image")
+async def send_image_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    """Manda el patrón dibujado en el editor de píxeles del panel tal cual
+    (ver send_matrix en screen_service.py) -- a diferencia de /text, esto
+    no pasa por ninguna fuente tipográfica."""
+    matrix = payload.get("matrix")
+    if not isinstance(matrix, list) or not matrix:
+        raise HTTPException(status_code=400, detail="Falta la matriz de píxeles")
+
+    try:
+        result = await asyncio.to_thread(
+            screen_service.send_matrix,
+            matrix,
+            str(payload.get("color") or "ffffff"),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    if not result.get("success"):
+        raise HTTPException(status_code=502, detail=result)
+    return result
