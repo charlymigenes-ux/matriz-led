@@ -92,7 +92,8 @@ async def send_text_endpoint(payload: Dict[str, Any], user: dict = Depends(requi
 async def send_image_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
     """Manda el patrón dibujado en el editor de píxeles del panel tal cual
     (ver send_matrix en screen_service.py) -- a diferencia de /text, esto
-    no pasa por ninguna fuente tipográfica."""
+    no pasa por ninguna fuente tipográfica. Cada celda de la matriz trae
+    su propio color (o "" si está apagada)."""
     matrix = payload.get("matrix")
     if not isinstance(matrix, list) or not matrix:
         raise HTTPException(status_code=400, detail="Falta la matriz de píxeles")
@@ -101,7 +102,9 @@ async def send_image_endpoint(payload: Dict[str, Any], user: dict = Depends(requ
         result = await asyncio.to_thread(
             screen_service.send_matrix,
             matrix,
-            str(payload.get("color") or "ffffff"),
+            bool(payload.get("animate_col")),
+            bool(payload.get("animate_row")),
+            int(payload.get("speed") or 80),
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -109,3 +112,142 @@ async def send_image_endpoint(payload: Dict[str, Any], user: dict = Depends(requ
     if not result.get("success"):
         raise HTTPException(status_code=502, detail=result)
     return result
+
+
+# ── Anuncios (Editor de Anuncios) ──
+
+@router.get("/api/plugins/matriz-led/announcements")
+async def list_announcements_endpoint(user: dict = Depends(require_auth)):
+    return {"announcements": screen_service.list_announcements()}
+
+
+@router.get("/api/plugins/matriz-led/announcements/{announcement_id}")
+async def get_announcement_endpoint(announcement_id: str, user: dict = Depends(require_auth)):
+    try:
+        return screen_service.get_announcement(announcement_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/api/plugins/matriz-led/announcements")
+async def create_announcement_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    try:
+        return screen_service.create_announcement(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.put("/api/plugins/matriz-led/announcements/{announcement_id}")
+async def update_announcement_endpoint(
+    announcement_id: str, payload: Dict[str, Any], user: dict = Depends(require_auth)
+):
+    try:
+        return screen_service.update_announcement(announcement_id, payload)
+    except ValueError as exc:
+        status_code = 404 if "no encontrado" in str(exc) else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+@router.delete("/api/plugins/matriz-led/announcements/{announcement_id}")
+async def delete_announcement_endpoint(announcement_id: str, user: dict = Depends(require_auth)):
+    try:
+        screen_service.delete_announcement(announcement_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"success": True}
+
+
+@router.post("/api/plugins/matriz-led/announcements/{announcement_id}/send")
+async def send_announcement_endpoint(announcement_id: str, user: dict = Depends(require_auth)):
+    try:
+        result = await asyncio.to_thread(screen_service.send_announcement, announcement_id)
+    except ValueError as exc:
+        status_code = 404 if "no encontrado" in str(exc) else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+    if not result.get("success"):
+        raise HTTPException(status_code=502, detail=result)
+    return result
+
+
+# ── Panel principal ──
+
+@router.get("/api/plugins/matriz-led/device-info")
+async def get_device_info_endpoint(user: dict = Depends(require_auth)):
+    return await asyncio.to_thread(screen_service.get_device_info)
+
+
+@router.get("/api/plugins/matriz-led/last-sent")
+async def get_last_sent_endpoint(user: dict = Depends(require_auth)):
+    return {"last_sent": screen_service.get_last_sent()}
+
+
+@router.get("/api/plugins/matriz-led/stats")
+async def get_stats_endpoint(user: dict = Depends(require_auth)):
+    return screen_service.get_stats()
+
+
+# ── Reglas de automatización ──
+
+@router.get("/api/plugins/matriz-led/rules")
+async def list_rules_endpoint(user: dict = Depends(require_auth)):
+    return {"rules": screen_service.list_rules()}
+
+
+@router.post("/api/plugins/matriz-led/rules")
+async def create_rule_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    try:
+        return screen_service.create_rule(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.put("/api/plugins/matriz-led/rules/{rule_id}")
+async def update_rule_endpoint(rule_id: str, payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    try:
+        return screen_service.update_rule(rule_id, payload)
+    except ValueError as exc:
+        status_code = 404 if "no encontrada" in str(exc) else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+@router.delete("/api/plugins/matriz-led/rules/{rule_id}")
+async def delete_rule_endpoint(rule_id: str, user: dict = Depends(require_auth)):
+    try:
+        screen_service.delete_rule(rule_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"success": True}
+
+
+@router.post("/api/plugins/matriz-led/rules/{rule_id}/run")
+async def run_rule_endpoint(rule_id: str, user: dict = Depends(require_auth)):
+    try:
+        result = await asyncio.to_thread(screen_service.run_rule, rule_id)
+    except ValueError as exc:
+        status_code = 404 if "no encontrad" in str(exc) else 400
+        raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+    if not result.get("success"):
+        raise HTTPException(status_code=502, detail=result)
+    return result
+
+
+# ── Alertas por máquina ──
+
+@router.get("/api/plugins/matriz-led/machine-alerts")
+async def list_machine_alerts_endpoint(user: dict = Depends(require_auth)):
+    return {"machine_alerts": screen_service.list_machine_alerts()}
+
+
+@router.get("/api/plugins/matriz-led/machine-alerts/{machine_id}")
+async def get_machine_alerts_endpoint(machine_id: str, user: dict = Depends(require_auth)):
+    return screen_service.get_machine_alerts(machine_id)
+
+
+@router.put("/api/plugins/matriz-led/machine-alerts/{machine_id}")
+async def save_machine_alerts_endpoint(machine_id: str, payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    try:
+        return screen_service.save_machine_alerts(machine_id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc

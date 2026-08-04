@@ -1,8 +1,14 @@
 /* Matriz LED -- usa las variables de tema del dashboard (--bg, --card-bg,
    --text, --green, etc., definidas en style.css) en vez de colores fijos,
-   para respetar el tema activo (claro/oscuro/verde/rojo/custom). */
+   para respetar el tema activo (claro/oscuro/verde/rojo/custom). Los
+   colores DENTRO de la matriz (--mled-cell-*) sí son fijos a propósito:
+   simulan una pantalla LED física de fondo negro, que no debe cambiar de
+   tono con el tema del dashboard. */
 
 .mled-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     width: 100%;
     max-width: none;
     padding: 24px;
@@ -11,32 +17,80 @@
     box-sizing: border-box;
 }
 
+.mled-view {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: 20px;
+}
+
+.mled-view[hidden] {
+    display: none;
+}
+
+.mled-view-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+}
+
+.mled-view-tab {
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    padding: 8px 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -5px;
+}
+
+.mled-view-tab.is-active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+}
+
 .mled-shell {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
+    gap: 18px;
+    min-width: 0;
 }
 
-.mled-hero {
+.mled-sidebar {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 18px;
+    position: sticky;
+    top: 0;
+}
+
+.mled-header {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    padding: 6px 2px;
+    flex-wrap: wrap;
 }
 
-.mled-hero-copy h1 {
+.mled-header h1 {
     margin: 0 0 4px;
-    font-size: 34px;
-    line-height: 1.1;
+    font-size: 26px;
     font-weight: 700;
 }
 
-.mled-hero-copy p {
-    margin: 0;
+.mled-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mled-sub {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 13px;
+    margin: 0 0 14px;
 }
 
 .mled-status-pill {
@@ -63,295 +117,39 @@
 .mled-status-warn .mled-status-dot { background: var(--orange); }
 .mled-status-off .mled-status-dot { background: var(--text-muted); }
 
-.mled-kpi-grid {
+.mled-btn-icon {
+    width: 38px;
+    height: 38px;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    place-items: center;
+    font-size: 16px;
+}
+
+.mled-top-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
 }
 
-.mled-kpi-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 16px 18px;
-}
-
-.mled-kpi-icon {
-    display: inline-grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: rgba(52, 245, 139, 0.12);
-    color: var(--accent);
-    font-weight: 700;
-}
-
-.mled-kpi-card strong {
-    display: block;
-    margin-bottom: 2px;
-    font-size: 15px;
-}
-
-.mled-kpi-card small {
-    color: var(--text-secondary);
-}
-
-.mled-main-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(340px, 0.95fr);
-    gap: 18px;
-    align-items: start;
-    min-height: 0;
-    width: 100%;
-}
-
-.mled-primary-column {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.mled-demo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.mled-demo-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.18);
-}
-
-.mled-demo-number {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    background: rgba(52, 245, 139, 0.15);
-    color: var(--green);
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.mled-demo-card h2 {
-    margin: 0 0 14px;
-    font-size: 18px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
-
-.mled-demo-display {
-    min-height: 116px;
-    display: grid;
-    place-items: center;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    padding: 12px;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    border: 1px solid var(--border);
-    background: var(--panel-bg);
-}
-
-.demo-blue { color: var(--text); background: linear-gradient(180deg, rgba(37,211,102,.10), rgba(37,211,102,.04)); }
-.demo-green { color: var(--text); background: linear-gradient(180deg, rgba(37,211,102,.12), rgba(37,211,102,.04)); }
-.demo-red { color: var(--text); background: linear-gradient(180deg, rgba(239,68,68,.14), rgba(239,68,68,.04)); }
-.demo-purple { color: var(--text); background: linear-gradient(180deg, rgba(123,97,255,.14), rgba(123,97,255,.04)); }
-
-.mled-demo-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.mled-demo-meta span {
-    font-weight: 700;
-}
-
-.mled-demo-meta small {
-    color: var(--text-secondary);
-}
-
-.mled-demo-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-}
-
-.mled-btn-small {
-    padding: 7px 10px;
-    font-size: 11px;
-}
-
-.mled-lower-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.mled-side-column {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.mled-side-card {
+.mled-card,
+.mled-editor-card,
+.mled-templates-card,
+.mled-table-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg, 16px);
     padding: 20px;
 }
 
-.mled-side-card h2 {
-    margin: 0 0 12px;
-    font-size: 18px;
-}
-
-.mled-side-card p {
-    margin: 0 0 14px;
-    color: var(--text-secondary);
-}
-
-.mled-help-list {
-    margin: 0;
-    padding-left: 18px;
-    color: var(--text);
-}
-
-.mled-help-list li + li {
-    margin-top: 8px;
-}
-
-.mled-editor-card {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.mled-preview-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.mled-preview-display {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(5, 12, 20, 0.92), rgba(17, 24, 39, 0.94));
-    padding: 12px;
-    box-sizing: border-box;
-}
-
-.mled-preview-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.mled-preview-label,
-.mled-preview-stats {
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.mled-preview-meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 12px;
-}
-
-.mled-preview-meta div {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.mled-preview-meta span {
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.mled-preview-meta strong {
-    font-size: 13px;
-}
-
-.mled-preview-grid,
-.mled-matrix-grid {
-    display: grid;
-    grid-template-columns: repeat(32, minmax(0, 1fr));
-    gap: 2px;
-}
-
-.mled-preview-cell,
-.mled-matrix-cell {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 2px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04);
-}
-
-.mled-preview-cell.is-on,
-.mled-matrix-cell.is-on {
-    background: var(--accent);
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
-}
-
-.mled-matrix-editor {
-    margin-top: 8px;
-}
-
-.mled-editor-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.mled-field.compact span {
-    margin-bottom: 4px;
-}
-
-.mled-row.start {
-    justify-content: flex-start;
-}
-
-.mled-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 20px;
-}
-
-.mled-card h2 {
+.mled-card h2,
+.mled-editor-card-head h2,
+.mled-templates-card h2,
+.mled-table-head h2 {
     margin: 0 0 6px;
     font-size: 15px;
     text-transform: uppercase;
     letter-spacing: .04em;
-}
-
-.mled-sub {
-    color: var(--text-secondary);
-    font-size: 13px;
-    margin: 0 0 14px;
 }
 
 .mled-field {
@@ -359,7 +157,8 @@
     margin-bottom: 12px;
 }
 
-.mled-field span {
+.mled-field span,
+.mled-field-label {
     display: block;
     font-size: 12px;
     color: var(--text-secondary);
@@ -378,10 +177,12 @@
     font-size: 14px;
 }
 
-.mled-field input[type="color"] {
-    padding: 3px;
-    height: 38px;
-    width: 60px;
+.mled-field input[type="range"] {
+    padding: 0;
+}
+
+.mled-field input[type="range"] + input[type="number"] {
+    margin-top: 8px;
 }
 
 .mled-checkbox {
@@ -398,17 +199,6 @@
     width: 16px;
     height: 16px;
     accent-color: var(--accent);
-}
-
-.mled-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.mled-preset-btn {
-    border-width: 2px;
 }
 
 .mled-row {
@@ -429,14 +219,26 @@
     font-size: 13px;
 }
 
-.mled-btn:hover {
-    border-color: var(--accent);
-}
+.mled-btn:hover { border-color: var(--accent); }
 
 .mled-btn-primary {
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
+}
+
+.mled-btn-small {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.mled-btn-large {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    font-size: 16px;
+    border-radius: var(--radius-lg, 12px);
 }
 
 .mled-inline-msg {
@@ -445,15 +247,764 @@
 }
 
 .mled-inline-msg-ok { color: var(--green); }
-.mled-inline-msg-error { color: #ef4444; }
+.mled-inline-msg-error { color: var(--red, #ef4444); }
+
+/* ── Editor 16x32 ── */
+.mled-editor-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.mled-editor-card-head small {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.mled-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.mled-tool {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    border-radius: var(--radius-sm, 8px);
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.mled-tool.is-active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+}
+
+.mled-tool-file {
+    overflow: hidden;
+}
+
+.mled-tool-danger {
+    margin-left: auto;
+    border-color: var(--red, #ef4444);
+    color: var(--red, #ef4444);
+}
+
+.mled-tool-danger:hover {
+    background: var(--red, #ef4444);
+    color: #fff;
+}
+
+.mled-text-tool {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.mled-text-tool input[type="text"] {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+}
+
+.mled-text-tool-num {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.mled-text-tool-num input[type="number"] {
+    width: 56px;
+    padding: 8px 6px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+}
+
+.mled-grid {
+    display: grid;
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+    gap: 2px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #05070c;
+    border: 1px solid var(--border);
+    width: 50%;
+    max-width: 50%;
+    margin: 0 auto;
+}
+
+.mled-cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    border: none;
+    background: #12161f;
+    padding: 0;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+/* ── Plantillas ── */
+.mled-templates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mled-template {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 84px;
+    padding: 12px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 10px);
+    background: var(--panel-bg);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.mled-template:hover { border-color: var(--accent); }
+
+.mled-template-icon {
+    font-size: 20px;
+}
+
+.mled-template small {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* ── Columnas: Programación / Duración / Asignación ── */
+.mled-main-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.mled-repeat-days {
+    display: flex;
+    gap: 6px;
+}
+
+.mled-day-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mled-day-btn.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.mled-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    min-height: 20px;
+}
+
+.mled-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(52, 245, 139, 0.14);
+    color: var(--accent);
+    font-size: 12px;
+}
+
+.mled-tag button {
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.mled-tag-add {
+    display: flex;
+    gap: 8px;
+}
+
+.mled-tag-add input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+}
+
+/* ── Acciones ── */
+.mled-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ── Tabla de anuncios guardados ── */
+.mled-table-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.mled-table-head input[type="search"] {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    min-width: 220px;
+}
+
+.mled-table-scroll {
+    overflow-x: auto;
+}
+
+.mled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.mled-table th {
+    text-align: left;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.mled-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.mled-empty-row {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 24px 0 !important;
+}
+
+.mled-table-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.mled-table-actions button {
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.mled-btn-icon-danger {
+    color: var(--red, #ef4444) !important;
+    border-color: var(--red, #ef4444) !important;
+}
+
+.mled-badge {
+    display: inline-flex;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.mled-badge-alta { background: rgba(239, 68, 68, 0.16); color: var(--red, #ef4444); }
+.mled-badge-media { background: rgba(245, 158, 11, 0.16); color: var(--orange, #f59e0b); }
+.mled-badge-baja { background: rgba(52, 245, 139, 0.16); color: var(--green); }
+.mled-badge-estado { background: rgba(59, 130, 246, 0.16); color: #3b82f6; }
+
+/* ── Sidebar: vista previa, colores, efectos ── */
+.mled-preview-display {
+    border-radius: 12px;
+    background: #05070c;
+    padding: 10px;
+    border: 1px solid var(--border);
+}
+
+.mled-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+    gap: 1px;
+}
+
+.mled-preview-cell {
+    aspect-ratio: 1 / 1;
+    border-radius: 1px;
+    background: #12161f;
+}
+
+.mled-preview-caption {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.mled-palette {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.mled-swatch {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.mled-swatch:hover { border-color: var(--text); }
+
+.mled-color-custom {
+    display: flex;
+    gap: 8px;
+}
+
+.mled-color-custom input[type="color"] {
+    width: 44px;
+    height: 38px;
+    padding: 2px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+}
+
+.mled-color-custom input[type="text"] {
+    flex: 1;
+    padding: 9px 11px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+}
+
+/* ── Modal de configuración ── */
+.mled-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mled-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.mled-modal-dialog {
+    position: relative;
+    width: min(420px, 92vw);
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 20px;
+}
+
+.mled-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.mled-modal-head strong {
+    font-size: 15px;
+}
+
+.mled-modal-head button {
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* ── Panel principal ── */
+.mled-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.mled-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 16px 18px;
+}
+
+.mled-kpi-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(52, 245, 139, 0.14);
+    color: var(--accent);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.mled-kpi-card div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mled-kpi-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; }
+.mled-kpi-card strong { font-size: 20px; }
+.mled-kpi-card small { font-size: 11px; color: var(--text-secondary); }
+.mled-kpi-unavailable { opacity: 0.6; }
+
+.mled-dash-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.mled-dash-card,
+.mled-dash-col > .mled-dash-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 18px;
+}
+
+.mled-dash-card h2 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.mled-dash-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mled-live-display {
+    min-height: 140px;
+}
+
+.mled-live-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.mled-live-footer em {
+    font-style: normal;
+    color: var(--text-muted, var(--text-secondary));
+}
+
+.mled-res-row,
+.mled-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.mled-res-row:last-child,
+.mled-status-row:last-child {
+    border-bottom: none;
+}
+
+.mled-unavailable {
+    color: var(--text-muted, var(--text-secondary));
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.mled-scenes-carousel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mled-scenes-arrow {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.mled-scenes-arrow:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.mled-scenes-grid {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    flex: 1;
+    min-width: 0;
+    /* Sin scrollbar visible -- las flechas ya cubren la navegación. */
+    scrollbar-width: none;
+}
+
+.mled-scenes-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.mled-scene-card {
+    flex: 0 0 150px;
+    scroll-snap-align: start;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 10px);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color .15s, transform .1s;
+}
+
+.mled-scene-card:hover,
+.mled-scene-card:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.mled-scene-card:active {
+    transform: scale(0.98);
+}
+
+.mled-scene-card.is-sending {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.mled-scene-preview {
+    display: grid;
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+    gap: 1px;
+    background: #05070c;
+    border-radius: 6px;
+    padding: 4px;
+    aspect-ratio: 32 / 16;
+}
+
+.mled-scene-preview span {
+    aspect-ratio: 1 / 1;
+    background: #12161f;
+    border-radius: 1px;
+}
+
+.mled-scene-card strong {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mled-scene-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mled-btn-icon-play {
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--accent);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.mled-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mled-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 10px);
+    padding: 10px 12px;
+}
+
+.mled-suggestion-unavailable {
+    opacity: 0.55;
+}
+
+.mled-suggestion-icon {
+    font-size: 16px;
+}
+
+.mled-suggestion-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.mled-suggestion-copy small {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.mled-summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.mled-summary-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mled-summary-row span {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.mled-summary-row strong {
+    font-size: 18px;
+}
+
+.mled-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.mled-info-row:last-child { border-bottom: none; }
+
+.mled-tips-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.mled-tips-list li + li { margin-top: 6px; }
+
+.mled-priority-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+}
+
+.mled-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mled-modal-eyebrow {
+    display: block;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: .04em;
+    margin-bottom: 2px;
+}
+
+#mled-machine-alerts-states {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
 
 @media (max-width: 1100px) {
-    .mled-main-layout,
-    .mled-lower-grid {
+    .mled-view {
         grid-template-columns: 1fr;
     }
 
-    .mled-preview-meta {
+    .mled-sidebar {
+        position: static;
+    }
+
+    .mled-main-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .mled-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mled-dash-row {
         grid-template-columns: 1fr;
     }
 }
@@ -463,16 +1014,25 @@
         padding: 14px;
     }
 
-    .mled-hero {
+    .mled-top-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .mled-header {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .mled-demo-grid {
+    .mled-grid {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .mled-kpi-row {
         grid-template-columns: 1fr;
     }
 
-    .mled-hero-copy h1 {
-        font-size: 26px;
+    #mled-machine-alerts-states {
+        grid-template-columns: 1fr;
     }
 }

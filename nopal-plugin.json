@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "matriz-led",
   "name": "Matriz LED",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "publisher": "NOPAL Labs",
   "category": "Accesorios",
-  "description": "Conecta una pantalla LED matriz BLE (tipo iPixel Color) y muéstrale texto y animaciones según el estado de tus máquinas.",
+  "description": "Panel principal + Editor de Anuncios para una pantalla LED matriz BLE (tipo iPixel Color): escenas rápidas, automatizaciones reales (inactividad, material bajo) y alertas por máquina, además de dibujar patrones a color y guardarlos como anuncios reutilizables.",
   "permissions": ["Enviar mensajes por Bluetooth a través de un accesorio ESP32"],
   "compatibility": ["Impresión 3D", "Láser", "CNC"],
   "frontend": {
