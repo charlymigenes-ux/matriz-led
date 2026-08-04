@@ -36,6 +36,60 @@
     const DONE_STATES = new Set(['complete', 'completed']);
     const ERROR_STATES = new Set(['error']);
 
+    // "Calentando"/"Enfriando" no son estados reales que reporten los
+    // drivers (Marlin solo manda idle/printing/paused/offline -- ver
+    // marlin_printer_service.get_status(); Klipper/Bambu tampoco los usan)
+    // -- por eso las Alertas por máquina para esos dos estados nunca
+    // disparaban. El core de NOPAL resuelve esto mismo para la tira LED de
+    // arduino-accessories mirando temperatura real vs. target
+    // (machineLedCardState/computeHeatProgress en app.js); acá se replica
+    // con los mismos datos (machine.status.hotend/bed) que ya trae
+    // tunascreen_service.list_machines().
+    const COOL_TEMP_THRESHOLD_C = 40;
+    const coolingTracked = new Set();
+
+    // El "state" crudo NO es un vocabulario único entre marcas -- Klipper
+    // pasa tal cual el print_stats.state de Moonraker ("standby", no
+    // "idle"; "cancelled" en vez de "error" o "complete"), Bambu/Elegoo/
+    // FlashForge normalizan por su cuenta a un vocabulario parcial propio
+    // (ver _JOB_STATE_MAP en bambu_service.py: p.ej. "FINISH" -> "idle",
+    // nunca "complete"). Sin este mapeo, "En espera"/"Finalizada"/etc.
+    // nunca calzaban contra el vocabulario de MACHINE_STATES de este
+    // plugin para máquinas que no fueran Marlin.
+    const RAW_STATE_ALIASES = {
+        standby: 'idle',
+        ready: 'idle',
+        cancelled: 'idle',
+        unknown: 'idle',
+        preparing: 'printing',
+    };
+
+    function deriveMachineVisualState(machine) {
+        const raw = RAW_STATE_ALIASES[machine?.status?.state] || machine?.status?.state;
+        if (!machine?.online || raw === 'offline') { coolingTracked.delete(machine.id); return 'offline'; }
+        const hotend = machine?.status?.hotend;
+        const bed = machine?.status?.bed;
+        const bedTarget = typeof bed?.target === 'number' ? bed.target : 0;
+        const extruderTarget = typeof hotend?.target === 'number' ? hotend.target : 0;
+        const bedTemp = typeof bed?.current === 'number' ? bed.current : null;
+        const extruderTemp = typeof hotend?.current === 'number' ? hotend.current : null;
+        const isWarm = (bedTemp != null && bedTemp > COOL_TEMP_THRESHOLD_C) || (extruderTemp != null && extruderTemp > COOL_TEMP_THRESHOLD_C);
+
+        if (raw === 'printing' || raw === 'paused') { coolingTracked.add(machine.id); return raw; }
+        if (raw === 'idle') {
+            // Un calentador con target > 0 sigue "trabajando" aunque el
+            // driver diga idle (precalentando fuera de un trabajo activo).
+            if (bedTarget > 0 || extruderTarget > 0) { coolingTracked.delete(machine.id); return 'heating'; }
+            if (coolingTracked.has(machine.id)) {
+                if (isWarm) return 'cooling';
+                coolingTracked.delete(machine.id);
+            }
+            return 'idle';
+        }
+        coolingTracked.delete(machine.id);
+        return raw || 'idle';
+    }
+
     const MATRIX_ROWS = 16;
     const MATRIX_COLS = 32;
 
@@ -836,21 +890,17 @@
         const idleRule = findRuleByTrigger('idle_timeout');
         for (const machine of machines) {
             const id = machine.id;
-            const currentState = machine?.status?.state;
+            const currentState = deriveMachineVisualState(machine);
             seenIds.add(id);
             const previousState = lastMachineStates.get(id);
             lastMachineStates.set(id, currentState);
 
-            // Alertas por máquina: en cada TRANSICIÓN de estado, si esta
-            // máquina tiene alertas activas y ese estado tiene un anuncio
-            // asignado (ver modal "Alertas por máquina"), mandarlo.
-            const machineConfig = state.machineAlerts[id];
-            if (machineConfig?.enabled && previousState !== currentState) {
-                const announcementId = machineConfig.state_announcements?.[currentState];
-                if (announcementId) {
-                    api(`/announcements/${encodeURIComponent(announcementId)}/send`, { method: 'POST' }).catch(() => {});
-                }
-            }
+            // Alertas por máquina: a diferencia de v0.5.0 (que mandaba el
+            // anuncio solo en la TRANSICIÓN de estado), ahora es
+            // tickMachineAlertRotation() quien decide qué mostrar -- una
+            // sola pantalla física no puede reflejar dos máquinas activas
+            // a la vez, así que se turnan cada MACHINE_ALERT_ROTATION_MS
+            // (ver más abajo) en vez de pisarse entre sí.
 
             if (currentState === 'idle') {
                 if (!idleSince.has(id)) idleSince.set(id, Date.now());
@@ -864,7 +914,7 @@
             else if (ERROR_STATES.has(currentState)) enqueueSend('ERR', 'ef4444').catch(() => {});
         }
         for (const id of Array.from(lastMachineStates.keys())) {
-            if (!seenIds.has(id)) { lastMachineStates.delete(id); idleSince.delete(id); idleRuleFired.delete(id); }
+            if (!seenIds.has(id)) { lastMachineStates.delete(id); idleSince.delete(id); idleRuleFired.delete(id); coolingTracked.delete(id); }
         }
 
         // Regla global "Inactividad > 5 min" (ver Automatizaciones
@@ -880,6 +930,39 @@
                 }
             }
         }
+    }
+
+    // Carrusel de "Alertas por máquina": la pantalla es un solo dispositivo
+    // físico, así que si dos o más máquinas configuradas están activas a
+    // la vez (por ejemplo una calentando y otra imprimiendo), se turnan en
+    // vez de pisarse entre sí -- cada MACHINE_ALERT_ROTATION_MS se manda
+    // el anuncio de la siguiente máquina activa de la lista, y al llegar
+    // al final vuelve a la primera. Con una sola máquina activa, sigue
+    // reenviando ese mismo anuncio cada tanto (barato para el accesorio,
+    // y mantiene la pantalla mostrando el estado real aunque algo más
+    // la haya sobrescrito mientras tanto).
+    const MACHINE_ALERT_ROTATION_MS = 5000;
+    let machineAlertRotationTimer = null;
+    let machineAlertRotationIndex = 0;
+
+    function activeMachineAlertEntries() {
+        const active = [];
+        for (const [id, currentState] of lastMachineStates.entries()) {
+            const machineConfig = state.machineAlerts[id];
+            if (!machineConfig?.enabled) continue;
+            const announcementId = machineConfig.state_announcements?.[currentState];
+            if (announcementId) active.push({ id, announcementId });
+        }
+        return active;
+    }
+
+    function tickMachineAlertRotation() {
+        const active = activeMachineAlertEntries();
+        if (!active.length) return;
+        machineAlertRotationIndex = machineAlertRotationIndex % active.length;
+        const entry = active[machineAlertRotationIndex];
+        machineAlertRotationIndex = (machineAlertRotationIndex + 1) % active.length;
+        api(`/announcements/${encodeURIComponent(entry.announcementId)}/send`, { method: 'POST' }).catch(() => {});
     }
 
     // Sondea Spoolman (si el plugin está instalado -- si no, falla en
@@ -922,6 +1005,14 @@
         } else if (!shouldPoll && machinesTimer) {
             window.clearInterval(machinesTimer);
             machinesTimer = null;
+        }
+
+        if (anyMachineAlertEnabled && !machineAlertRotationTimer) {
+            machineAlertRotationIndex = 0;
+            machineAlertRotationTimer = window.setInterval(tickMachineAlertRotation, MACHINE_ALERT_ROTATION_MS);
+        } else if (!anyMachineAlertEnabled && machineAlertRotationTimer) {
+            window.clearInterval(machineAlertRotationTimer);
+            machineAlertRotationTimer = null;
         }
 
         const materialRuleEnabled = state.rules.some((rule) => rule.trigger === 'material_low' && rule.enabled);
@@ -1813,6 +1904,7 @@
         if (statusTimer) { window.clearInterval(statusTimer); statusTimer = null; }
         if (machinesTimer) { window.clearInterval(machinesTimer); machinesTimer = null; }
         if (materialsTimer) { window.clearInterval(materialsTimer); materialsTimer = null; }
+        if (machineAlertRotationTimer) { window.clearInterval(machineAlertRotationTimer); machineAlertRotationTimer = null; }
         if (scenesResizeObserver) { scenesResizeObserver.disconnect(); scenesResizeObserver = null; }
         document.querySelector(`[data-plugin-nav="${PLUGIN_ID}"]`)?.remove();
         document.getElementById(`${PLUGIN_ID}-section`)?.remove();

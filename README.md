@@ -95,6 +95,21 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
   estado** (en espera/calentando/enfriando/trabajando/pausada/
   finalizada/error/desconectada), reusando el Editor de Anuncios en vez
   de duplicar lógica de texto/color.
+  - El estado de cada máquina se normaliza antes de comparar: los
+    drivers no usan un vocabulario único ("standby" en vez de "idle"
+    para Klipper, "FINISH"→"idle" en vez de "complete" para Bambu, etc.
+    -- ver `RAW_STATE_ALIASES` en el JS del plugin) y "calentando"/
+    "enfriando" no existen como estado real de ningún driver, así que
+    se derivan comparando temperatura actual contra target
+    (`deriveMachineVisualState`), igual que hace `app.js` del núcleo
+    para la tira LED. "Finalizada"/"Error" solo llegan a dispararse en
+    marcas cuyo driver expone esa señal de verdad (Klipper vía
+    Moonraker); Marlin standalone nunca la reporta, así que esos dos
+    estados no tienen forma de activarse ahí.
+  - Si dos o más máquinas configuradas están activas al mismo tiempo,
+    la pantalla (un solo dispositivo físico) no puede mostrarlas juntas
+    -- se turnan cada 5 segundos en orden, y al llegar a la última
+    vuelve a la primera (`tickMachineAlertRotation`).
 - **Resumen operativo**: mensajes mostrados hoy y errores son reales
   (`GET /api/plugins/matriz-led/stats`, contados dentro de
   `send_windows`, se resetea solo al cambiar de día). Uso de CPU/RAM no
