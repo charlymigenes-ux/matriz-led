@@ -34,6 +34,7 @@ LAST_SENT_PATH = Path("data/plugins/matriz-led/last_sent.json")
 STATS_PATH = Path("data/plugins/matriz-led/stats.json")
 RULES_PATH = Path("data/plugins/matriz-led/rules.json")
 MACHINE_ALERTS_PATH = Path("data/plugins/matriz-led/machine_alerts.json")
+LAST_ERROR_PATH = Path("data/plugins/matriz-led/last_error.json")
 REQUEST_TIMEOUT_SECONDS = 15
 
 # Confirmado en hardware real contra una pantalla iPixel Color 16x32.
@@ -200,6 +201,24 @@ def get_stats() -> Dict[str, Any]:
     return {"sent_ok": 0, "sent_error": 0}
 
 
+def _record_error(message: str) -> None:
+    """Último error real de un envío (texto o imagen) -- separado de
+    get_stats() (que solo cuenta cuántos, sin el detalle) para que el
+    panel de diagnóstico pueda mostrar qué pasó la última vez, no solo
+    que pasó. No se limpia al tener éxito de nuevo -- es un registro del
+    último error visto, no un semáforo de salud actual (eso ya lo cubre
+    get_status())."""
+    _write_json_atomic(LAST_ERROR_PATH, {"detail": message, "at": datetime.now(timezone.utc).isoformat()})
+
+
+def get_last_error() -> Optional[Dict[str, Any]]:
+    try:
+        data = json.loads(LAST_ERROR_PATH.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else None
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
 def send_windows(windows: List[bytes]) -> Dict[str, Any]:
     """Manda cada ventana ya armada (por pypixelcolor) al relay BLE del
     ESP32, en orden. Corta en el primer error -- las ventanas de un mismo
@@ -217,14 +236,17 @@ def send_windows(windows: List[bytes]) -> Dict[str, Any]:
             )
         except requests.RequestException as exc:
             _record_stat(False)
+            detail = f"No se pudo contactar al accesorio: {exc}"
+            _record_error(detail)
             return {
                 "success": False,
                 "window": index,
                 "windows_total": len(windows),
-                "detail": f"No se pudo contactar al accesorio: {exc}",
+                "detail": detail,
             }
         if response.text.strip() != "OK":
             _record_stat(False)
+            _record_error(response.text.strip() or "El accesorio respondió con un error sin detalle")
             return {
                 "success": False,
                 "window": index,

@@ -24,6 +24,14 @@
     gap: 20px;
 }
 
+/* El editor es el único que necesita 3 columnas (colores | editor |
+   vista previa+efectos) -- el selector con ID gana especificidad sobre la
+   regla de 2 columnas de arriba sin tocar el Panel principal, que sigue
+   usando .mled-view tal cual. */
+#mled-view-editor.mled-view {
+    grid-template-columns: 300px minmax(0, 1fr) 320px;
+}
+
 .mled-view[hidden] {
     display: none;
 }
@@ -604,13 +612,13 @@
     gap: 8px;
 }
 
-.mled-color-custom input[type="color"] {
+.mled-color-current-swatch {
+    display: inline-block;
+    flex: 0 0 auto;
     width: 44px;
     height: 38px;
-    padding: 2px;
     border-radius: var(--radius-sm, 8px);
     border: 1px solid var(--border);
-    background: var(--panel-bg);
 }
 
 .mled-color-custom input[type="text"] {
@@ -620,6 +628,114 @@
     border: 1px solid var(--border);
     background: var(--panel-bg);
     color: var(--text);
+}
+
+/* ── Selector de color con gama completa (gamut) -- reemplaza el popup
+   nativo del navegador, todo el rango queda visible sin abrir nada. Vive
+   en su propio aside a la izquierda (mled-sidebar-left, ver #mled-view-editor
+   más arriba) -- el ancho ya lo da esa columna de 300px, no hace falta
+   limitarlo acá también. ── */
+.mled-color-gamut {
+    position: relative;
+    height: 130px;
+    border-radius: var(--radius-sm, 10px);
+    margin-bottom: 10px;
+    background:
+        linear-gradient(to top, #000, transparent),
+        linear-gradient(to right, #fff, hsl(var(--hue, 0), 100%, 50%));
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.mled-color-gamut-cursor {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .5), 0 0 4px rgba(0, 0, 0, .5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.mled-color-hue {
+    position: relative;
+    height: 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+    cursor: pointer;
+    touch-action: none;
+}
+
+.mled-color-hue-cursor {
+    position: absolute;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.mled-color-saved-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    margin-bottom: 8px;
+}
+
+.mled-color-saved-empty {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* ── Anuncios guardados, versión compacta del sidebar del editor ── */
+.mled-sidebar-scenes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.mled-sidebar-scene {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 10px);
+    cursor: pointer;
+    transition: border-color .15s;
+}
+
+.mled-sidebar-scene:hover,
+.mled-sidebar-scene:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.mled-sidebar-scene.is-sending {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.mled-scene-preview-small {
+    flex: 0 0 56px;
+    width: 56px;
+}
+
+.mled-sidebar-scene-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ── Modal de configuración ── */
@@ -947,6 +1063,22 @@
 
 .mled-info-row:last-child { border-bottom: none; }
 
+.mled-card-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.mled-card-head-row h2 { margin: 0; }
+
+/* Mismos colores que el pill de estado del header (mled-status-ok/warn/off)
+   -- diagnóstico real, no decorativo. */
+.mled-diag-ok { color: var(--green); }
+.mled-diag-warn { color: var(--orange); }
+.mled-diag-off { color: var(--text-muted); }
+
 .mled-tips-list {
     margin: 0;
     padding-left: 18px;
@@ -988,7 +1120,8 @@
 }
 
 @media (max-width: 1100px) {
-    .mled-view {
+    .mled-view,
+    #mled-view-editor.mled-view {
         grid-template-columns: 1fr;
     }
 

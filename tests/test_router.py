@@ -17,6 +17,7 @@ def test_config_endpoints_require_auth(client):
     assert client.post("/api/plugins/matriz-led/announcements/x/send").status_code == 401
     assert client.get("/api/plugins/matriz-led/device-info").status_code == 401
     assert client.get("/api/plugins/matriz-led/last-sent").status_code == 401
+    assert client.get("/api/plugins/matriz-led/last-error").status_code == 401
     assert client.get("/api/plugins/matriz-led/stats").status_code == 401
     assert client.get("/api/plugins/matriz-led/rules").status_code == 401
     assert client.post("/api/plugins/matriz-led/rules", json={}).status_code == 401
@@ -255,6 +256,13 @@ def test_last_sent_endpoint(client, as_admin, monkeypatch):
     response = client.get("/api/plugins/matriz-led/last-sent")
     assert response.status_code == 200
     assert response.json() == {"last_sent": None}
+
+
+def test_last_error_endpoint(client, as_admin, monkeypatch):
+    monkeypatch.setattr(screen_service, "get_last_error", lambda: None)
+    response = client.get("/api/plugins/matriz-led/last-error")
+    assert response.status_code == 200
+    assert response.json() == {"last_error": None}
 
 
 def test_stats_endpoint(client, as_admin):

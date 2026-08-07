@@ -182,6 +182,11 @@ async def get_last_sent_endpoint(user: dict = Depends(require_auth)):
     return {"last_sent": screen_service.get_last_sent()}
 
 
+@router.get("/api/plugins/matriz-led/last-error")
+async def get_last_error_endpoint(user: dict = Depends(require_auth)):
+    return {"last_error": screen_service.get_last_error()}
+
+
 @router.get("/api/plugins/matriz-led/stats")
 async def get_stats_endpoint(user: dict = Depends(require_auth)):
     return screen_service.get_stats()

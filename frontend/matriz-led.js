@@ -119,6 +119,7 @@
     const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
     const QUICK_PALETTE = ['ff0000', 'ff8c00', 'ffd400', '22c55e', '14b8a6', '3b82f6', '8b5cf6', 'ec4899'];
+    const SAVED_COLORS_KEY = 'nopal.matriz-led.savedColors';
 
     // Plantillas del sistema: no se pueden borrar, siembran el editor con
     // un patrón + texto ya "quemado" a píxeles. Absorbe lo que antes eran
@@ -170,6 +171,7 @@
         editingId: null,
         activeTool: 'pencil',
         drawColor: 'ff0000',
+        pickerHsv: { h: 0, s: 1, v: 1 },
         tags: [],
         dragStart: null,
         searchQuery: '',
@@ -177,6 +179,7 @@
         view: 'dashboard',
         deviceInfo: { available: false },
         lastSent: null,
+        lastError: null,
         stats: { sent_ok: 0, sent_error: 0 },
         rules: [],
         machineAlerts: {},
@@ -454,11 +457,132 @@
         });
     }
 
+    // ── Conversión de color (hex <-> rgb <-> hsv) para el selector con
+    // gama completa (gamut) -- sin esto, el único selector era el popup
+    // nativo del navegador (<input type="color">), justo lo que se quería
+    // evitar. h en grados [0,360), s/v en [0,1].
+    function hexToRgb(hex) {
+        const n = parseInt(hex, 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+        return [r, g, b].map((value) => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, '0')).join('');
+    }
+
+    function rgbToHsv(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+        let h = 0;
+        if (d !== 0) {
+            if (max === r) h = ((g - b) / d) % 6;
+            else if (max === g) h = (b - r) / d + 2;
+            else h = (r - g) / d + 4;
+            h *= 60;
+            if (h < 0) h += 360;
+        }
+        return { h, s: max === 0 ? 0 : d / max, v: max };
+    }
+
+    function hsvToRgb(h, s, v) {
+        const c = v * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = v - c;
+        const [r, g, b] = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x]
+            : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+        return { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
+    }
+
+    // Solo mueve los indicadores según el state.pickerHsv actual -- no
+    // recalcula nada, para no perder precisión de matiz a mitad de un
+    // arrastre continuo (ver bindColorGamutPointer).
+    function updateColorPickerCursors() {
+        const gamut = root.querySelector('#mled-color-gamut');
+        const gamutCursor = root.querySelector('#mled-color-gamut-cursor');
+        const hueCursor = root.querySelector('#mled-color-hue-cursor');
+        const { h, s, v } = state.pickerHsv;
+        if (gamut) gamut.style.setProperty('--hue', h);
+        if (gamutCursor) { gamutCursor.style.left = `${s * 100}%`; gamutCursor.style.top = `${(1 - v) * 100}%`; }
+        if (hueCursor) hueCursor.style.left = `${(h / 360) * 100}%`;
+    }
+
+    // Fuente de verdad = state.drawColor (hex) -- para selección de paleta,
+    // gotero, plantillas, texto de hex a mano. Recalcula el matiz desde el
+    // hex; en blanco/negro puro el matiz queda indefinido y se reinicia a 0,
+    // aceptable acá porque no es un arrastre continuo.
     function syncColorInputs() {
         const swatch = root.querySelector('#mled-color-swatch');
         const hexInput = root.querySelector('#mled-color-hex');
-        if (swatch) swatch.value = `#${state.drawColor}`;
+        if (swatch) swatch.style.background = `#${state.drawColor}`;
         if (hexInput) hexInput.value = `#${state.drawColor}`;
+        const { r, g, b } = hexToRgb(state.drawColor);
+        state.pickerHsv = rgbToHsv(r, g, b);
+        updateColorPickerCursors();
+    }
+
+    // Fuente de verdad = h/s/v en vivo, para el arrastre del gamut/matiz --
+    // no pasa por syncColorInputs (evitaría el redondeo hex->hsv a mitad de
+    // arrastre) pero mantiene swatch/hex/cursores sincronizados igual.
+    function setColorFromHsv(h, s, v) {
+        state.pickerHsv = { h, s, v };
+        const { r, g, b } = hsvToRgb(h, s, v);
+        state.drawColor = rgbToHex(r, g, b);
+        const swatch = root.querySelector('#mled-color-swatch');
+        const hexInput = root.querySelector('#mled-color-hex');
+        if (swatch) swatch.style.background = `#${state.drawColor}`;
+        if (hexInput) hexInput.value = `#${state.drawColor}`;
+        updateColorPickerCursors();
+    }
+
+    function bindColorGamutPointer() {
+        const gamut = root.querySelector('#mled-color-gamut');
+        const hueTrack = root.querySelector('#mled-color-hue');
+        if (!gamut || !hueTrack) return;
+
+        const fromGamut = (event) => {
+            const rect = gamut.getBoundingClientRect();
+            const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+            const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+            setColorFromHsv(state.pickerHsv.h, x, 1 - y);
+        };
+        const fromHue = (event) => {
+            const rect = hueTrack.getBoundingClientRect();
+            const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+            setColorFromHsv(x * 360, state.pickerHsv.s, state.pickerHsv.v);
+        };
+
+        let draggingGamut = false, draggingHue = false;
+        gamut.addEventListener('pointerdown', (event) => { draggingGamut = true; gamut.setPointerCapture(event.pointerId); fromGamut(event); });
+        gamut.addEventListener('pointermove', (event) => { if (draggingGamut) fromGamut(event); });
+        gamut.addEventListener('pointerup', () => { draggingGamut = false; });
+        hueTrack.addEventListener('pointerdown', (event) => { draggingHue = true; hueTrack.setPointerCapture(event.pointerId); fromHue(event); });
+        hueTrack.addEventListener('pointermove', (event) => { if (draggingHue) fromHue(event); });
+        hueTrack.addEventListener('pointerup', () => { draggingHue = false; });
+    }
+
+    function readSavedColors() {
+        try { return JSON.parse(localStorage.getItem(SAVED_COLORS_KEY)) || []; } catch { return []; }
+    }
+
+    function writeSavedColors(colors) {
+        try { localStorage.setItem(SAVED_COLORS_KEY, JSON.stringify(colors.slice(0, 24))); } catch { /* localStorage no disponible -- no es crítico */ }
+    }
+
+    function renderSavedColors() {
+        const container = root.querySelector('#mled-color-saved-list');
+        if (!container) return;
+        const saved = readSavedColors();
+        if (!saved.length) {
+            container.innerHTML = `<span class="mled-color-saved-empty">Sin colores guardados todavía</span>`;
+            return;
+        }
+        container.innerHTML = saved.map((color) => (
+            `<button type="button" class="mled-swatch" data-saved-color="${color}" style="background:#${color}" title="#${color}"></button>`
+        )).join('');
+        container.querySelectorAll('[data-saved-color]').forEach((button) => {
+            button.addEventListener('click', () => {
+                state.drawColor = button.dataset.savedColor;
+                syncColorInputs();
+            });
+        });
     }
 
     function renderPalette() {
@@ -694,6 +818,46 @@
         });
     }
 
+    // Lista compacta debajo de "Vista previa" en el editor -- mismo patrón
+    // de tarjeta-completa-clicable que renderQuickScenes() del Panel
+    // principal (misma acción, /announcements/{id}/send), pero apilada
+    // vertical en vez de carrusel horizontal porque acá vive en la
+    // columna angosta del sidebar, no en una tarjeta ancha del dashboard.
+    function renderSidebarAnnouncements() {
+        const container = root.querySelector('#mled-sidebar-announcements');
+        if (!container) return;
+        const items = state.announcements;
+        if (!items.length) {
+            container.innerHTML = '<p class="mled-empty-row">Sin anuncios guardados todavía.</p>';
+            return;
+        }
+        container.innerHTML = items.map((item) => `
+            <article class="mled-sidebar-scene" data-scene-id="${esc(item.id)}" role="button" tabindex="0" title="Enviar “${esc(item.name)}” a la pantalla">
+                <div class="mled-scene-preview mled-scene-preview-small">${item.matrix.flat().map((color) => `<span style="${color ? `background:#${color}` : ''}"></span>`).join('')}</div>
+                <span class="mled-sidebar-scene-name">${esc(item.name)}</span>
+                <span class="mled-btn-icon-play" aria-hidden="true">▶</span>
+            </article>`).join('');
+
+        async function sendSidebarScene(card) {
+            if (card.classList.contains('is-sending')) return;
+            card.classList.add('is-sending');
+            try {
+                await api(`/announcements/${encodeURIComponent(card.dataset.sceneId)}/send`, { method: 'POST' });
+                await loadLastSent();
+            } catch (error) {
+                root.querySelector('#mled-save-msg').textContent = error.message || 'Error al enviar';
+            } finally {
+                card.classList.remove('is-sending');
+            }
+        }
+        container.querySelectorAll('.mled-sidebar-scene').forEach((card) => {
+            card.addEventListener('click', () => sendSidebarScene(card));
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); sendSidebarScene(card); }
+            });
+        });
+    }
+
     async function loadAnnouncements() {
         try {
             ({ announcements: state.announcements } = await api('/announcements'));
@@ -702,6 +866,7 @@
         }
         refreshGroupOptions();
         renderAnnouncementsTable();
+        renderSidebarAnnouncements();
         renderKPIs();
         renderQuickScenes();
     }
@@ -811,6 +976,7 @@
             text.textContent = 'Configurada, sin conexión BLE';
         }
         renderKPIs();
+        renderDiagnostics();
     }
 
     // ── Modal de configuración del accesorio ──
@@ -1040,24 +1206,66 @@
         return bytes < 1024 ? `${bytes} B` : `${Math.round(bytes / 1024)} KB`;
     }
 
+    // Reemplaza el "Hace un momento" fijo que había antes (no medía nada
+    // real, solo aparecía si device-info respondía) -- esto sí calcula
+    // contra una marca de tiempo real del backend (sent_at/at).
+    function formatRelativeTime(isoString) {
+        if (!isoString) return null;
+        const then = new Date(isoString).getTime();
+        if (Number.isNaN(then)) return null;
+        const seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
+        if (seconds < 5) return 'justo ahora';
+        if (seconds < 60) return `hace ${seconds} s`;
+        const minutes = Math.round(seconds / 60);
+        if (minutes < 60) return `hace ${minutes} min`;
+        const hours = Math.round(minutes / 60);
+        if (hours < 24) return `hace ${hours} h`;
+        const days = Math.round(hours / 24);
+        return `hace ${days} d`;
+    }
+
     async function loadDeviceInfo() {
         try {
             state.deviceInfo = await api('/device-info');
         } catch {
             state.deviceInfo = { available: false };
         }
-        renderDeviceInfoCard();
+        renderDiagnostics();
         renderEstadoTaller();
         renderSummary();
     }
 
-    function renderDeviceInfoCard() {
+    // Diagnóstico real: todo lo que se muestra acá viene de datos que el
+    // backend de verdad rastrea (get_status/get_device_info/get_last_sent/
+    // get_last_error) -- nada de "reintentos" (no hay lógica de reintento
+    // en send_windows) ni "hora de última conexión" separada (no se
+    // rastrea aparte de last_sent/last_error, que sí son reales).
+    function renderDiagnostics() {
+        if (!root) return;
         const info = state.deviceInfo;
         const set = (id, value) => { const el = root.querySelector(id); if (el) el.textContent = value; };
         set('#mled-info-model', info.available ? (info.chip || '—') : 'No disponible');
         set('#mled-info-firmware', info.available ? (info.firmware || '—') : 'No disponible');
         set('#mled-info-heap', info.available ? formatBytes(info.free_heap_bytes) : 'No disponible');
-        set('#mled-info-sync', info.available ? 'Hace un momento' : 'Nunca');
+
+        const connEl = root.querySelector('#mled-diag-connection');
+        if (connEl) {
+            connEl.classList.remove('mled-diag-ok', 'mled-diag-warn', 'mled-diag-off');
+            if (!state.status.configured) { connEl.textContent = 'Sin configurar'; connEl.classList.add('mled-diag-off'); }
+            else if (state.status.connected) { connEl.textContent = 'Conectado'; connEl.classList.add('mled-diag-ok'); }
+            else { connEl.textContent = 'Sin conexión BLE'; connEl.classList.add('mled-diag-warn'); }
+        }
+
+        const lastSentEl = root.querySelector('#mled-diag-last-sent');
+        if (lastSentEl) lastSentEl.textContent = state.lastSent?.sent_at ? (formatRelativeTime(state.lastSent.sent_at) || '—') : 'Nunca';
+
+        const lastErrorEl = root.querySelector('#mled-diag-last-error');
+        if (lastErrorEl) {
+            lastErrorEl.classList.toggle('mled-diag-warn', !!state.lastError);
+            lastErrorEl.textContent = state.lastError
+                ? `${state.lastError.detail} (${formatRelativeTime(state.lastError.at) || '—'})`
+                : 'Sin errores registrados';
+        }
     }
 
     function renderEstadoTaller() {
@@ -1087,6 +1295,16 @@
         }
         renderLiveView();
         renderQuickScenes();
+        renderDiagnostics();
+    }
+
+    async function loadLastError() {
+        try {
+            ({ last_error: state.lastError } = await api('/last-error'));
+        } catch {
+            state.lastError = null;
+        }
+        renderDiagnostics();
     }
 
     function renderLiveView() {
@@ -1444,7 +1662,7 @@
     }
 
     async function loadDashboard() {
-        await Promise.all([loadDeviceInfo(), loadLastSent(), loadStats(), loadRules(), loadMaterialAlerts(), loadMachineAlerts()]);
+        await Promise.all([loadDeviceInfo(), loadLastSent(), loadLastError(), loadStats(), loadRules(), loadMaterialAlerts(), loadMachineAlerts()]);
         renderKPIs();
     }
 
@@ -1567,12 +1785,14 @@
 
                     <aside class="mled-sidebar">
                         <article class="mled-card">
-                            <h2>Información del dispositivo</h2>
+                            <div class="mled-card-head-row"><h2>Diagnóstico</h2><button type="button" class="mled-btn mled-btn-small" id="mled-diag-test-btn">Probar conexión</button></div>
+                            <div class="mled-info-row"><span>Conexión BLE</span><strong id="mled-diag-connection">—</strong></div>
                             <div class="mled-info-row"><span>Modelo</span><strong id="mled-info-model">—</strong></div>
                             <div class="mled-info-row"><span>Firmware</span><strong id="mled-info-firmware">—</strong></div>
                             <div class="mled-info-row"><span>Memoria libre</span><strong id="mled-info-heap">—</strong></div>
                             <div class="mled-info-row"><span>Tipo de matriz</span><strong>RGB 16×32</strong></div>
-                            <div class="mled-info-row"><span>Última sincronización</span><strong id="mled-info-sync">—</strong></div>
+                            <div class="mled-info-row"><span>Último envío</span><strong id="mled-diag-last-sent">—</strong></div>
+                            <div class="mled-info-row"><span>Último error</span><strong id="mled-diag-last-error">—</strong></div>
                         </article>
                         <article class="mled-card">
                             <h2>Buenas prácticas</h2>
@@ -1593,6 +1813,27 @@
                 </div>
 
                 <div id="mled-view-editor" class="mled-view" hidden>
+                <aside class="mled-sidebar mled-sidebar-left">
+                    <article class="mled-card mled-colors-card">
+                        <h2>Colores</h2>
+                        <span class="mled-field-label">Paleta rápida</span>
+                        <div class="mled-palette" id="mled-palette"></div>
+
+                        <span class="mled-field-label">Selector de color</span>
+                        <div class="mled-color-gamut" id="mled-color-gamut"><div class="mled-color-gamut-cursor" id="mled-color-gamut-cursor"></div></div>
+                        <div class="mled-color-hue" id="mled-color-hue"><div class="mled-color-hue-cursor" id="mled-color-hue-cursor"></div></div>
+                        <div class="mled-color-custom">
+                            <span class="mled-color-current-swatch" id="mled-color-swatch"></span>
+                            <input type="text" id="mled-color-hex" value="#ff0000">
+                        </div>
+
+                        <div class="mled-color-saved-head">
+                            <span class="mled-field-label">Colores guardados</span>
+                            <button type="button" class="mled-btn mled-btn-small" id="mled-color-save-btn" title="Guardar el color actual">+</button>
+                        </div>
+                        <div class="mled-palette mled-color-saved" id="mled-color-saved-list"></div>
+                    </article>
+                </aside>
                 <div class="mled-shell">
                     <div class="mled-top-fields">
                         <label class="mled-field"><span>Nombre del anuncio</span><input type="text" id="mled-name" placeholder="Alerta Temperatura Alta"></label>
@@ -1701,14 +1942,8 @@
                     </article>
 
                     <article class="mled-card">
-                        <h2>Colores</h2>
-                        <span class="mled-field-label">Paleta rápida</span>
-                        <div class="mled-palette" id="mled-palette"></div>
-                        <span class="mled-field-label">Color personalizado</span>
-                        <div class="mled-color-custom">
-                            <input type="color" id="mled-color-swatch" value="#ff0000">
-                            <input type="text" id="mled-color-hex" value="#ff0000">
-                        </div>
+                        <h2>Anuncios guardados</h2>
+                        <div class="mled-sidebar-scenes" id="mled-sidebar-announcements"></div>
                     </article>
 
                     <article class="mled-card">
@@ -1801,14 +2036,19 @@
             renderEditor();
         });
 
-        root.querySelector('#mled-color-swatch').addEventListener('input', (event) => {
-            state.drawColor = event.target.value.replace('#', '');
-            syncColorInputs();
-        });
         root.querySelector('#mled-color-hex').addEventListener('change', (event) => {
             const value = event.target.value.replace('#', '');
             if (/^[0-9a-fA-F]{6}$/.test(value)) { state.drawColor = value; syncColorInputs(); }
         });
+        root.querySelector('#mled-color-save-btn').addEventListener('click', () => {
+            const saved = readSavedColors();
+            if (!saved.includes(state.drawColor)) {
+                saved.unshift(state.drawColor);
+                writeSavedColors(saved);
+                renderSavedColors();
+            }
+        });
+        bindColorGamutPointer();
 
         root.querySelector('#mled-mode').addEventListener('change', () => { draft.mode = root.querySelector('#mled-mode').value; syncModeFieldsDisabled(); });
 
@@ -1861,6 +2101,16 @@
         });
         root.querySelector('#mled-machine-alerts-save-btn').addEventListener('click', saveMachineAlertsModal);
 
+        root.querySelector('#mled-diag-test-btn').addEventListener('click', async (event) => {
+            const button = event.currentTarget;
+            button.disabled = true;
+            button.textContent = 'Probando…';
+            await refreshStatus();
+            await loadLastError();
+            button.disabled = false;
+            button.textContent = 'Probar conexión';
+        });
+
         root.querySelector('#mled-scenes-prev').addEventListener('click', () => scrollQuickScenes(-1));
         root.querySelector('#mled-scenes-next').addEventListener('click', () => scrollQuickScenes(1));
         if (window.ResizeObserver) {
@@ -1870,6 +2120,7 @@
 
         renderTemplates();
         renderPalette();
+        renderSavedColors();
         syncColorInputs();
     }
 

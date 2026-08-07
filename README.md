@@ -70,8 +70,17 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
   ambos roles en un solo HTTP server). El firmware marca ese sensor como
   `calibrated:false` (analógico, sin datasheet) -- se muestra tal cual,
   como estimado.
-- **Escenas rápidas**: hasta 4 anuncios guardados, con botón de envío
-  inmediato.
+- **Escenas rápidas**: todos los anuncios guardados (no un tope fijo),
+  en un carrusel con flechas cuando no caben todos a la vez -- clic en
+  cualquier parte de la tarjeta lo manda de inmediato.
+- **Diagnóstico** (reemplaza la vieja tarjeta "Información del
+  dispositivo"): conexión BLE real, modelo/firmware/memoria del ESP32,
+  **último envío** y **último error** -- ambos con marca de tiempo real
+  (`GET /api/plugins/matriz-led/last-error`, nuevo, persistido dentro de
+  `send_windows` en cuanto falla un envío). Antes "Última sincronización"
+  mostraba el texto fijo "Hace un momento" sin medir nada real; ya no.
+  El botón "Probar conexión" dispara el mismo chequeo de estado real que
+  ya corre cada 10s, pero al toque.
 - **Automatizaciones sugeridas**, reales y activables con un clic (no
   decorativas):
   - *Inactividad > 5 min* y *Material bajo detectado* (vía
@@ -142,6 +151,12 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
   herramienta de texto que "quema" letras a píxeles con una fuente 5x7
   propia del editor (no la de pypixelcolor -- esa solo se resuelve del
   lado del servidor y no sirve para texto editable a mano).
+- Selector de color con gama completa (cuadro de saturación/valor +
+  barra de matiz, conversión hex/rgb/hsv propia del plugin) en vez del
+  popup nativo del navegador -- todo el rango queda visible sin abrir
+  nada, con colores guardados aparte (persistidos en `localStorage`, no
+  en el servidor, es una preferencia del navegador). Vive en su propia
+  columna a la izquierda del editor, simétrica a "Efectos" a la derecha.
 - 9 plantillas del sistema (Alerta/Error/Atención/Emergencia/Listo/
   Bienvenida/Mantenimiento/Modo nocturno/Material bajo) que siembran el
   editor con texto y color ya listos -- reemplazan los presets de demo y

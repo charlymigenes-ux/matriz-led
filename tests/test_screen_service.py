@@ -160,6 +160,53 @@ def test_send_windows_stops_on_first_failure(monkeypatch):
     assert len(calls) == 1
 
 
+def test_get_last_error_none_by_default():
+    assert screen_service.get_last_error() is None
+
+
+def test_send_windows_records_last_error_on_bad_response(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+
+    class FakeResponse:
+        text = "ERR:BLE_NO_ACK"
+
+    monkeypatch.setattr(screen_service.requests, "post", lambda *a, **k: FakeResponse())
+
+    screen_service.send_windows([b"\x01"])
+
+    last_error = screen_service.get_last_error()
+    assert last_error is not None
+    assert last_error["detail"] == "ERR:BLE_NO_ACK"
+    assert "at" in last_error
+
+
+def test_send_windows_records_last_error_on_connection_failure(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+
+    def fake_post(*args, **kwargs):
+        raise screen_service.requests.RequestException("timed out")
+
+    monkeypatch.setattr(screen_service.requests, "post", fake_post)
+
+    screen_service.send_windows([b"\x01"])
+
+    last_error = screen_service.get_last_error()
+    assert last_error is not None
+    assert "timed out" in last_error["detail"]
+
+
+def test_send_windows_success_does_not_touch_last_error(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+
+    class FakeResponse:
+        text = "OK"
+
+    monkeypatch.setattr(screen_service.requests, "post", lambda *a, **k: FakeResponse())
+    screen_service.send_windows([b"\x01"])
+
+    assert screen_service.get_last_error() is None
+
+
 def test_send_matrix_rejects_wrong_shape():
     matrix = [[""] * 32] * 10  # solo 10 filas, faltan 6
     try:
