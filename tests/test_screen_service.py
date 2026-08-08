@@ -474,6 +474,50 @@ def test_send_matrix_does_not_record_last_sent_on_failure(monkeypatch):
     assert screen_service.get_last_sent() is None
 
 
+def test_get_last_sent_history_empty_by_default():
+    assert screen_service.get_last_sent_history() == []
+
+
+def test_send_matrix_records_source_in_history(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    monkeypatch.setattr(screen_service, "send_windows", lambda windows: {"success": True, "windows_total": 1})
+
+    screen_service.send_matrix(_solid_matrix(), source="nopal-i3")
+    history = screen_service.get_last_sent_history()
+    assert len(history) == 1
+    assert history[0]["source"] == "nopal-i3"
+    assert "sent_at" in history[0]
+
+
+def test_send_matrix_defaults_source_to_manual(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    monkeypatch.setattr(screen_service, "send_windows", lambda windows: {"success": True, "windows_total": 1})
+
+    screen_service.send_matrix(_solid_matrix())
+    history = screen_service.get_last_sent_history()
+    assert history[0]["source"] == "Manual"
+
+
+def test_last_sent_history_most_recent_first(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    monkeypatch.setattr(screen_service, "send_windows", lambda windows: {"success": True, "windows_total": 1})
+
+    screen_service.send_matrix(_solid_matrix(), source="primero")
+    screen_service.send_matrix(_solid_matrix(), source="segundo")
+    history = screen_service.get_last_sent_history()
+    assert [entry["source"] for entry in history] == ["segundo", "primero"]
+
+
+def test_send_announcement_defaults_source_to_announcement_name(monkeypatch):
+    screen_service.save_config("192.168.0.85", "nopal", "clave123")
+    monkeypatch.setattr(screen_service, "send_windows", lambda windows: {"success": True, "windows_total": 1})
+    saved = screen_service.create_announcement({"name": "READY", "matrix": _solid_matrix()})
+
+    screen_service.send_announcement(saved["id"])
+    history = screen_service.get_last_sent_history()
+    assert history[0]["source"] == "READY"
+
+
 def test_get_stats_defaults_to_zero():
     assert screen_service.get_stats() == {"sent_ok": 0, "sent_error": 0}
 

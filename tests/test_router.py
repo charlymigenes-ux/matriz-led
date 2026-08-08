@@ -231,6 +231,17 @@ def test_send_announcement_endpoint_missing_id(client, as_admin):
     assert response.status_code == 404
 
 
+def test_send_announcement_endpoint_forwards_source_query_param(client, as_admin, monkeypatch):
+    monkeypatch.setattr(screen_service, "send_windows", lambda windows: {"success": True, "windows_total": 1})
+    created = client.post("/api/plugins/matriz-led/announcements", json={"name": "Bienvenido"})
+    announcement_id = created.json()["id"]
+
+    response = client.post(f"/api/plugins/matriz-led/announcements/{announcement_id}/send?source=nopal-i3")
+    assert response.status_code == 200
+    history = client.get("/api/plugins/matriz-led/last-sent-history").json()["history"]
+    assert history[0]["source"] == "nopal-i3"
+
+
 def test_send_announcement_endpoint_reports_upstream_failure(client, as_admin, monkeypatch):
     monkeypatch.setattr(
         screen_service,

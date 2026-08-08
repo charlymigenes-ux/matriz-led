@@ -158,9 +158,9 @@ async def delete_announcement_endpoint(announcement_id: str, user: dict = Depend
 
 
 @router.post("/api/plugins/matriz-led/announcements/{announcement_id}/send")
-async def send_announcement_endpoint(announcement_id: str, user: dict = Depends(require_auth)):
+async def send_announcement_endpoint(announcement_id: str, source: str = "", user: dict = Depends(require_auth)):
     try:
-        result = await asyncio.to_thread(screen_service.send_announcement, announcement_id)
+        result = await asyncio.to_thread(screen_service.send_announcement, announcement_id, source or None)
     except ValueError as exc:
         status_code = 404 if "no encontrado" in str(exc) else 400
         raise HTTPException(status_code=status_code, detail=str(exc)) from exc
@@ -180,6 +180,14 @@ async def get_device_info_endpoint(user: dict = Depends(require_auth)):
 @router.get("/api/plugins/matriz-led/last-sent")
 async def get_last_sent_endpoint(user: dict = Depends(require_auth)):
     return {"last_sent": screen_service.get_last_sent()}
+
+
+@router.get("/api/plugins/matriz-led/last-sent-history")
+async def get_last_sent_history_endpoint(user: dict = Depends(require_auth)):
+    """Quién mandó los últimos envíos a la pantalla (nombre de máquina o de
+    anuncio) -- para el "ticker" del dock del Panel de Control en el core.
+    Más reciente primero."""
+    return {"history": screen_service.get_last_sent_history()}
 
 
 @router.get("/api/plugins/matriz-led/last-error")

@@ -31,6 +31,8 @@ logger = logging.getLogger(__name__)
 CONFIG_PATH = Path("data/plugins/matriz-led/config.json")
 ANNOUNCEMENTS_PATH = Path("data/plugins/matriz-led/announcements.json")
 LAST_SENT_PATH = Path("data/plugins/matriz-led/last_sent.json")
+LAST_SENT_HISTORY_PATH = Path("data/plugins/matriz-led/last_sent_history.json")
+LAST_SENT_HISTORY_LIMIT = 15
 STATS_PATH = Path("data/plugins/matriz-led/stats.json")
 RULES_PATH = Path("data/plugins/matriz-led/rules.json")
 MACHINE_ALERTS_PATH = Path("data/plugins/matriz-led/machine_alerts.json")
@@ -389,6 +391,7 @@ def _matrix_to_image_hex(
 
 def send_matrix(
     matrix: List[List[str]], animate_col: bool = False, animate_row: bool = False, speed: int = 80,
+    source: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Manda el patrón de píxeles (color por celda) al relay BLE, estático
     o animado (ver _matrix_to_image_hex). Al ya venir del tamaño exacto
@@ -414,7 +417,9 @@ def send_matrix(
         # último que se mandó. No es una lectura real de la pantalla (el
         # relay BLE es de solo escritura, ver el docstring del módulo),
         # es lo último que NOPAL le mandó.
-        _write_json_atomic(LAST_SENT_PATH, {"matrix": matrix, "sent_at": datetime.now(timezone.utc).isoformat()})
+        sent_at = datetime.now(timezone.utc).isoformat()
+        _write_json_atomic(LAST_SENT_PATH, {"matrix": matrix, "sent_at": sent_at})
+        _record_sent_history(source or "Manual", sent_at)
     return result
 
 
@@ -424,6 +429,33 @@ def get_last_sent() -> Optional[Dict[str, Any]]:
         return data if isinstance(data, dict) else None
     except (OSError, json.JSONDecodeError):
         return None
+
+
+def _record_sent_history(source: str, sent_at: str) -> None:
+    """Historial liviano (solo texto: quién mandó qué y cuándo, sin la
+    matriz de píxeles) para el "ticker" del dock del Panel de Control en el
+    core -- ver #dashboard-dock-matrix-ticker en app.js. Separado de
+    LAST_SENT_PATH (que sí guarda la matriz completa, para "Vista en
+    vivo") porque el ticker necesita varias entradas, no solo la última."""
+    try:
+        history = json.loads(LAST_SENT_HISTORY_PATH.read_text(encoding="utf-8"))
+        if not isinstance(history, list):
+            history = []
+    except (OSError, json.JSONDecodeError):
+        history = []
+    history.append({"source": source, "sent_at": sent_at})
+    history = history[-LAST_SENT_HISTORY_LIMIT:]
+    _write_json_atomic(LAST_SENT_HISTORY_PATH, history)
+
+
+def get_last_sent_history(limit: int = 10) -> List[Dict[str, Any]]:
+    try:
+        history = json.loads(LAST_SENT_HISTORY_PATH.read_text(encoding="utf-8"))
+        if not isinstance(history, list):
+            return []
+    except (OSError, json.JSONDecodeError):
+        return []
+    return history[-limit:][::-1]
 
 
 def get_device_info() -> Dict[str, Any]:
@@ -610,18 +642,22 @@ def delete_announcement(announcement_id: str) -> None:
     _write_announcements(remaining)
 
 
-def send_announcement(announcement_id: str) -> Dict[str, Any]:
+def send_announcement(announcement_id: str, source: Optional[str] = None) -> Dict[str, Any]:
     """Manda un anuncio guardado a la pantalla ahora mismo -- el botón
     "Enviar"/"Vista previa en vivo" del editor. El modo "programado" guarda
     fecha/repetición como metadata (ver _build_announcement) pero todavía
     no se dispara solo: NOPAL no tiene un scheduler de fondo para plugins
-    (ver el comentario de _last_known_connected más arriba)."""
+    (ver el comentario de _last_known_connected más arriba). `source` es
+    quién lo disparó para el ticker del dock (ver _record_sent_history) --
+    si no viene (envío manual desde el editor/escenas), se usa el nombre
+    del propio anuncio."""
     announcement = get_announcement(announcement_id)
     return send_matrix(
         announcement["matrix"],
         animate_col=announcement.get("animate_col", False),
         animate_row=announcement.get("animate_row", False),
         speed=announcement.get("speed", 80),
+        source=source or announcement.get("name"),
     )
 
 

@@ -1128,7 +1128,12 @@
         machineAlertRotationIndex = machineAlertRotationIndex % active.length;
         const entry = active[machineAlertRotationIndex];
         machineAlertRotationIndex = (machineAlertRotationIndex + 1) % active.length;
-        api(`/announcements/${encodeURIComponent(entry.announcementId)}/send`, { method: 'POST' }).catch(() => {});
+        // El nombre de la máquina (no el del anuncio) es lo que queda
+        // registrado como "source" -- así el ticker del dock en el core
+        // muestra de qué máquina viene cada envío automático.
+        const machine = state.machines.find((item) => item.id === entry.id);
+        const source = encodeURIComponent(machine?.name || entry.id);
+        api(`/announcements/${encodeURIComponent(entry.announcementId)}/send?source=${source}`, { method: 'POST' }).catch(() => {});
     }
 
     // Sondea Spoolman (si el plugin está instalado -- si no, falla en
@@ -2132,7 +2137,12 @@
         navButton.className = 'nav-item';
         navButton.dataset.section = PLUGIN_ID;
         navButton.dataset.pluginNav = PLUGIN_ID;
-        navButton.innerHTML = '<span>🖥️</span><span>Matriz LED</span>';
+        // SVG real, no un emoji en <span> -- el CSS del sidebar contraído
+        // oculta TODOS los <span> del botón (ver .sidebar-collapsed
+        // .nav-item span en style.css), así que un ícono envuelto en
+        // <span> desaparecía entero al contraer. El resto de los plugins
+        // ya usa <svg> (inmune a esa regla) por esta misma razón.
+        navButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Matriz LED</span>';
         navButton.addEventListener('click', () => window.switchSection?.(PLUGIN_ID));
         pluginsContainer?.appendChild(navButton);
 
