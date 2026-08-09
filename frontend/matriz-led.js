@@ -31,6 +31,525 @@
         return;
     }
 
+    // Mismo patrón que font-library.js/svg-toolkit.js/spoolman.js (plugins/
+    // font-library, plugins/svg-toolkit, plugins/spoolman): diccionario
+    // propio del plugin, sin un t()/i18n global del core (no existe uno
+    // expuesto a plugins) -- lee el idioma ya elegido en Configuración
+    // (localStorage.language). Va primero en el archivo porque ENTRY_EFFECTS/
+    // EXIT_EFFECTS/PRIORITIES/SYSTEM_TEMPLATES (más abajo) llaman tr() al
+    // definirse.
+    const I18N = {
+        es: {
+            effectStatic: 'Estático', effectBlink: 'Parpadeo',
+            exitNone: 'Ninguno', exitFade: 'Desvanecer', exitOff: 'Apagar',
+            priorityHigh: 'Alta', priorityMedium: 'Media', priorityLow: 'Baja',
+            tplAlert: 'Alerta', tplError: 'Error', tplAttention: 'Atención', tplEmergency: 'Emergencia',
+            tplReady: 'Listo', tplWelcome: 'Bienvenida', tplMaintenance: 'Mantenimiento',
+            tplNightMode: 'Modo nocturno', tplLowMaterial: 'Material bajo',
+            stateIdle: 'En espera', stateHeating: 'Calentando', stateCooling: 'Enfriando', statePrinting: 'Trabajando',
+            statePaused: 'Pausada', stateComplete: 'Finalizada', stateError: 'Error', stateOffline: 'Desconectada',
+            noSavedColorsYet: 'Sin colores guardados todavía',
+            noAnnouncementsYet: 'Sin anuncios guardados todavía.',
+            secondsSuffix: 'seg', scheduledBadge: 'Programado', activeStateBadge: 'Activo',
+            editTitle: 'Editar', duplicateTitle: 'Duplicar', deleteTitle: 'Eliminar',
+            confirmDeleteAnnouncement: 'Vas a eliminar el anuncio "{name}". Esta acción no se puede deshacer.',
+            deleteAnnouncementTitle: 'Eliminar anuncio',
+            sendToScreenTitle: 'Enviar "{name}" a la pantalla',
+            errorSending: 'Error al enviar',
+            allUnassigned: 'Todas / sin asignar', noGroup: 'Sin grupo', allMachines: 'Todas',
+            missingAnnouncementName: 'Falta el nombre del anuncio',
+            saving: 'Guardando…', announcementSaved: 'Anuncio guardado', errorSaving: 'Error al guardar',
+            savedGeneric: 'Guardado', copySuffix: '(copia)',
+            sendingToScreen: 'Enviando a la pantalla… (puede tardar unos segundos)',
+            sentWindows: 'Enviado ({count} {word})', windowSingular: 'ventana', windowPlural: 'ventanas',
+            notConfigured: 'Sin configurar', statusConnected: 'Conectada', diagConnected: 'Conectado',
+            configuredNoBle: 'Configurada, sin conexión BLE', noBle: 'Sin conexión BLE',
+            never: 'Nunca', noErrorsLogged: 'Sin errores registrados', estimatedTemp: '{value}°C (estimado)',
+            justNow: 'justo ahora', secondsAgo: 'hace {n} s', minutesAgo: 'hace {n} min', hoursAgo: 'hace {n} h', daysAgo: 'hace {n} d',
+            currentScene: 'Escena actual: {name}', custom: 'Personalizado', currentSceneNoSends: 'Escena actual: Sin envíos todavía',
+            operational: 'Operativa', readyToUse: 'Listas para usar', createFirstAnnouncement: 'Crea tu primer anuncio',
+            rulesAndMachines: '{rules} reglas · {machines} máquinas',
+            noAnnouncementsCreateHint: 'Todavía no tienes anuncios guardados -- créalos en "Escenas y Configuración".',
+            activeBadge: 'Activa', readyBadge: 'Lista',
+            suggestionIdleTitle: 'Inactividad > 5 min', suggestionIdleDetail: 'Mostrar "Modo nocturno"{suffix}',
+            detectedNowSuffix: ' -- detectado ahora',
+            suggestionMaterialTitle: 'Material bajo detectado', suggestionMaterialDetail: 'Mostrar "Material bajo"{suffix}',
+            suggestionJobDoneTitle: 'Trabajo terminado', suggestionJobDoneDetail: 'Avisar OK/ERR cuando una máquina termine o falle',
+            suggestionSmokeTitle: 'Humo detectado', suggestionSmokeDetail: 'No hay sensor de humo instalado todavía',
+            clickToDeactivate: 'Clic para desactivar', clickToActivate: 'Clic para activar', activateBtn: 'Activar',
+            notAvailableBadge: 'No disponible', genericError: 'Error',
+            noMachinesDetected: 'No hay máquinas detectadas todavía.',
+            activeAlertsBadge: 'Activas', inactiveAlertsBadge: 'Inactivas', configureBtn: 'Configurar',
+            unassignedOption: 'Sin asignar',
+            dashboardTitle: 'Panel principal · Matriz LED',
+            dashboardSub: 'Controla tu matriz LED, escenas, alertas y automatizaciones del taller en tiempo real.',
+            editorTitle: 'Escenas y Configuración',
+            editorSub: 'Crea anuncios, configura alertas por máquina y el accesorio ESP32.',
+            checking: 'Comprobando…', accessoryConfigTitle: 'Configuración del accesorio',
+            tabMainPanel: 'Panel principal',
+            kpiMatricesConnected: 'Matrices conectadas', kpiActiveScenes: 'Escenas activas', kpiAutomations: 'Automatizaciones',
+            kpiGlobalBrightness: 'Brillo global', noFirmwareSensor: 'Sin sensor en el firmware',
+            liveView: 'Vista en vivo', selectMatrix: 'Seleccionar matriz', mainMatrixLabel: 'Matriz principal · 16×32',
+            currentSceneDash: 'Escena actual: —', brightnessLabel: 'Brillo:', fpsLabel: 'FPS:', panelTempLabel: 'Temp. panel:',
+            registeredResolutions: 'Resoluciones registradas', rgbResolution: '16 × 32 RGB', defaultBadge: 'Predeterminada',
+            workshopStatus: 'Estado del taller', criticalSensors: 'Sensores críticos', ventilation: 'Ventilación',
+            stablePower: 'Energía estable', ambientTemp: 'Temperatura ambiente',
+            quickScenes: 'Escenas rápidas', previousTitle: 'Anteriores', previousAria: 'Escenas anteriores',
+            nextTitle: 'Siguientes', nextAria: 'Escenas siguientes',
+            suggestedAutomations: 'Automatizaciones sugeridas', operationalSummary: 'Resumen operativo',
+            uptimeLabel: 'Tiempo en línea', messagesToday: 'Mensajes mostrados hoy', successfulUpdates: 'Actualizaciones exitosas',
+            errorsLabel: 'Errores', diagnosticsTitle: 'Diagnóstico', testConnectionBtn: 'Probar conexión',
+            bleConnection: 'Conexión BLE', modelLabel: 'Modelo', firmwareLabel: 'Firmware', freeMemory: 'Memoria libre',
+            matrixType: 'Tipo de matriz', lastSentLabel: 'Último envío', lastErrorLabel: 'Último error',
+            goodPractices: 'Buenas prácticas', tipShortMessages: 'Usa mensajes cortos y claros.',
+            tipAvoidBlinking: 'Evita parpadeos excesivos.', tipPrioritizeColors: 'Prioriza colores por nivel de urgencia.',
+            colorPriorities: 'Prioridades por color', greenPriority: 'Verde -- estado normal / OK',
+            amberPriority: 'Ámbar -- advertencia / atención', redPriority: 'Rojo -- alerta / peligro', bluePriority: 'Azul -- información / proceso',
+            colorsTitle: 'Colores', quickPalette: 'Paleta rápida', colorPicker: 'Selector de color',
+            savedColors: 'Colores guardados', saveColorTitle: 'Guardar el color actual',
+            announcementNameLabel: 'Nombre del anuncio', announcementNamePlaceholder: 'Alerta Temperatura Alta',
+            assignMachineLabel: 'Asignar a máquina', priorityLabel: 'Prioridad',
+            editor1632: 'Editor 16x32', pixels1632: '16 x 32 píxeles',
+            pencilTitle: 'Lápiz', eraserTitle: 'Borrador', lineTitle: 'Línea', rectTitle: 'Rectángulo', ellipseTitle: 'Elipse',
+            bucketTitle: 'Cubeta', eyedropperTitle: 'Gotero', importImageTitle: 'Importar imagen', textTitle: 'Texto', clearAllTitle: 'Borrar todo',
+            textPlaceholder: 'TEXTO', rowLabel: 'Fila', rowTitle: 'Fila inicial', columnLabel: 'Columna', columnTitle: 'Columna inicial',
+            placeBtn: 'Colocar', livePreviewBtn: 'Vista previa en vivo', templatesTitle: 'Marcos / Plantillas',
+            schedulingTitle: 'Programación', playbackModeLabel: 'Modo de reproducción', manualOption: 'Manual', scheduledOption: 'Programado',
+            startDateLabel: 'Fecha de inicio', endDateLabel: 'Fecha de fin (opcional)', repeatLabel: 'Repetir',
+            durationTitle: 'Duración del anuncio', screenTimeLabel: 'Tiempo en pantalla (seg)', transitionLabel: 'Transición (seg)',
+            assignmentTitle: 'Asignación', groupLabel: 'Grupo (opcional)', tagsLabel: 'Etiquetas', addTagPlaceholder: 'Agregar etiqueta',
+            saveAnnouncementBtn: 'Guardar Anuncio', cancelBtn: 'Cancelar',
+            savedAnnouncementsTitle: 'Anuncios guardados', searchAnnouncementsPlaceholder: 'Buscar anuncios…',
+            colName: 'Nombre', colMachine: 'Máquina', colResolution: 'Resolución', colDuration: 'Duración',
+            colPriority: 'Prioridad', colStatus: 'Estado', colActions: 'Acciones',
+            machineAlertsTitle: 'Alertas por máquina',
+            machineAlertsHint: 'Para cada máquina, elige qué anuncio mostrar cuando cambie a cada estado -- reusa los anuncios de arriba en vez de un color fijo por estado.',
+            previewTitle: 'Vista previa', effectsTitle: 'Efectos', entryEffectLabel: 'Efecto de entrada',
+            sendAnimationLabel: 'Animación al enviar (combinables)', animateColumnLabel: 'Animar por columna', animateRowLabel: 'Animar por fila',
+            speedLabel: 'Velocidad', exitEffectLabel: 'Efecto de salida', pauseLabel: 'Pausa (seg)',
+            accessoryConfigModalDesc: 'La IP y credenciales del ESP32 que hace de puente BLE.',
+            accessoryIpLabel: 'IP del accesorio', usernameLabel: 'Usuario', passwordLabel: 'Contraseña',
+            jobDoneOnlyAlert: 'Avisar solo cuando un trabajo termine o falle', saveBtn: 'Guardar',
+            machineAlertsEyebrow: 'ALERTAS POR MÁQUINA', visualAlertsTitle: 'Alertas visuales',
+            machineAlertsCheckboxLabel: 'Esta máquina mandará sus cambios de estado a la Matriz LED.',
+            announcementPerState: 'Anuncio para cada estado',
+            confirmClearAll: 'Vas a borrar todo el dibujo actual. Esta acción no se puede deshacer.', clearAllConfirmTitle: 'Borrar todo',
+            testing: 'Probando…', matrixLedNavLabel: 'Matriz LED',
+            dayInitials: 'L,M,M,J,V,S,D',
+        },
+        en: {
+            effectStatic: 'Static', effectBlink: 'Blink',
+            exitNone: 'None', exitFade: 'Fade', exitOff: 'Turn off',
+            priorityHigh: 'High', priorityMedium: 'Medium', priorityLow: 'Low',
+            tplAlert: 'Alert', tplError: 'Error', tplAttention: 'Attention', tplEmergency: 'Emergency',
+            tplReady: 'Ready', tplWelcome: 'Welcome', tplMaintenance: 'Maintenance',
+            tplNightMode: 'Night mode', tplLowMaterial: 'Low material',
+            stateIdle: 'Idle', stateHeating: 'Heating', stateCooling: 'Cooling', statePrinting: 'Printing',
+            statePaused: 'Paused', stateComplete: 'Completed', stateError: 'Error', stateOffline: 'Offline',
+            noSavedColorsYet: 'No saved colors yet',
+            noAnnouncementsYet: 'No saved announcements yet.',
+            secondsSuffix: 'sec', scheduledBadge: 'Scheduled', activeStateBadge: 'Active',
+            editTitle: 'Edit', duplicateTitle: 'Duplicate', deleteTitle: 'Delete',
+            confirmDeleteAnnouncement: 'You are about to delete the announcement "{name}". This action cannot be undone.',
+            deleteAnnouncementTitle: 'Delete announcement',
+            sendToScreenTitle: 'Send "{name}" to the screen',
+            errorSending: 'Error sending',
+            allUnassigned: 'All / unassigned', noGroup: 'No group', allMachines: 'All',
+            missingAnnouncementName: 'Missing the announcement name',
+            saving: 'Saving…', announcementSaved: 'Announcement saved', errorSaving: 'Error saving',
+            savedGeneric: 'Saved', copySuffix: '(copy)',
+            sendingToScreen: 'Sending to the screen… (may take a few seconds)',
+            sentWindows: 'Sent ({count} {word})', windowSingular: 'window', windowPlural: 'windows',
+            notConfigured: 'Not configured', statusConnected: 'Connected', diagConnected: 'Connected',
+            configuredNoBle: 'Configured, no BLE connection', noBle: 'No BLE connection',
+            never: 'Never', noErrorsLogged: 'No errors logged', estimatedTemp: '{value}°C (estimated)',
+            justNow: 'just now', secondsAgo: '{n} s ago', minutesAgo: '{n} min ago', hoursAgo: '{n} h ago', daysAgo: '{n} d ago',
+            currentScene: 'Current scene: {name}', custom: 'Custom', currentSceneNoSends: 'Current scene: No sends yet',
+            operational: 'Operational', readyToUse: 'Ready to use', createFirstAnnouncement: 'Create your first announcement',
+            rulesAndMachines: '{rules} rules · {machines} machines',
+            noAnnouncementsCreateHint: 'You don\'t have any saved announcements yet -- create them in "Scenes and Settings".',
+            activeBadge: 'Active', readyBadge: 'Ready',
+            suggestionIdleTitle: 'Idle > 5 min', suggestionIdleDetail: 'Show "Night mode"{suffix}',
+            detectedNowSuffix: ' -- detected now',
+            suggestionMaterialTitle: 'Low material detected', suggestionMaterialDetail: 'Show "Low material"{suffix}',
+            suggestionJobDoneTitle: 'Job finished', suggestionJobDoneDetail: 'Notify OK/ERR when a machine finishes or fails',
+            suggestionSmokeTitle: 'Smoke detected', suggestionSmokeDetail: 'No smoke sensor installed yet',
+            clickToDeactivate: 'Click to deactivate', clickToActivate: 'Click to activate', activateBtn: 'Activate',
+            notAvailableBadge: 'Not available', genericError: 'Error',
+            noMachinesDetected: 'No machines detected yet.',
+            activeAlertsBadge: 'Active', inactiveAlertsBadge: 'Inactive', configureBtn: 'Configure',
+            unassignedOption: 'Unassigned',
+            dashboardTitle: 'Main panel · LED Matrix',
+            dashboardSub: 'Control your LED matrix, scenes, alerts, and workshop automations in real time.',
+            editorTitle: 'Scenes and Settings',
+            editorSub: 'Create announcements, configure machine alerts, and the ESP32 accessory.',
+            checking: 'Checking…', accessoryConfigTitle: 'Accessory settings',
+            tabMainPanel: 'Main panel',
+            kpiMatricesConnected: 'Connected matrices', kpiActiveScenes: 'Active scenes', kpiAutomations: 'Automations',
+            kpiGlobalBrightness: 'Global brightness', noFirmwareSensor: 'No sensor in the firmware',
+            liveView: 'Live view', selectMatrix: 'Select matrix', mainMatrixLabel: 'Main matrix · 16×32',
+            currentSceneDash: 'Current scene: —', brightnessLabel: 'Brightness:', fpsLabel: 'FPS:', panelTempLabel: 'Panel temp.:',
+            registeredResolutions: 'Registered resolutions', rgbResolution: '16 × 32 RGB', defaultBadge: 'Default',
+            workshopStatus: 'Workshop status', criticalSensors: 'Critical sensors', ventilation: 'Ventilation',
+            stablePower: 'Stable power', ambientTemp: 'Ambient temperature',
+            quickScenes: 'Quick scenes', previousTitle: 'Previous', previousAria: 'Previous scenes',
+            nextTitle: 'Next', nextAria: 'Next scenes',
+            suggestedAutomations: 'Suggested automations', operationalSummary: 'Operational summary',
+            uptimeLabel: 'Uptime', messagesToday: 'Messages shown today', successfulUpdates: 'Successful updates',
+            errorsLabel: 'Errors', diagnosticsTitle: 'Diagnostics', testConnectionBtn: 'Test connection',
+            bleConnection: 'BLE connection', modelLabel: 'Model', firmwareLabel: 'Firmware', freeMemory: 'Free memory',
+            matrixType: 'Matrix type', lastSentLabel: 'Last sent', lastErrorLabel: 'Last error',
+            goodPractices: 'Best practices', tipShortMessages: 'Use short, clear messages.',
+            tipAvoidBlinking: 'Avoid excessive blinking.', tipPrioritizeColors: 'Prioritize colors by urgency level.',
+            colorPriorities: 'Color priorities', greenPriority: 'Green -- normal status / OK',
+            amberPriority: 'Amber -- warning / attention', redPriority: 'Red -- alert / danger', bluePriority: 'Blue -- information / process',
+            colorsTitle: 'Colors', quickPalette: 'Quick palette', colorPicker: 'Color picker',
+            savedColors: 'Saved colors', saveColorTitle: 'Save the current color',
+            announcementNameLabel: 'Announcement name', announcementNamePlaceholder: 'High Temperature Alert',
+            assignMachineLabel: 'Assign to machine', priorityLabel: 'Priority',
+            editor1632: '16x32 editor', pixels1632: '16 x 32 pixels',
+            pencilTitle: 'Pencil', eraserTitle: 'Eraser', lineTitle: 'Line', rectTitle: 'Rectangle', ellipseTitle: 'Ellipse',
+            bucketTitle: 'Bucket', eyedropperTitle: 'Eyedropper', importImageTitle: 'Import image', textTitle: 'Text', clearAllTitle: 'Clear all',
+            textPlaceholder: 'TEXT', rowLabel: 'Row', rowTitle: 'Starting row', columnLabel: 'Column', columnTitle: 'Starting column',
+            placeBtn: 'Place', livePreviewBtn: 'Live preview', templatesTitle: 'Frames / Templates',
+            schedulingTitle: 'Scheduling', playbackModeLabel: 'Playback mode', manualOption: 'Manual', scheduledOption: 'Scheduled',
+            startDateLabel: 'Start date', endDateLabel: 'End date (optional)', repeatLabel: 'Repeat',
+            durationTitle: 'Announcement duration', screenTimeLabel: 'Time on screen (sec)', transitionLabel: 'Transition (sec)',
+            assignmentTitle: 'Assignment', groupLabel: 'Group (optional)', tagsLabel: 'Tags', addTagPlaceholder: 'Add tag',
+            saveAnnouncementBtn: 'Save Announcement', cancelBtn: 'Cancel',
+            savedAnnouncementsTitle: 'Saved announcements', searchAnnouncementsPlaceholder: 'Search announcements…',
+            colName: 'Name', colMachine: 'Machine', colResolution: 'Resolution', colDuration: 'Duration',
+            colPriority: 'Priority', colStatus: 'Status', colActions: 'Actions',
+            machineAlertsTitle: 'Machine alerts',
+            machineAlertsHint: 'For each machine, choose which announcement to show when it changes to each state -- reuses the announcements above instead of a fixed color per state.',
+            previewTitle: 'Preview', effectsTitle: 'Effects', entryEffectLabel: 'Entry effect',
+            sendAnimationLabel: 'Animation on send (combinable)', animateColumnLabel: 'Animate by column', animateRowLabel: 'Animate by row',
+            speedLabel: 'Speed', exitEffectLabel: 'Exit effect', pauseLabel: 'Pause (sec)',
+            accessoryConfigModalDesc: 'The IP and credentials of the ESP32 acting as the BLE bridge.',
+            accessoryIpLabel: 'Accessory IP', usernameLabel: 'Username', passwordLabel: 'Password',
+            jobDoneOnlyAlert: 'Only notify when a job finishes or fails', saveBtn: 'Save',
+            machineAlertsEyebrow: 'MACHINE ALERTS', visualAlertsTitle: 'Visual alerts',
+            machineAlertsCheckboxLabel: 'This machine will send its state changes to the LED Matrix.',
+            announcementPerState: 'Announcement for each state',
+            confirmClearAll: 'You are about to clear the entire current drawing. This action cannot be undone.', clearAllConfirmTitle: 'Clear all',
+            testing: 'Testing…', matrixLedNavLabel: 'LED Matrix',
+            dayInitials: 'M,T,W,T,F,S,S',
+        },
+        de: {
+            effectStatic: 'Statisch', effectBlink: 'Blinken',
+            exitNone: 'Keiner', exitFade: 'Ausblenden', exitOff: 'Ausschalten',
+            priorityHigh: 'Hoch', priorityMedium: 'Mittel', priorityLow: 'Niedrig',
+            tplAlert: 'Alarm', tplError: 'Fehler', tplAttention: 'Achtung', tplEmergency: 'Notfall',
+            tplReady: 'Bereit', tplWelcome: 'Willkommen', tplMaintenance: 'Wartung',
+            tplNightMode: 'Nachtmodus', tplLowMaterial: 'Material niedrig',
+            stateIdle: 'Bereit', stateHeating: 'Heizt auf', stateCooling: 'Kühlt ab', statePrinting: 'Druckt',
+            statePaused: 'Pausiert', stateComplete: 'Abgeschlossen', stateError: 'Fehler', stateOffline: 'Offline',
+            noSavedColorsYet: 'Noch keine gespeicherten Farben',
+            noAnnouncementsYet: 'Noch keine gespeicherten Anzeigen.',
+            secondsSuffix: 'Sek.', scheduledBadge: 'Geplant', activeStateBadge: 'Aktiv',
+            editTitle: 'Bearbeiten', duplicateTitle: 'Duplizieren', deleteTitle: 'Löschen',
+            confirmDeleteAnnouncement: 'Du wirst die Anzeige "{name}" löschen. Diese Aktion kann nicht rückgängig gemacht werden.',
+            deleteAnnouncementTitle: 'Anzeige löschen',
+            sendToScreenTitle: '"{name}" an den Bildschirm senden',
+            errorSending: 'Fehler beim Senden',
+            allUnassigned: 'Alle / nicht zugewiesen', noGroup: 'Keine Gruppe', allMachines: 'Alle',
+            missingAnnouncementName: 'Der Name der Anzeige fehlt',
+            saving: 'Wird gespeichert…', announcementSaved: 'Anzeige gespeichert', errorSaving: 'Fehler beim Speichern',
+            savedGeneric: 'Gespeichert', copySuffix: '(Kopie)',
+            sendingToScreen: 'Wird an den Bildschirm gesendet… (kann ein paar Sekunden dauern)',
+            sentWindows: 'Gesendet ({count} {word})', windowSingular: 'Fenster', windowPlural: 'Fenster',
+            notConfigured: 'Nicht konfiguriert', statusConnected: 'Verbunden', diagConnected: 'Verbunden',
+            configuredNoBle: 'Konfiguriert, keine BLE-Verbindung', noBle: 'Keine BLE-Verbindung',
+            never: 'Nie', noErrorsLogged: 'Keine Fehler protokolliert', estimatedTemp: '{value}°C (geschätzt)',
+            justNow: 'gerade eben', secondsAgo: 'vor {n} s', minutesAgo: 'vor {n} Min.', hoursAgo: 'vor {n} Std.', daysAgo: 'vor {n} T.',
+            currentScene: 'Aktuelle Szene: {name}', custom: 'Benutzerdefiniert', currentSceneNoSends: 'Aktuelle Szene: Noch nichts gesendet',
+            operational: 'Betriebsbereit', readyToUse: 'Einsatzbereit', createFirstAnnouncement: 'Erstelle deine erste Anzeige',
+            rulesAndMachines: '{rules} Regeln · {machines} Maschinen',
+            noAnnouncementsCreateHint: 'Du hast noch keine gespeicherten Anzeigen -- erstelle sie unter "Szenen und Konfiguration".',
+            activeBadge: 'Aktiv', readyBadge: 'Bereit',
+            suggestionIdleTitle: 'Inaktivität > 5 Min.', suggestionIdleDetail: '"Nachtmodus" anzeigen{suffix}',
+            detectedNowSuffix: ' -- gerade erkannt',
+            suggestionMaterialTitle: 'Niedriger Materialstand erkannt', suggestionMaterialDetail: '"Material niedrig" anzeigen{suffix}',
+            suggestionJobDoneTitle: 'Auftrag beendet', suggestionJobDoneDetail: 'OK/ERR melden, wenn eine Maschine fertig ist oder fehlschlägt',
+            suggestionSmokeTitle: 'Rauch erkannt', suggestionSmokeDetail: 'Noch kein Rauchmelder installiert',
+            clickToDeactivate: 'Klicken zum Deaktivieren', clickToActivate: 'Klicken zum Aktivieren', activateBtn: 'Aktivieren',
+            notAvailableBadge: 'Nicht verfügbar', genericError: 'Fehler',
+            noMachinesDetected: 'Noch keine Maschinen erkannt.',
+            activeAlertsBadge: 'Aktiv', inactiveAlertsBadge: 'Inaktiv', configureBtn: 'Konfigurieren',
+            unassignedOption: 'Nicht zugewiesen',
+            dashboardTitle: 'Hauptpanel · LED-Matrix',
+            dashboardSub: 'Steuere deine LED-Matrix, Szenen, Warnungen und Werkstattautomatisierungen in Echtzeit.',
+            editorTitle: 'Szenen und Konfiguration',
+            editorSub: 'Erstelle Anzeigen, konfiguriere Maschinenwarnungen und das ESP32-Zubehör.',
+            checking: 'Wird geprüft…', accessoryConfigTitle: 'Zubehör-Konfiguration',
+            tabMainPanel: 'Hauptpanel',
+            kpiMatricesConnected: 'Verbundene Matrizen', kpiActiveScenes: 'Aktive Szenen', kpiAutomations: 'Automatisierungen',
+            kpiGlobalBrightness: 'Globale Helligkeit', noFirmwareSensor: 'Kein Sensor in der Firmware',
+            liveView: 'Live-Ansicht', selectMatrix: 'Matrix auswählen', mainMatrixLabel: 'Hauptmatrix · 16×32',
+            currentSceneDash: 'Aktuelle Szene: —', brightnessLabel: 'Helligkeit:', fpsLabel: 'FPS:', panelTempLabel: 'Panel-Temp.:',
+            registeredResolutions: 'Registrierte Auflösungen', rgbResolution: '16 × 32 RGB', defaultBadge: 'Standard',
+            workshopStatus: 'Werkstattstatus', criticalSensors: 'Kritische Sensoren', ventilation: 'Belüftung',
+            stablePower: 'Stabile Stromversorgung', ambientTemp: 'Umgebungstemperatur',
+            quickScenes: 'Schnellszenen', previousTitle: 'Vorherige', previousAria: 'Vorherige Szenen',
+            nextTitle: 'Nächste', nextAria: 'Nächste Szenen',
+            suggestedAutomations: 'Vorgeschlagene Automatisierungen', operationalSummary: 'Betriebsübersicht',
+            uptimeLabel: 'Betriebszeit', messagesToday: 'Heute angezeigte Nachrichten', successfulUpdates: 'Erfolgreiche Updates',
+            errorsLabel: 'Fehler', diagnosticsTitle: 'Diagnose', testConnectionBtn: 'Verbindung testen',
+            bleConnection: 'BLE-Verbindung', modelLabel: 'Modell', firmwareLabel: 'Firmware', freeMemory: 'Freier Speicher',
+            matrixType: 'Matrixtyp', lastSentLabel: 'Letzte Sendung', lastErrorLabel: 'Letzter Fehler',
+            goodPractices: 'Bewährte Praktiken', tipShortMessages: 'Verwende kurze, klare Nachrichten.',
+            tipAvoidBlinking: 'Vermeide übermäßiges Blinken.', tipPrioritizeColors: 'Priorisiere Farben nach Dringlichkeit.',
+            colorPriorities: 'Farbprioritäten', greenPriority: 'Grün -- normaler Status / OK',
+            amberPriority: 'Bernstein -- Warnung / Achtung', redPriority: 'Rot -- Alarm / Gefahr', bluePriority: 'Blau -- Information / Vorgang',
+            colorsTitle: 'Farben', quickPalette: 'Schnellpalette', colorPicker: 'Farbwähler',
+            savedColors: 'Gespeicherte Farben', saveColorTitle: 'Aktuelle Farbe speichern',
+            announcementNameLabel: 'Name der Anzeige', announcementNamePlaceholder: 'Hohe Temperatur Warnung',
+            assignMachineLabel: 'Maschine zuweisen', priorityLabel: 'Priorität',
+            editor1632: '16x32-Editor', pixels1632: '16 x 32 Pixel',
+            pencilTitle: 'Stift', eraserTitle: 'Radierer', lineTitle: 'Linie', rectTitle: 'Rechteck', ellipseTitle: 'Ellipse',
+            bucketTitle: 'Eimer', eyedropperTitle: 'Pipette', importImageTitle: 'Bild importieren', textTitle: 'Text', clearAllTitle: 'Alles löschen',
+            textPlaceholder: 'TEXT', rowLabel: 'Zeile', rowTitle: 'Startzeile', columnLabel: 'Spalte', columnTitle: 'Startspalte',
+            placeBtn: 'Platzieren', livePreviewBtn: 'Live-Vorschau', templatesTitle: 'Rahmen / Vorlagen',
+            schedulingTitle: 'Zeitplanung', playbackModeLabel: 'Wiedergabemodus', manualOption: 'Manuell', scheduledOption: 'Geplant',
+            startDateLabel: 'Startdatum', endDateLabel: 'Enddatum (optional)', repeatLabel: 'Wiederholen',
+            durationTitle: 'Anzeigedauer', screenTimeLabel: 'Zeit auf dem Bildschirm (Sek.)', transitionLabel: 'Übergang (Sek.)',
+            assignmentTitle: 'Zuweisung', groupLabel: 'Gruppe (optional)', tagsLabel: 'Tags', addTagPlaceholder: 'Tag hinzufügen',
+            saveAnnouncementBtn: 'Anzeige speichern', cancelBtn: 'Abbrechen',
+            savedAnnouncementsTitle: 'Gespeicherte Anzeigen', searchAnnouncementsPlaceholder: 'Anzeigen suchen…',
+            colName: 'Name', colMachine: 'Maschine', colResolution: 'Auflösung', colDuration: 'Dauer',
+            colPriority: 'Priorität', colStatus: 'Status', colActions: 'Aktionen',
+            machineAlertsTitle: 'Maschinenwarnungen',
+            machineAlertsHint: 'Wähle für jede Maschine, welche Anzeige bei jedem Statuswechsel gezeigt wird -- nutzt die Anzeigen von oben statt einer festen Farbe pro Status.',
+            previewTitle: 'Vorschau', effectsTitle: 'Effekte', entryEffectLabel: 'Eingangseffekt',
+            sendAnimationLabel: 'Animation beim Senden (kombinierbar)', animateColumnLabel: 'Nach Spalte animieren', animateRowLabel: 'Nach Zeile animieren',
+            speedLabel: 'Geschwindigkeit', exitEffectLabel: 'Ausgangseffekt', pauseLabel: 'Pause (Sek.)',
+            accessoryConfigModalDesc: 'Die IP und Zugangsdaten des ESP32, der als BLE-Brücke dient.',
+            accessoryIpLabel: 'Zubehör-IP', usernameLabel: 'Benutzername', passwordLabel: 'Passwort',
+            jobDoneOnlyAlert: 'Nur benachrichtigen, wenn ein Auftrag beendet ist oder fehlschlägt', saveBtn: 'Speichern',
+            machineAlertsEyebrow: 'MASCHINENWARNUNGEN', visualAlertsTitle: 'Visuelle Warnungen',
+            machineAlertsCheckboxLabel: 'Diese Maschine sendet ihre Statusänderungen an die LED-Matrix.',
+            announcementPerState: 'Anzeige für jeden Status',
+            confirmClearAll: 'Du wirst die gesamte aktuelle Zeichnung löschen. Diese Aktion kann nicht rückgängig gemacht werden.', clearAllConfirmTitle: 'Alles löschen',
+            testing: 'Wird getestet…', matrixLedNavLabel: 'LED-Matrix',
+            dayInitials: 'M,D,M,D,F,S,S',
+        },
+        fr: {
+            effectStatic: 'Statique', effectBlink: 'Clignotement',
+            exitNone: 'Aucun', exitFade: 'Fondu', exitOff: 'Éteindre',
+            priorityHigh: 'Haute', priorityMedium: 'Moyenne', priorityLow: 'Basse',
+            tplAlert: 'Alerte', tplError: 'Erreur', tplAttention: 'Attention', tplEmergency: 'Urgence',
+            tplReady: 'Prêt', tplWelcome: 'Bienvenue', tplMaintenance: 'Maintenance',
+            tplNightMode: 'Mode nuit', tplLowMaterial: 'Matériau faible',
+            stateIdle: 'En attente', stateHeating: 'Chauffe', stateCooling: 'Refroidit', statePrinting: 'Impression',
+            statePaused: 'En pause', stateComplete: 'Terminée', stateError: 'Erreur', stateOffline: 'Déconnectée',
+            noSavedColorsYet: 'Pas encore de couleurs enregistrées',
+            noAnnouncementsYet: 'Pas encore d\'annonces enregistrées.',
+            secondsSuffix: 'sec', scheduledBadge: 'Programmé', activeStateBadge: 'Actif',
+            editTitle: 'Modifier', duplicateTitle: 'Dupliquer', deleteTitle: 'Supprimer',
+            confirmDeleteAnnouncement: 'Vous allez supprimer l\'annonce "{name}". Cette action est irréversible.',
+            deleteAnnouncementTitle: 'Supprimer l\'annonce',
+            sendToScreenTitle: 'Envoyer "{name}" à l\'écran',
+            errorSending: 'Erreur lors de l\'envoi',
+            allUnassigned: 'Toutes / non assigné', noGroup: 'Aucun groupe', allMachines: 'Toutes',
+            missingAnnouncementName: 'Le nom de l\'annonce est manquant',
+            saving: 'Enregistrement…', announcementSaved: 'Annonce enregistrée', errorSaving: 'Erreur lors de l\'enregistrement',
+            savedGeneric: 'Enregistré', copySuffix: '(copie)',
+            sendingToScreen: 'Envoi à l\'écran… (peut prendre quelques secondes)',
+            sentWindows: 'Envoyé ({count} {word})', windowSingular: 'fenêtre', windowPlural: 'fenêtres',
+            notConfigured: 'Non configuré', statusConnected: 'Connectée', diagConnected: 'Connecté',
+            configuredNoBle: 'Configuré, sans connexion BLE', noBle: 'Sans connexion BLE',
+            never: 'Jamais', noErrorsLogged: 'Aucune erreur enregistrée', estimatedTemp: '{value}°C (estimé)',
+            justNow: 'à l\'instant', secondsAgo: 'il y a {n} s', minutesAgo: 'il y a {n} min', hoursAgo: 'il y a {n} h', daysAgo: 'il y a {n} j',
+            currentScene: 'Scène actuelle : {name}', custom: 'Personnalisé', currentSceneNoSends: 'Scène actuelle : Aucun envoi pour le moment',
+            operational: 'Opérationnelle', readyToUse: 'Prêtes à l\'emploi', createFirstAnnouncement: 'Créez votre première annonce',
+            rulesAndMachines: '{rules} règles · {machines} machines',
+            noAnnouncementsCreateHint: 'Vous n\'avez pas encore d\'annonces enregistrées -- créez-les dans "Scènes et Configuration".',
+            activeBadge: 'Active', readyBadge: 'Prête',
+            suggestionIdleTitle: 'Inactivité > 5 min', suggestionIdleDetail: 'Afficher "Mode nuit"{suffix}',
+            detectedNowSuffix: ' -- détecté maintenant',
+            suggestionMaterialTitle: 'Matériau faible détecté', suggestionMaterialDetail: 'Afficher "Matériau faible"{suffix}',
+            suggestionJobDoneTitle: 'Travail terminé', suggestionJobDoneDetail: 'Avertir OK/ERR quand une machine termine ou échoue',
+            suggestionSmokeTitle: 'Fumée détectée', suggestionSmokeDetail: 'Aucun capteur de fumée installé pour le moment',
+            clickToDeactivate: 'Cliquer pour désactiver', clickToActivate: 'Cliquer pour activer', activateBtn: 'Activer',
+            notAvailableBadge: 'Non disponible', genericError: 'Erreur',
+            noMachinesDetected: 'Aucune machine détectée pour le moment.',
+            activeAlertsBadge: 'Actives', inactiveAlertsBadge: 'Inactives', configureBtn: 'Configurer',
+            unassignedOption: 'Non assigné',
+            dashboardTitle: 'Panneau principal · Matrice LED',
+            dashboardSub: 'Contrôlez votre matrice LED, vos scènes, alertes et automatisations d\'atelier en temps réel.',
+            editorTitle: 'Scènes et Configuration',
+            editorSub: 'Créez des annonces, configurez les alertes machine et l\'accessoire ESP32.',
+            checking: 'Vérification…', accessoryConfigTitle: 'Configuration de l\'accessoire',
+            tabMainPanel: 'Panneau principal',
+            kpiMatricesConnected: 'Matrices connectées', kpiActiveScenes: 'Scènes actives', kpiAutomations: 'Automatisations',
+            kpiGlobalBrightness: 'Luminosité globale', noFirmwareSensor: 'Aucun capteur dans le firmware',
+            liveView: 'Vue en direct', selectMatrix: 'Sélectionner la matrice', mainMatrixLabel: 'Matrice principale · 16×32',
+            currentSceneDash: 'Scène actuelle : —', brightnessLabel: 'Luminosité :', fpsLabel: 'FPS :', panelTempLabel: 'Temp. panneau :',
+            registeredResolutions: 'Résolutions enregistrées', rgbResolution: '16 × 32 RGB', defaultBadge: 'Par défaut',
+            workshopStatus: 'État de l\'atelier', criticalSensors: 'Capteurs critiques', ventilation: 'Ventilation',
+            stablePower: 'Alimentation stable', ambientTemp: 'Température ambiante',
+            quickScenes: 'Scènes rapides', previousTitle: 'Précédentes', previousAria: 'Scènes précédentes',
+            nextTitle: 'Suivantes', nextAria: 'Scènes suivantes',
+            suggestedAutomations: 'Automatisations suggérées', operationalSummary: 'Résumé opérationnel',
+            uptimeLabel: 'Temps de fonctionnement', messagesToday: 'Messages affichés aujourd\'hui', successfulUpdates: 'Mises à jour réussies',
+            errorsLabel: 'Erreurs', diagnosticsTitle: 'Diagnostic', testConnectionBtn: 'Tester la connexion',
+            bleConnection: 'Connexion BLE', modelLabel: 'Modèle', firmwareLabel: 'Firmware', freeMemory: 'Mémoire libre',
+            matrixType: 'Type de matrice', lastSentLabel: 'Dernier envoi', lastErrorLabel: 'Dernière erreur',
+            goodPractices: 'Bonnes pratiques', tipShortMessages: 'Utilisez des messages courts et clairs.',
+            tipAvoidBlinking: 'Évitez les clignotements excessifs.', tipPrioritizeColors: 'Priorisez les couleurs selon l\'urgence.',
+            colorPriorities: 'Priorités par couleur', greenPriority: 'Vert -- état normal / OK',
+            amberPriority: 'Ambre -- avertissement / attention', redPriority: 'Rouge -- alerte / danger', bluePriority: 'Bleu -- information / processus',
+            colorsTitle: 'Couleurs', quickPalette: 'Palette rapide', colorPicker: 'Sélecteur de couleur',
+            savedColors: 'Couleurs enregistrées', saveColorTitle: 'Enregistrer la couleur actuelle',
+            announcementNameLabel: 'Nom de l\'annonce', announcementNamePlaceholder: 'Alerte Température Élevée',
+            assignMachineLabel: 'Assigner à une machine', priorityLabel: 'Priorité',
+            editor1632: 'Éditeur 16x32', pixels1632: '16 x 32 pixels',
+            pencilTitle: 'Crayon', eraserTitle: 'Gomme', lineTitle: 'Ligne', rectTitle: 'Rectangle', ellipseTitle: 'Ellipse',
+            bucketTitle: 'Pot de peinture', eyedropperTitle: 'Pipette', importImageTitle: 'Importer une image', textTitle: 'Texte', clearAllTitle: 'Tout effacer',
+            textPlaceholder: 'TEXTE', rowLabel: 'Ligne', rowTitle: 'Ligne de départ', columnLabel: 'Colonne', columnTitle: 'Colonne de départ',
+            placeBtn: 'Placer', livePreviewBtn: 'Aperçu en direct', templatesTitle: 'Cadres / Modèles',
+            schedulingTitle: 'Programmation', playbackModeLabel: 'Mode de lecture', manualOption: 'Manuel', scheduledOption: 'Programmé',
+            startDateLabel: 'Date de début', endDateLabel: 'Date de fin (optionnel)', repeatLabel: 'Répéter',
+            durationTitle: 'Durée de l\'annonce', screenTimeLabel: 'Temps à l\'écran (sec)', transitionLabel: 'Transition (sec)',
+            assignmentTitle: 'Assignation', groupLabel: 'Groupe (optionnel)', tagsLabel: 'Étiquettes', addTagPlaceholder: 'Ajouter une étiquette',
+            saveAnnouncementBtn: 'Enregistrer l\'annonce', cancelBtn: 'Annuler',
+            savedAnnouncementsTitle: 'Annonces enregistrées', searchAnnouncementsPlaceholder: 'Rechercher des annonces…',
+            colName: 'Nom', colMachine: 'Machine', colResolution: 'Résolution', colDuration: 'Durée',
+            colPriority: 'Priorité', colStatus: 'Statut', colActions: 'Actions',
+            machineAlertsTitle: 'Alertes par machine',
+            machineAlertsHint: 'Pour chaque machine, choisissez quelle annonce afficher lorsqu\'elle change d\'état -- réutilise les annonces ci-dessus au lieu d\'une couleur fixe par état.',
+            previewTitle: 'Aperçu', effectsTitle: 'Effets', entryEffectLabel: 'Effet d\'entrée',
+            sendAnimationLabel: 'Animation à l\'envoi (combinables)', animateColumnLabel: 'Animer par colonne', animateRowLabel: 'Animer par ligne',
+            speedLabel: 'Vitesse', exitEffectLabel: 'Effet de sortie', pauseLabel: 'Pause (sec)',
+            accessoryConfigModalDesc: 'L\'IP et les identifiants de l\'ESP32 qui fait office de pont BLE.',
+            accessoryIpLabel: 'IP de l\'accessoire', usernameLabel: 'Utilisateur', passwordLabel: 'Mot de passe',
+            jobDoneOnlyAlert: 'Avertir uniquement quand un travail se termine ou échoue', saveBtn: 'Enregistrer',
+            machineAlertsEyebrow: 'ALERTES PAR MACHINE', visualAlertsTitle: 'Alertes visuelles',
+            machineAlertsCheckboxLabel: 'Cette machine enverra ses changements d\'état à la Matrice LED.',
+            announcementPerState: 'Annonce pour chaque état',
+            confirmClearAll: 'Vous allez effacer tout le dessin actuel. Cette action est irréversible.', clearAllConfirmTitle: 'Tout effacer',
+            testing: 'Test en cours…', matrixLedNavLabel: 'Matrice LED',
+            dayInitials: 'L,M,M,J,V,S,D',
+        },
+        'pt-BR': {
+            effectStatic: 'Estático', effectBlink: 'Piscar',
+            exitNone: 'Nenhum', exitFade: 'Desvanecer', exitOff: 'Desligar',
+            priorityHigh: 'Alta', priorityMedium: 'Média', priorityLow: 'Baixa',
+            tplAlert: 'Alerta', tplError: 'Erro', tplAttention: 'Atenção', tplEmergency: 'Emergência',
+            tplReady: 'Pronto', tplWelcome: 'Bem-vindo', tplMaintenance: 'Manutenção',
+            tplNightMode: 'Modo noturno', tplLowMaterial: 'Material baixo',
+            stateIdle: 'Em espera', stateHeating: 'Aquecendo', stateCooling: 'Esfriando', statePrinting: 'Imprimindo',
+            statePaused: 'Pausada', stateComplete: 'Concluída', stateError: 'Erro', stateOffline: 'Desconectada',
+            noSavedColorsYet: 'Ainda sem cores salvas',
+            noAnnouncementsYet: 'Ainda sem anúncios salvos.',
+            secondsSuffix: 'seg', scheduledBadge: 'Programado', activeStateBadge: 'Ativo',
+            editTitle: 'Editar', duplicateTitle: 'Duplicar', deleteTitle: 'Excluir',
+            confirmDeleteAnnouncement: 'Você vai excluir o anúncio "{name}". Esta ação não pode ser desfeita.',
+            deleteAnnouncementTitle: 'Excluir anúncio',
+            sendToScreenTitle: 'Enviar "{name}" para a tela',
+            errorSending: 'Erro ao enviar',
+            allUnassigned: 'Todas / não atribuído', noGroup: 'Sem grupo', allMachines: 'Todas',
+            missingAnnouncementName: 'Falta o nome do anúncio',
+            saving: 'Salvando…', announcementSaved: 'Anúncio salvo', errorSaving: 'Erro ao salvar',
+            savedGeneric: 'Salvo', copySuffix: '(cópia)',
+            sendingToScreen: 'Enviando para a tela… (pode levar alguns segundos)',
+            sentWindows: 'Enviado ({count} {word})', windowSingular: 'janela', windowPlural: 'janelas',
+            notConfigured: 'Não configurado', statusConnected: 'Conectada', diagConnected: 'Conectado',
+            configuredNoBle: 'Configurada, sem conexão BLE', noBle: 'Sem conexão BLE',
+            never: 'Nunca', noErrorsLogged: 'Nenhum erro registrado', estimatedTemp: '{value}°C (estimado)',
+            justNow: 'agora mesmo', secondsAgo: 'há {n} s', minutesAgo: 'há {n} min', hoursAgo: 'há {n} h', daysAgo: 'há {n} d',
+            currentScene: 'Cena atual: {name}', custom: 'Personalizado', currentSceneNoSends: 'Cena atual: Ainda sem envios',
+            operational: 'Operacional', readyToUse: 'Prontas para usar', createFirstAnnouncement: 'Crie seu primeiro anúncio',
+            rulesAndMachines: '{rules} regras · {machines} máquinas',
+            noAnnouncementsCreateHint: 'Você ainda não tem anúncios salvos -- crie-os em "Cenas e Configuração".',
+            activeBadge: 'Ativa', readyBadge: 'Pronta',
+            suggestionIdleTitle: 'Inatividade > 5 min', suggestionIdleDetail: 'Mostrar "Modo noturno"{suffix}',
+            detectedNowSuffix: ' -- detectado agora',
+            suggestionMaterialTitle: 'Material baixo detectado', suggestionMaterialDetail: 'Mostrar "Material baixo"{suffix}',
+            suggestionJobDoneTitle: 'Trabalho concluído', suggestionJobDoneDetail: 'Avisar OK/ERR quando uma máquina terminar ou falhar',
+            suggestionSmokeTitle: 'Fumaça detectada', suggestionSmokeDetail: 'Ainda não há sensor de fumaça instalado',
+            clickToDeactivate: 'Clique para desativar', clickToActivate: 'Clique para ativar', activateBtn: 'Ativar',
+            notAvailableBadge: 'Não disponível', genericError: 'Erro',
+            noMachinesDetected: 'Ainda não há máquinas detectadas.',
+            activeAlertsBadge: 'Ativas', inactiveAlertsBadge: 'Inativas', configureBtn: 'Configurar',
+            unassignedOption: 'Não atribuído',
+            dashboardTitle: 'Painel principal · Matriz LED',
+            dashboardSub: 'Controle sua matriz LED, cenas, alertas e automações da oficina em tempo real.',
+            editorTitle: 'Cenas e Configuração',
+            editorSub: 'Crie anúncios, configure alertas por máquina e o acessório ESP32.',
+            checking: 'Verificando…', accessoryConfigTitle: 'Configuração do acessório',
+            tabMainPanel: 'Painel principal',
+            kpiMatricesConnected: 'Matrizes conectadas', kpiActiveScenes: 'Cenas ativas', kpiAutomations: 'Automações',
+            kpiGlobalBrightness: 'Brilho global', noFirmwareSensor: 'Sem sensor no firmware',
+            liveView: 'Visualização ao vivo', selectMatrix: 'Selecionar matriz', mainMatrixLabel: 'Matriz principal · 16×32',
+            currentSceneDash: 'Cena atual: —', brightnessLabel: 'Brilho:', fpsLabel: 'FPS:', panelTempLabel: 'Temp. painel:',
+            registeredResolutions: 'Resoluções registradas', rgbResolution: '16 × 32 RGB', defaultBadge: 'Padrão',
+            workshopStatus: 'Status da oficina', criticalSensors: 'Sensores críticos', ventilation: 'Ventilação',
+            stablePower: 'Energia estável', ambientTemp: 'Temperatura ambiente',
+            quickScenes: 'Cenas rápidas', previousTitle: 'Anteriores', previousAria: 'Cenas anteriores',
+            nextTitle: 'Próximas', nextAria: 'Próximas cenas',
+            suggestedAutomations: 'Automações sugeridas', operationalSummary: 'Resumo operacional',
+            uptimeLabel: 'Tempo online', messagesToday: 'Mensagens exibidas hoje', successfulUpdates: 'Atualizações bem-sucedidas',
+            errorsLabel: 'Erros', diagnosticsTitle: 'Diagnóstico', testConnectionBtn: 'Testar conexão',
+            bleConnection: 'Conexão BLE', modelLabel: 'Modelo', firmwareLabel: 'Firmware', freeMemory: 'Memória livre',
+            matrixType: 'Tipo de matriz', lastSentLabel: 'Último envio', lastErrorLabel: 'Último erro',
+            goodPractices: 'Boas práticas', tipShortMessages: 'Use mensagens curtas e claras.',
+            tipAvoidBlinking: 'Evite piscadas excessivas.', tipPrioritizeColors: 'Priorize cores por nível de urgência.',
+            colorPriorities: 'Prioridades por cor', greenPriority: 'Verde -- estado normal / OK',
+            amberPriority: 'Âmbar -- aviso / atenção', redPriority: 'Vermelho -- alerta / perigo', bluePriority: 'Azul -- informação / processo',
+            colorsTitle: 'Cores', quickPalette: 'Paleta rápida', colorPicker: 'Seletor de cor',
+            savedColors: 'Cores salvas', saveColorTitle: 'Salvar a cor atual',
+            announcementNameLabel: 'Nome do anúncio', announcementNamePlaceholder: 'Alerta de Temperatura Alta',
+            assignMachineLabel: 'Atribuir a máquina', priorityLabel: 'Prioridade',
+            editor1632: 'Editor 16x32', pixels1632: '16 x 32 pixels',
+            pencilTitle: 'Lápis', eraserTitle: 'Borracha', lineTitle: 'Linha', rectTitle: 'Retângulo', ellipseTitle: 'Elipse',
+            bucketTitle: 'Balde', eyedropperTitle: 'Conta-gotas', importImageTitle: 'Importar imagem', textTitle: 'Texto', clearAllTitle: 'Limpar tudo',
+            textPlaceholder: 'TEXTO', rowLabel: 'Linha', rowTitle: 'Linha inicial', columnLabel: 'Coluna', columnTitle: 'Coluna inicial',
+            placeBtn: 'Colocar', livePreviewBtn: 'Pré-visualização ao vivo', templatesTitle: 'Molduras / Modelos',
+            schedulingTitle: 'Programação', playbackModeLabel: 'Modo de reprodução', manualOption: 'Manual', scheduledOption: 'Programado',
+            startDateLabel: 'Data de início', endDateLabel: 'Data de término (opcional)', repeatLabel: 'Repetir',
+            durationTitle: 'Duração do anúncio', screenTimeLabel: 'Tempo na tela (seg)', transitionLabel: 'Transição (seg)',
+            assignmentTitle: 'Atribuição', groupLabel: 'Grupo (opcional)', tagsLabel: 'Etiquetas', addTagPlaceholder: 'Adicionar etiqueta',
+            saveAnnouncementBtn: 'Salvar Anúncio', cancelBtn: 'Cancelar',
+            savedAnnouncementsTitle: 'Anúncios salvos', searchAnnouncementsPlaceholder: 'Buscar anúncios…',
+            colName: 'Nome', colMachine: 'Máquina', colResolution: 'Resolução', colDuration: 'Duração',
+            colPriority: 'Prioridade', colStatus: 'Status', colActions: 'Ações',
+            machineAlertsTitle: 'Alertas por máquina',
+            machineAlertsHint: 'Para cada máquina, escolha qual anúncio mostrar quando ela mudar para cada estado -- reutiliza os anúncios acima em vez de uma cor fixa por estado.',
+            previewTitle: 'Pré-visualização', effectsTitle: 'Efeitos', entryEffectLabel: 'Efeito de entrada',
+            sendAnimationLabel: 'Animação ao enviar (combináveis)', animateColumnLabel: 'Animar por coluna', animateRowLabel: 'Animar por linha',
+            speedLabel: 'Velocidade', exitEffectLabel: 'Efeito de saída', pauseLabel: 'Pausa (seg)',
+            accessoryConfigModalDesc: 'O IP e as credenciais do ESP32 que faz a ponte BLE.',
+            accessoryIpLabel: 'IP do acessório', usernameLabel: 'Usuário', passwordLabel: 'Senha',
+            jobDoneOnlyAlert: 'Avisar somente quando um trabalho terminar ou falhar', saveBtn: 'Salvar',
+            machineAlertsEyebrow: 'ALERTAS POR MÁQUINA', visualAlertsTitle: 'Alertas visuais',
+            machineAlertsCheckboxLabel: 'Esta máquina enviará suas mudanças de estado para a Matriz LED.',
+            announcementPerState: 'Anúncio para cada estado',
+            confirmClearAll: 'Você vai apagar todo o desenho atual. Esta ação não pode ser desfeita.', clearAllConfirmTitle: 'Limpar tudo',
+            testing: 'Testando…', matrixLedNavLabel: 'Matriz LED',
+            dayInitials: 'S,T,Q,Q,S,S,D',
+        },
+    };
+
+    function lang() {
+        const raw = document.documentElement.lang || localStorage.getItem('language') || 'es';
+        if (raw.toLowerCase().startsWith('pt')) return 'pt-BR';
+        const short = raw.slice(0, 2).toLowerCase();
+        return ['es', 'en', 'de', 'fr'].includes(short) ? short : 'en';
+    }
+
+    function tr(key, vars) {
+        let text = I18N[lang()]?.[key] || I18N.en[key] || key;
+        if (vars) Object.entries(vars).forEach(([name, value]) => { text = text.replace(`{${name}}`, value); });
+        return text;
+    }
+
+    const MACHINE_STATE_TR_KEYS = {
+        idle: 'stateIdle', heating: 'stateHeating', cooling: 'stateCooling', printing: 'statePrinting',
+        paused: 'statePaused', complete: 'stateComplete', error: 'stateError', offline: 'stateOffline',
+    };
+    function machineStateLabel(key) { return tr(MACHINE_STATE_TR_KEYS[key] || key); }
+
     const API_BASE = '/api/plugins/matriz-led';
     const MACHINES_POLL_MS = 8000;
     const DONE_STATES = new Set(['complete', 'completed']);
@@ -99,24 +618,24 @@
     // docstring de pypixelcolor.commands.send_text). Por ahora solo se
     // ofrecen los dos animation ints que sí se probaron en pantalla física.
     const ENTRY_EFFECTS = [
-        { value: 'estatico', label: 'Estático', animation: 0 },
-        { value: 'parpadeo', label: 'Parpadeo', animation: 1 },
+        { value: 'estatico', label: tr('effectStatic'), animation: 0 },
+        { value: 'parpadeo', label: tr('effectBlink'), animation: 1 },
     ];
     // Persistido como metadata -- pypixelcolor no expone un parámetro de
     // "efecto de salida" independiente todavía (ver README.md, Pendiente).
     const EXIT_EFFECTS = [
-        { value: 'ninguno', label: 'Ninguno' },
-        { value: 'desvanecer', label: 'Desvanecer' },
-        { value: 'apagar', label: 'Apagar' },
+        { value: 'ninguno', label: tr('exitNone') },
+        { value: 'desvanecer', label: tr('exitFade') },
+        { value: 'apagar', label: tr('exitOff') },
     ];
 
     const PRIORITIES = [
-        { value: 'alta', label: 'Alta' },
-        { value: 'media', label: 'Media' },
-        { value: 'baja', label: 'Baja' },
+        { value: 'alta', label: tr('priorityHigh') },
+        { value: 'media', label: tr('priorityMedium') },
+        { value: 'baja', label: tr('priorityLow') },
     ];
 
-    const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    function dayLabels() { return tr('dayInitials').split(','); }
 
     const QUICK_PALETTE = ['ff0000', 'ff8c00', 'ffd400', '22c55e', '14b8a6', '3b82f6', '8b5cf6', 'ec4899'];
     const SAVED_COLORS_KEY = 'nopal.matriz-led.savedColors';
@@ -125,16 +644,21 @@
     // un patrón + texto ya "quemado" a píxeles. Absorbe lo que antes eran
     // los presets de demo (temperatura/idle) y las alertas rápidas
     // (Listo/Error/Atención/Emergencia) de v0.2-0.3 en un solo concepto.
+    // El "name" (etiqueta del botón) sí se traduce; "text" (lo que de
+    // verdad se quema a píxeles en la pantalla física) NO -- FONT_5X7 solo
+    // define glifos A-Z/0-9, y el firmware muestra ese texto tal cual sin
+    // importar el idioma de la UI (una realidad de hardware, no una
+    // elección de idioma).
     const SYSTEM_TEMPLATES = [
-        { id: 'tpl-alerta', name: 'Alerta', color: 'ff0000', text: ['ALERTA'], icon: '▲' },
-        { id: 'tpl-error', name: 'Error', color: 'ef4444', text: ['ERROR'], icon: '✕' },
-        { id: 'tpl-atencion', name: 'Atención', color: 'f59e0b', text: ['ATN'], icon: '!' },
-        { id: 'tpl-emergencia', name: 'Emergencia', color: 'ff0000', text: ['EMERG'], icon: '⚠' },
-        { id: 'tpl-listo', name: 'Listo', color: '22c55e', text: ['LISTO'], icon: '✓' },
-        { id: 'tpl-bienvenida', name: 'Bienvenida', color: '22c55e', text: ['HOLA'], icon: '✦' },
-        { id: 'tpl-mantenimiento', name: 'Mantenimiento', color: '3b82f6', text: ['MANT'], icon: '⚙' },
-        { id: 'tpl-nocturno', name: 'Modo nocturno', color: '8b5cf6', text: ['ZZZ'], icon: '☾' },
-        { id: 'tpl-material-bajo', name: 'Material bajo', color: 'f59e0b', text: ['MATERIAL'], icon: '◔' },
+        { id: 'tpl-alerta', name: tr('tplAlert'), color: 'ff0000', text: ['ALERTA'], icon: '▲' },
+        { id: 'tpl-error', name: tr('tplError'), color: 'ef4444', text: ['ERROR'], icon: '✕' },
+        { id: 'tpl-atencion', name: tr('tplAttention'), color: 'f59e0b', text: ['ATN'], icon: '!' },
+        { id: 'tpl-emergencia', name: tr('tplEmergency'), color: 'ff0000', text: ['EMERG'], icon: '⚠' },
+        { id: 'tpl-listo', name: tr('tplReady'), color: '22c55e', text: ['LISTO'], icon: '✓' },
+        { id: 'tpl-bienvenida', name: tr('tplWelcome'), color: '22c55e', text: ['HOLA'], icon: '✦' },
+        { id: 'tpl-mantenimiento', name: tr('tplMaintenance'), color: '3b82f6', text: ['MANT'], icon: '⚙' },
+        { id: 'tpl-nocturno', name: tr('tplNightMode'), color: '8b5cf6', text: ['ZZZ'], icon: '☾' },
+        { id: 'tpl-material-bajo', name: tr('tplLowMaterial'), color: 'f59e0b', text: ['MATERIAL'], icon: '◔' },
     ];
 
     // ── Fuente de píxeles 5x7 para la herramienta de texto (T) ──
@@ -188,12 +712,10 @@
     };
 
     // Estados de máquina que ofrece el modal "Alertas por máquina" -- deben
-    // coincidir con MACHINE_STATES de screen_service.py.
+    // coincidir con MACHINE_STATES de screen_service.py. Las etiquetas
+    // ahora se resuelven con machineStateLabel() (ver el bloque I18N al
+    // principio del archivo), no con un objeto fijo acá.
     const MACHINE_STATES = ['idle', 'heating', 'cooling', 'printing', 'paused', 'complete', 'error', 'offline'];
-    const MACHINE_STATE_LABELS = {
-        idle: 'En espera', heating: 'Calentando', cooling: 'Enfriando', printing: 'Trabajando',
-        paused: 'Pausada', complete: 'Finalizada', error: 'Error', offline: 'Desconectada',
-    };
 
     let root = null;
     let statusTimer = null;
@@ -571,7 +1093,7 @@
         if (!container) return;
         const saved = readSavedColors();
         if (!saved.length) {
-            container.innerHTML = `<span class="mled-color-saved-empty">Sin colores guardados todavía</span>`;
+            container.innerHTML = `<span class="mled-color-saved-empty">${tr('noSavedColorsYet')}</span>`;
             return;
         }
         container.innerHTML = saved.map((color) => (
@@ -702,7 +1224,7 @@
     function renderRepeatDays() {
         const container = root.querySelector('#mled-repeat-days');
         if (!container) return;
-        container.innerHTML = DAY_LABELS.map((label, index) => (
+        container.innerHTML = dayLabels().map((label, index) => (
             `<button type="button" class="mled-day-btn ${draft.repeat_days.includes(index) ? 'is-active' : ''}" data-repeat-day="${index}">${esc(label)}</button>`
         )).join('');
         container.querySelectorAll('[data-repeat-day]').forEach((button) => {
@@ -721,7 +1243,7 @@
         const options = state.machines.map((machine) => (
             `<option value="${esc(machine.id)}" ${machine.id === selected ? 'selected' : ''}>${esc(machine.name || machine.id)}</option>`
         )).join('');
-        return `<option value="" ${!selected ? 'selected' : ''}>Todas / sin asignar</option>${options}`;
+        return `<option value="" ${!selected ? 'selected' : ''}>${tr('allUnassigned')}</option>${options}`;
     }
 
     function groupOptionsHtml(selected) {
@@ -729,7 +1251,7 @@
         const options = groups.map((group) => (
             `<option value="${esc(group)}" ${group === selected ? 'selected' : ''}>${esc(group)}</option>`
         )).join('');
-        return `<option value="" ${!selected ? 'selected' : ''}>Sin grupo</option>${options}`;
+        return `<option value="" ${!selected ? 'selected' : ''}>${tr('noGroup')}</option>${options}`;
     }
 
     // ── Plantillas ──
@@ -762,7 +1284,7 @@
     }
 
     function machineName(machineId) {
-        if (!machineId) return 'Todas';
+        if (!machineId) return tr('allMachines');
         return state.machines.find((machine) => machine.id === machineId)?.name || machineId;
     }
 
@@ -772,7 +1294,7 @@
         const query = state.searchQuery.trim().toLowerCase();
         const rows = state.announcements.filter((item) => !query || item.name.toLowerCase().includes(query));
         if (!rows.length) {
-            body.innerHTML = `<tr><td colspan="7" class="mled-empty-row">Sin anuncios guardados todavía.</td></tr>`;
+            body.innerHTML = `<tr><td colspan="7" class="mled-empty-row">${tr('noAnnouncementsYet')}</td></tr>`;
             return;
         }
         body.innerHTML = rows.map((item) => `
@@ -780,13 +1302,13 @@
                 <td>${esc(item.name)}</td>
                 <td>${esc(machineName(item.machine_id))}</td>
                 <td>${MATRIX_ROWS}x${MATRIX_COLS}</td>
-                <td>${esc(item.duration_seconds)} seg</td>
+                <td>${esc(item.duration_seconds)} ${tr('secondsSuffix')}</td>
                 <td>${priorityBadgeHtml(item.priority)}</td>
-                <td><span class="mled-badge mled-badge-estado">${item.mode === 'programado' ? 'Programado' : 'Activo'}</span></td>
+                <td><span class="mled-badge mled-badge-estado">${item.mode === 'programado' ? tr('scheduledBadge') : tr('activeStateBadge')}</span></td>
                 <td class="mled-table-actions">
-                    <button type="button" data-edit-announcement="${esc(item.id)}" title="Editar">✎</button>
-                    <button type="button" data-duplicate-announcement="${esc(item.id)}" title="Duplicar">⧉</button>
-                    <button type="button" data-delete-announcement="${esc(item.id)}" title="Eliminar" class="mled-btn-icon-danger">🗑</button>
+                    <button type="button" data-edit-announcement="${esc(item.id)}" title="${tr('editTitle')}">✎</button>
+                    <button type="button" data-duplicate-announcement="${esc(item.id)}" title="${tr('duplicateTitle')}">⧉</button>
+                    <button type="button" data-delete-announcement="${esc(item.id)}" title="${tr('deleteTitle')}" class="mled-btn-icon-danger">🗑</button>
                 </td>
             </tr>`).join('');
         body.querySelectorAll('[data-edit-announcement]').forEach((button) => {
@@ -800,7 +1322,7 @@
                 const item = state.announcements.find((a) => a.id === button.dataset.duplicateAnnouncement);
                 if (!item) return;
                 const { id, created_at, updated_at, ...rest } = item;
-                await api('/announcements', { method: 'POST', body: JSON.stringify({ ...rest, name: `${item.name} (copia)` }) });
+                await api('/announcements', { method: 'POST', body: JSON.stringify({ ...rest, name: `${item.name} ${tr('copySuffix')}` }) });
                 await loadAnnouncements();
             });
         });
@@ -808,8 +1330,8 @@
             button.addEventListener('click', async () => {
                 const id = button.dataset.deleteAnnouncement;
                 const item = state.announcements.find((a) => a.id === id);
-                const message = `Vas a eliminar el anuncio "${item?.name || id}". Esta acción no se puede deshacer.`;
-                const confirmed = window.appConfirm ? await window.appConfirm(message, 'Eliminar anuncio', 'danger') : window.confirm(message);
+                const message = tr('confirmDeleteAnnouncement', { name: item?.name || id });
+                const confirmed = window.appConfirm ? await window.appConfirm(message, tr('deleteAnnouncementTitle'), 'danger') : window.confirm(message);
                 if (!confirmed) return;
                 await api(`/announcements/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (state.editingId === id) resetDraft();
@@ -828,11 +1350,11 @@
         if (!container) return;
         const items = state.announcements;
         if (!items.length) {
-            container.innerHTML = '<p class="mled-empty-row">Sin anuncios guardados todavía.</p>';
+            container.innerHTML = `<p class="mled-empty-row">${tr('noAnnouncementsYet')}</p>`;
             return;
         }
         container.innerHTML = items.map((item) => `
-            <article class="mled-sidebar-scene" data-scene-id="${esc(item.id)}" role="button" tabindex="0" title="Enviar “${esc(item.name)}” a la pantalla">
+            <article class="mled-sidebar-scene" data-scene-id="${esc(item.id)}" role="button" tabindex="0" title="${esc(tr('sendToScreenTitle', { name: item.name }))}">
                 <div class="mled-scene-preview mled-scene-preview-small">${item.matrix.flat().map((color) => `<span style="${color ? `background:#${color}` : ''}"></span>`).join('')}</div>
                 <span class="mled-sidebar-scene-name">${esc(item.name)}</span>
                 <span class="mled-btn-icon-play" aria-hidden="true">▶</span>
@@ -845,7 +1367,7 @@
                 await api(`/announcements/${encodeURIComponent(card.dataset.sceneId)}/send`, { method: 'POST' });
                 await loadLastSent();
             } catch (error) {
-                root.querySelector('#mled-save-msg').textContent = error.message || 'Error al enviar';
+                root.querySelector('#mled-save-msg').textContent = error.message || tr('errorSending');
             } finally {
                 card.classList.remove('is-sending');
             }
@@ -907,11 +1429,11 @@
         readDraftForm();
         const msg = root.querySelector('#mled-save-msg');
         if (!draft.name) {
-            msg.textContent = 'Falta el nombre del anuncio';
+            msg.textContent = tr('missingAnnouncementName');
             msg.className = 'mled-inline-msg mled-inline-msg-error';
             return;
         }
-        msg.textContent = 'Guardando…';
+        msg.textContent = tr('saving');
         msg.className = 'mled-inline-msg';
         try {
             const payload = { ...draft };
@@ -920,18 +1442,18 @@
                 ? await api(`/announcements/${encodeURIComponent(state.editingId)}`, { method: 'PUT', body: JSON.stringify(payload) })
                 : await api('/announcements', { method: 'POST', body: JSON.stringify(payload) });
             state.editingId = saved.id;
-            msg.textContent = 'Anuncio guardado';
+            msg.textContent = tr('announcementSaved');
             msg.classList.add('mled-inline-msg-ok');
             await loadAnnouncements();
         } catch (error) {
-            msg.textContent = error.message || 'Error al guardar';
+            msg.textContent = error.message || tr('errorSaving');
             msg.classList.add('mled-inline-msg-error');
         }
     }
 
     async function sendDraftNow() {
         const msg = root.querySelector('#mled-save-msg');
-        msg.textContent = 'Enviando a la pantalla… (puede tardar unos segundos)';
+        msg.textContent = tr('sendingToScreen');
         msg.className = 'mled-inline-msg';
         const animateCol = root.querySelector('#mled-animate-col').checked;
         const animateRow = root.querySelector('#mled-animate-row').checked;
@@ -941,10 +1463,11 @@
                 method: 'POST',
                 body: JSON.stringify({ matrix: draft.matrix, animate_col: animateCol, animate_row: animateRow, speed }),
             });
-            msg.textContent = `Enviado (${result.windows_total ?? 1} ventana${(result.windows_total ?? 1) === 1 ? '' : 's'})`;
+            const windowsTotal = result.windows_total ?? 1;
+            msg.textContent = tr('sentWindows', { count: windowsTotal, word: tr(windowsTotal === 1 ? 'windowSingular' : 'windowPlural') });
             msg.classList.add('mled-inline-msg-ok');
         } catch (error) {
-            msg.textContent = error.message || 'Error al enviar';
+            msg.textContent = error.message || tr('errorSending');
             msg.classList.add('mled-inline-msg-error');
         }
     }
@@ -967,13 +1490,13 @@
         pill.classList.remove('mled-status-ok', 'mled-status-warn', 'mled-status-off');
         if (!state.status.configured) {
             pill.classList.add('mled-status-off');
-            text.textContent = 'Sin configurar';
+            text.textContent = tr('notConfigured');
         } else if (state.status.connected) {
             pill.classList.add('mled-status-ok');
-            text.textContent = 'Conectada';
+            text.textContent = tr('statusConnected');
         } else {
             pill.classList.add('mled-status-warn');
-            text.textContent = 'Configurada, sin conexión BLE';
+            text.textContent = tr('configuredNoBle');
         }
         renderKPIs();
         renderDiagnostics();
@@ -1001,7 +1524,7 @@
 
     async function saveConfig() {
         const msg = root.querySelector('#mled-config-msg');
-        msg.textContent = 'Guardando…';
+        msg.textContent = tr('saving');
         msg.className = 'mled-inline-msg';
         try {
             state.config = await api('/config', {
@@ -1014,12 +1537,12 @@
                 }),
             });
             fillConfigForm();
-            msg.textContent = 'Guardado';
+            msg.textContent = tr('savedGeneric');
             msg.classList.add('mled-inline-msg-ok');
             refreshStatus();
             syncMachinePolling();
         } catch (error) {
-            msg.textContent = error.message || 'Error al guardar';
+            msg.textContent = error.message || tr('errorSaving');
             msg.classList.add('mled-inline-msg-error');
         }
     }
@@ -1219,14 +1742,14 @@
         const then = new Date(isoString).getTime();
         if (Number.isNaN(then)) return null;
         const seconds = Math.max(0, Math.round((Date.now() - then) / 1000));
-        if (seconds < 5) return 'justo ahora';
-        if (seconds < 60) return `hace ${seconds} s`;
+        if (seconds < 5) return tr('justNow');
+        if (seconds < 60) return tr('secondsAgo', { n: seconds });
         const minutes = Math.round(seconds / 60);
-        if (minutes < 60) return `hace ${minutes} min`;
+        if (minutes < 60) return tr('minutesAgo', { n: minutes });
         const hours = Math.round(minutes / 60);
-        if (hours < 24) return `hace ${hours} h`;
+        if (hours < 24) return tr('hoursAgo', { n: hours });
         const days = Math.round(hours / 24);
-        return `hace ${days} d`;
+        return tr('daysAgo', { n: days });
     }
 
     async function loadDeviceInfo() {
@@ -1249,27 +1772,27 @@
         if (!root) return;
         const info = state.deviceInfo;
         const set = (id, value) => { const el = root.querySelector(id); if (el) el.textContent = value; };
-        set('#mled-info-model', info.available ? (info.chip || '—') : 'No disponible');
-        set('#mled-info-firmware', info.available ? (info.firmware || '—') : 'No disponible');
-        set('#mled-info-heap', info.available ? formatBytes(info.free_heap_bytes) : 'No disponible');
+        set('#mled-info-model', info.available ? (info.chip || '—') : tr('notAvailableBadge'));
+        set('#mled-info-firmware', info.available ? (info.firmware || '—') : tr('notAvailableBadge'));
+        set('#mled-info-heap', info.available ? formatBytes(info.free_heap_bytes) : tr('notAvailableBadge'));
 
         const connEl = root.querySelector('#mled-diag-connection');
         if (connEl) {
             connEl.classList.remove('mled-diag-ok', 'mled-diag-warn', 'mled-diag-off');
-            if (!state.status.configured) { connEl.textContent = 'Sin configurar'; connEl.classList.add('mled-diag-off'); }
-            else if (state.status.connected) { connEl.textContent = 'Conectado'; connEl.classList.add('mled-diag-ok'); }
-            else { connEl.textContent = 'Sin conexión BLE'; connEl.classList.add('mled-diag-warn'); }
+            if (!state.status.configured) { connEl.textContent = tr('notConfigured'); connEl.classList.add('mled-diag-off'); }
+            else if (state.status.connected) { connEl.textContent = tr('diagConnected'); connEl.classList.add('mled-diag-ok'); }
+            else { connEl.textContent = tr('noBle'); connEl.classList.add('mled-diag-warn'); }
         }
 
         const lastSentEl = root.querySelector('#mled-diag-last-sent');
-        if (lastSentEl) lastSentEl.textContent = state.lastSent?.sent_at ? (formatRelativeTime(state.lastSent.sent_at) || '—') : 'Nunca';
+        if (lastSentEl) lastSentEl.textContent = state.lastSent?.sent_at ? (formatRelativeTime(state.lastSent.sent_at) || '—') : tr('never');
 
         const lastErrorEl = root.querySelector('#mled-diag-last-error');
         if (lastErrorEl) {
             lastErrorEl.classList.toggle('mled-diag-warn', !!state.lastError);
             lastErrorEl.textContent = state.lastError
                 ? `${state.lastError.detail} (${formatRelativeTime(state.lastError.at) || '—'})`
-                : 'Sin errores registrados';
+                : tr('noErrorsLogged');
         }
     }
 
@@ -1278,10 +1801,10 @@
         if (!el) return;
         const info = state.deviceInfo;
         if (info.available && info.th_sensor_enabled && info.temperature_c_estimated != null) {
-            el.textContent = `${info.temperature_c_estimated.toFixed(1)}°C (estimado)`;
+            el.textContent = tr('estimatedTemp', { value: info.temperature_c_estimated.toFixed(1) });
             el.classList.remove('mled-unavailable');
         } else {
-            el.textContent = 'No disponible';
+            el.textContent = tr('notAvailableBadge');
             el.classList.add('mled-unavailable');
         }
     }
@@ -1322,7 +1845,7 @@
         const sceneLabel = root.querySelector('#mled-live-scene');
         if (sceneLabel) {
             const name = findMatchingAnnouncementName(matrix);
-            sceneLabel.textContent = matrix ? `Escena actual: ${name || 'Personalizado'}` : 'Escena actual: Sin envíos todavía';
+            sceneLabel.textContent = matrix ? tr('currentScene', { name: name || tr('custom') }) : tr('currentSceneNoSends');
         }
     }
 
@@ -1337,7 +1860,7 @@
 
     function renderSummary() {
         const uptimeEl = root.querySelector('#mled-sum-uptime');
-        if (uptimeEl) uptimeEl.textContent = state.deviceInfo.available ? formatUptime(state.deviceInfo.uptime_ms) : 'No disponible';
+        if (uptimeEl) uptimeEl.textContent = state.deviceInfo.available ? formatUptime(state.deviceInfo.uptime_ms) : tr('notAvailableBadge');
         const total = state.stats.sent_ok + state.stats.sent_error;
         const set = (id, value) => { const el = root.querySelector(id); if (el) el.textContent = value; };
         set('#mled-sum-sent', String(total));
@@ -1348,14 +1871,14 @@
     function renderKPIs() {
         const set = (id, value) => { const el = root.querySelector(id); if (el) el.textContent = value; };
         set('#mled-kpi-matrices', '1');
-        set('#mled-kpi-matrices-sub', state.status.connected ? 'Operativa' : (state.status.configured ? 'Sin conexión BLE' : 'Sin configurar'));
+        set('#mled-kpi-matrices-sub', state.status.connected ? tr('operational') : (state.status.configured ? tr('noBle') : tr('notConfigured')));
         set('#mled-kpi-scenes', String(state.announcements.length));
-        set('#mled-kpi-scenes-sub', state.announcements.length ? 'Listas para usar' : 'Crea tu primer anuncio');
+        set('#mled-kpi-scenes-sub', state.announcements.length ? tr('readyToUse') : tr('createFirstAnnouncement'));
 
         const enabledRules = state.rules.filter((rule) => rule.enabled).length;
         const enabledMachines = Object.values(state.machineAlerts).filter((entry) => entry.enabled).length;
         set('#mled-kpi-automations', String(enabledRules + enabledMachines + (state.config.auto_alerts ? 1 : 0)));
-        set('#mled-kpi-automations-sub', `${enabledRules} reglas · ${enabledMachines} máquinas`);
+        set('#mled-kpi-automations-sub', tr('rulesAndMachines', { rules: enabledRules, machines: enabledMachines }));
     }
 
     function renderQuickScenes() {
@@ -1365,7 +1888,7 @@
         const prevBtn = root.querySelector('#mled-scenes-prev');
         const nextBtn = root.querySelector('#mled-scenes-next');
         if (!items.length) {
-            container.innerHTML = '<p class="mled-empty-row">Todavía no tienes anuncios guardados -- créalos en "Escenas y Configuración".</p>';
+            container.innerHTML = `<p class="mled-empty-row">${tr('noAnnouncementsCreateHint')}</p>`;
             if (prevBtn) prevBtn.hidden = true;
             if (nextBtn) nextBtn.hidden = true;
             return;
@@ -1374,11 +1897,11 @@
         container.innerHTML = items.map((item) => {
             const isActive = lastSentSerialized && JSON.stringify(item.matrix) === lastSentSerialized;
             return `
-                <article class="mled-scene-card" data-scene-id="${esc(item.id)}" role="button" tabindex="0" title="Enviar “${esc(item.name)}” a la pantalla">
+                <article class="mled-scene-card" data-scene-id="${esc(item.id)}" role="button" tabindex="0" title="${esc(tr('sendToScreenTitle', { name: item.name }))}">
                     <div class="mled-scene-preview">${item.matrix.flat().map((color) => `<span style="${color ? `background:#${color}` : ''}"></span>`).join('')}</div>
                     <strong>${esc(item.name)}</strong>
                     <div class="mled-scene-footer">
-                        <span class="mled-badge ${isActive ? 'mled-badge-alta' : 'mled-badge-baja'}">${isActive ? 'Activa' : 'Lista'}</span>
+                        <span class="mled-badge ${isActive ? 'mled-badge-alta' : 'mled-badge-baja'}">${isActive ? tr('activeBadge') : tr('readyBadge')}</span>
                         <span class="mled-btn-icon-play" aria-hidden="true">▶</span>
                     </div>
                 </article>`;
@@ -1394,7 +1917,7 @@
                 await api(`/announcements/${encodeURIComponent(card.dataset.sceneId)}/send`, { method: 'POST' });
                 await loadLastSent();
             } catch (error) {
-                root.querySelector('#mled-save-msg').textContent = error.message || 'Error al enviar';
+                root.querySelector('#mled-save-msg').textContent = error.message || tr('errorSending');
             } finally {
                 card.classList.remove('is-sending');
             }
@@ -1483,38 +2006,38 @@
         const items = [
             {
                 id: 'idle', icon: '💤', available: true,
-                title: 'Inactividad > 5 min',
-                detail: `Mostrar "Modo nocturno"${anyIdleMachine ? ' -- detectado ahora' : ''}`,
+                title: tr('suggestionIdleTitle'),
+                detail: tr('suggestionIdleDetail', { suffix: anyIdleMachine ? tr('detectedNowSuffix') : '' }),
                 active: !!idleRule?.enabled,
                 onToggle: async () => {
                     if (idleRule) {
                         await api(`/rules/${encodeURIComponent(idleRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !idleRule.enabled }) });
                     } else {
-                        const announcement = await ensureAnnouncementByName('Modo nocturno', 'tpl-nocturno');
-                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: 'Inactividad > 5 min', trigger: 'idle_timeout', idle_minutes: 5, announcement_id: announcement.id, enabled: true }) });
+                        const announcement = await ensureAnnouncementByName(tr('tplNightMode'), 'tpl-nocturno');
+                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('suggestionIdleTitle'), trigger: 'idle_timeout', idle_minutes: 5, announcement_id: announcement.id, enabled: true }) });
                     }
                     await loadRules();
                 },
             },
             {
                 id: 'material', icon: '🧵', available: true,
-                title: 'Material bajo detectado',
-                detail: `Mostrar "Material bajo"${materialDetected ? ' -- detectado ahora' : ''}`,
+                title: tr('suggestionMaterialTitle'),
+                detail: tr('suggestionMaterialDetail', { suffix: materialDetected ? tr('detectedNowSuffix') : '' }),
                 active: !!materialRule?.enabled,
                 onToggle: async () => {
                     if (materialRule) {
                         await api(`/rules/${encodeURIComponent(materialRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !materialRule.enabled }) });
                     } else {
-                        const announcement = await ensureAnnouncementByName('Material bajo', 'tpl-material-bajo');
-                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: 'Material bajo', trigger: 'material_low', announcement_id: announcement.id, enabled: true }) });
+                        const announcement = await ensureAnnouncementByName(tr('tplLowMaterial'), 'tpl-material-bajo');
+                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('tplLowMaterial'), trigger: 'material_low', announcement_id: announcement.id, enabled: true }) });
                     }
                     await loadRules();
                 },
             },
             {
                 id: 'job-done', icon: '✅', available: true,
-                title: 'Trabajo terminado',
-                detail: 'Avisar OK/ERR cuando una máquina termine o falle',
+                title: tr('suggestionJobDoneTitle'),
+                detail: tr('suggestionJobDoneDetail'),
                 active: !!state.config.auto_alerts,
                 onToggle: async () => {
                     state.config = await api('/config', {
@@ -1527,8 +2050,8 @@
             },
             {
                 id: 'smoke', icon: '🔥', available: false,
-                title: 'Humo detectado',
-                detail: 'No hay sensor de humo instalado todavía',
+                title: tr('suggestionSmokeTitle'),
+                detail: tr('suggestionSmokeDetail'),
                 active: false,
                 onToggle: null,
             },
@@ -1542,8 +2065,8 @@
                     <small>${esc(item.detail)}</small>
                 </div>
                 ${item.available
-                    ? `<button type="button" class="mled-btn mled-btn-small ${item.active ? 'mled-btn-primary' : ''}" data-suggestion="${item.id}" title="${item.active ? 'Clic para desactivar' : 'Clic para activar'}">${item.active ? 'Activa' : 'Activar'}</button>`
-                    : '<span class="mled-badge mled-badge-estado">No disponible</span>'}
+                    ? `<button type="button" class="mled-btn mled-btn-small ${item.active ? 'mled-btn-primary' : ''}" data-suggestion="${item.id}" title="${item.active ? tr('clickToDeactivate') : tr('clickToActivate')}">${item.active ? tr('activeBadge') : tr('activateBtn')}</button>`
+                    : `<span class="mled-badge mled-badge-estado">${tr('notAvailableBadge')}</span>`}
             </div>
         `).join('');
 
@@ -1555,7 +2078,7 @@
                 try {
                     await item.onToggle();
                 } catch (error) {
-                    root.querySelector('#mled-save-msg').textContent = error.message || 'Error';
+                    root.querySelector('#mled-save-msg').textContent = error.message || tr('genericError');
                 } finally {
                     button.disabled = false;
                 }
@@ -1579,7 +2102,7 @@
         const body = root.querySelector('#mled-machine-alerts-body');
         if (!body) return;
         if (!state.machines.length) {
-            body.innerHTML = '<tr><td colspan="3" class="mled-empty-row">No hay máquinas detectadas todavía.</td></tr>';
+            body.innerHTML = `<tr><td colspan="3" class="mled-empty-row">${tr('noMachinesDetected')}</td></tr>`;
             return;
         }
         body.innerHTML = state.machines.map((machine) => {
@@ -1588,8 +2111,8 @@
             return `
                 <tr>
                     <td>${esc(machine.name || machine.id)}</td>
-                    <td><span class="mled-badge ${enabled ? 'mled-badge-baja' : 'mled-badge-estado'}">${enabled ? 'Activas' : 'Inactivas'}</span></td>
-                    <td><button type="button" class="mled-btn mled-btn-small" data-configure-machine="${esc(machine.id)}">Configurar</button></td>
+                    <td><span class="mled-badge ${enabled ? 'mled-badge-baja' : 'mled-badge-estado'}">${enabled ? tr('activeAlertsBadge') : tr('inactiveAlertsBadge')}</span></td>
+                    <td><button type="button" class="mled-btn mled-btn-small" data-configure-machine="${esc(machine.id)}">${tr('configureBtn')}</button></td>
                 </tr>`;
         }).join('');
         body.querySelectorAll('[data-configure-machine]').forEach((button) => {
@@ -1611,9 +2134,9 @@
         const statesContainer = root.querySelector('#mled-machine-alerts-states');
         statesContainer.innerHTML = MACHINE_STATES.map((stateKey) => `
             <label class="mled-field compact">
-                <span>${esc(MACHINE_STATE_LABELS[stateKey])}</span>
+                <span>${esc(machineStateLabel(stateKey))}</span>
                 <select data-machine-state="${stateKey}">
-                    <option value="">Sin asignar</option>
+                    <option value="">${tr('unassignedOption')}</option>
                     ${state.announcements.map((item) => `<option value="${esc(item.id)}" ${config.state_announcements[stateKey] === item.id ? 'selected' : ''}>${esc(item.name)}</option>`).join('')}
                 </select>
             </label>
@@ -1626,7 +2149,7 @@
         const machineId = state.machineAlertsTarget;
         if (!machineId) return;
         const msg = root.querySelector('#mled-machine-alerts-msg');
-        msg.textContent = 'Guardando…';
+        msg.textContent = tr('saving');
         msg.className = 'mled-inline-msg';
         const stateAnnouncements = {};
         root.querySelectorAll('[data-machine-state]').forEach((select) => {
@@ -1640,11 +2163,11 @@
                     state_announcements: stateAnnouncements,
                 }),
             });
-            msg.textContent = 'Guardado';
+            msg.textContent = tr('savedGeneric');
             msg.classList.add('mled-inline-msg-ok');
             await loadMachineAlerts();
         } catch (error) {
-            msg.textContent = error.message || 'Error al guardar';
+            msg.textContent = error.message || tr('errorSaving');
             msg.classList.add('mled-inline-msg-error');
         }
     }
@@ -1657,11 +2180,11 @@
         const title = root.querySelector('#mled-page-title');
         const sub = root.querySelector('#mled-page-sub');
         if (view === 'dashboard') {
-            title.textContent = 'Panel principal · Matriz LED';
-            sub.textContent = 'Controla tu matriz LED, escenas, alertas y automatizaciones del taller en tiempo real.';
+            title.textContent = tr('dashboardTitle');
+            sub.textContent = tr('dashboardSub');
         } else {
-            title.textContent = 'Escenas y Configuración';
-            sub.textContent = 'Crea anuncios, configura alertas por máquina y el accesorio ESP32.';
+            title.textContent = tr('editorTitle');
+            sub.textContent = tr('editorSub');
         }
         if (view === 'dashboard') updateScenesArrowVisibility();
     }
@@ -1677,21 +2200,21 @@
             <section id="${PLUGIN_ID}-section" class="view-section mled-section" style="display:none">
                 <header class="mled-header">
                     <div>
-                        <h1 id="mled-page-title">Panel principal · Matriz LED</h1>
-                        <p class="mled-sub" id="mled-page-sub">Controla tu matriz LED, escenas, alertas y automatizaciones del taller en tiempo real.</p>
+                        <h1 id="mled-page-title">${tr('dashboardTitle')}</h1>
+                        <p class="mled-sub" id="mled-page-sub">${tr('dashboardSub')}</p>
                     </div>
                     <div class="mled-header-actions">
                         <span class="mled-status-pill" id="mled-status-pill">
                             <span class="mled-status-dot"></span>
-                            <span id="mled-status-text">Comprobando…</span>
+                            <span id="mled-status-text">${tr('checking')}</span>
                         </span>
-                        <button type="button" class="mled-btn mled-btn-icon" id="mled-config-open-btn" title="Configuración del accesorio">⚙</button>
+                        <button type="button" class="mled-btn mled-btn-icon" id="mled-config-open-btn" title="${tr('accessoryConfigTitle')}">⚙</button>
                     </div>
                 </header>
 
                 <div class="mled-view-tabs">
-                    <button type="button" class="mled-view-tab is-active" data-view="dashboard">Panel principal</button>
-                    <button type="button" class="mled-view-tab" data-view="editor">Escenas y Configuración</button>
+                    <button type="button" class="mled-view-tab is-active" data-view="dashboard">${tr('tabMainPanel')}</button>
+                    <button type="button" class="mled-view-tab" data-view="editor">${tr('editorTitle')}</button>
                 </div>
 
                 <div id="mled-view-dashboard" class="mled-view">
@@ -1700,15 +2223,15 @@
                             <article class="mled-kpi-card">
                                 <span class="mled-kpi-icon">▦</span>
                                 <div>
-                                    <span class="mled-kpi-label">Matrices conectadas</span>
+                                    <span class="mled-kpi-label">${tr('kpiMatricesConnected')}</span>
                                     <strong id="mled-kpi-matrices">—</strong>
-                                    <small id="mled-kpi-matrices-sub">Comprobando…</small>
+                                    <small id="mled-kpi-matrices-sub">${tr('checking')}</small>
                                 </div>
                             </article>
                             <article class="mled-kpi-card">
                                 <span class="mled-kpi-icon">▤</span>
                                 <div>
-                                    <span class="mled-kpi-label">Escenas activas</span>
+                                    <span class="mled-kpi-label">${tr('kpiActiveScenes')}</span>
                                     <strong id="mled-kpi-scenes">—</strong>
                                     <small id="mled-kpi-scenes-sub"></small>
                                 </div>
@@ -1716,7 +2239,7 @@
                             <article class="mled-kpi-card">
                                 <span class="mled-kpi-icon">⚡</span>
                                 <div>
-                                    <span class="mled-kpi-label">Automatizaciones</span>
+                                    <span class="mled-kpi-label">${tr('kpiAutomations')}</span>
                                     <strong id="mled-kpi-automations">—</strong>
                                     <small id="mled-kpi-automations-sub"></small>
                                 </div>
@@ -1724,95 +2247,95 @@
                             <article class="mled-kpi-card mled-kpi-unavailable">
                                 <span class="mled-kpi-icon">☀</span>
                                 <div>
-                                    <span class="mled-kpi-label">Brillo global</span>
-                                    <strong>No disponible</strong>
-                                    <small>Sin sensor en el firmware</small>
+                                    <span class="mled-kpi-label">${tr('kpiGlobalBrightness')}</span>
+                                    <strong>${tr('notAvailableBadge')}</strong>
+                                    <small>${tr('noFirmwareSensor')}</small>
                                 </div>
                             </article>
                         </div>
 
                         <div class="mled-dash-row">
                             <article class="mled-dash-card mled-live-card">
-                                <h2>Vista en vivo</h2>
-                                <label class="mled-field compact"><span>Seleccionar matriz</span><select id="mled-live-select"><option>Matriz principal · 16×32</option></select></label>
+                                <h2>${tr('liveView')}</h2>
+                                <label class="mled-field compact"><span>${tr('selectMatrix')}</span><select id="mled-live-select"><option>${tr('mainMatrixLabel')}</option></select></label>
                                 <div class="mled-preview-display mled-live-display"><div class="mled-preview-grid" id="mled-live-grid"></div></div>
                                 <div class="mled-live-footer">
-                                    <span id="mled-live-scene">Escena actual: —</span>
-                                    <span>Brillo: <em>No disponible</em></span>
-                                    <span>FPS: <em>No disponible</em></span>
-                                    <span>Temp. panel: <em>No disponible</em></span>
+                                    <span id="mled-live-scene">${tr('currentSceneDash')}</span>
+                                    <span>${tr('brightnessLabel')} <em>${tr('notAvailableBadge')}</em></span>
+                                    <span>${tr('fpsLabel')} <em>${tr('notAvailableBadge')}</em></span>
+                                    <span>${tr('panelTempLabel')} <em>${tr('notAvailableBadge')}</em></span>
                                 </div>
                             </article>
 
                             <div class="mled-dash-col">
                                 <article class="mled-dash-card">
-                                    <h2>Resoluciones registradas</h2>
+                                    <h2>${tr('registeredResolutions')}</h2>
                                     <div class="mled-res-row">
-                                        <span>16 × 32 RGB</span>
-                                        <span class="mled-badge mled-badge-baja">Predeterminada</span>
+                                        <span>${tr('rgbResolution')}</span>
+                                        <span class="mled-badge mled-badge-baja">${tr('defaultBadge')}</span>
                                     </div>
                                 </article>
                                 <article class="mled-dash-card">
-                                    <h2>Estado del taller</h2>
-                                    <div class="mled-status-row"><span>Sensores críticos</span><strong class="mled-unavailable">No disponible</strong></div>
-                                    <div class="mled-status-row"><span>Ventilación</span><strong class="mled-unavailable">No disponible</strong></div>
-                                    <div class="mled-status-row"><span>Energía estable</span><strong class="mled-unavailable">No disponible</strong></div>
-                                    <div class="mled-status-row"><span>Temperatura ambiente</span><strong id="mled-th-temp" class="mled-unavailable">No disponible</strong></div>
+                                    <h2>${tr('workshopStatus')}</h2>
+                                    <div class="mled-status-row"><span>${tr('criticalSensors')}</span><strong class="mled-unavailable">${tr('notAvailableBadge')}</strong></div>
+                                    <div class="mled-status-row"><span>${tr('ventilation')}</span><strong class="mled-unavailable">${tr('notAvailableBadge')}</strong></div>
+                                    <div class="mled-status-row"><span>${tr('stablePower')}</span><strong class="mled-unavailable">${tr('notAvailableBadge')}</strong></div>
+                                    <div class="mled-status-row"><span>${tr('ambientTemp')}</span><strong id="mled-th-temp" class="mled-unavailable">${tr('notAvailableBadge')}</strong></div>
                                 </article>
                             </div>
                         </div>
 
                         <div class="mled-dash-row">
                             <article class="mled-dash-card">
-                                <h2>Escenas rápidas</h2>
+                                <h2>${tr('quickScenes')}</h2>
                                 <div class="mled-scenes-carousel">
-                                    <button type="button" class="mled-scenes-arrow" id="mled-scenes-prev" title="Anteriores" aria-label="Escenas anteriores">‹</button>
+                                    <button type="button" class="mled-scenes-arrow" id="mled-scenes-prev" title="${tr('previousTitle')}" aria-label="${tr('previousAria')}">‹</button>
                                     <div class="mled-scenes-grid" id="mled-quick-scenes"></div>
-                                    <button type="button" class="mled-scenes-arrow" id="mled-scenes-next" title="Siguientes" aria-label="Escenas siguientes">›</button>
+                                    <button type="button" class="mled-scenes-arrow" id="mled-scenes-next" title="${tr('nextTitle')}" aria-label="${tr('nextAria')}">›</button>
                                 </div>
                             </article>
                             <article class="mled-dash-card">
-                                <h2>Automatizaciones sugeridas</h2>
+                                <h2>${tr('suggestedAutomations')}</h2>
                                 <div class="mled-suggestions" id="mled-suggestions"></div>
                             </article>
                         </div>
 
                         <article class="mled-dash-card">
-                            <h2>Resumen operativo</h2>
+                            <h2>${tr('operationalSummary')}</h2>
                             <div class="mled-summary-row">
-                                <div><span>Tiempo en línea</span><strong id="mled-sum-uptime">—</strong></div>
-                                <div><span>Mensajes mostrados hoy</span><strong id="mled-sum-sent">—</strong></div>
-                                <div><span>Actualizaciones exitosas</span><strong id="mled-sum-success">—</strong></div>
-                                <div><span>Errores</span><strong id="mled-sum-errors">—</strong></div>
+                                <div><span>${tr('uptimeLabel')}</span><strong id="mled-sum-uptime">—</strong></div>
+                                <div><span>${tr('messagesToday')}</span><strong id="mled-sum-sent">—</strong></div>
+                                <div><span>${tr('successfulUpdates')}</span><strong id="mled-sum-success">—</strong></div>
+                                <div><span>${tr('errorsLabel')}</span><strong id="mled-sum-errors">—</strong></div>
                             </div>
                         </article>
                     </div>
 
                     <aside class="mled-sidebar">
                         <article class="mled-card">
-                            <div class="mled-card-head-row"><h2>Diagnóstico</h2><button type="button" class="mled-btn mled-btn-small" id="mled-diag-test-btn">Probar conexión</button></div>
-                            <div class="mled-info-row"><span>Conexión BLE</span><strong id="mled-diag-connection">—</strong></div>
-                            <div class="mled-info-row"><span>Modelo</span><strong id="mled-info-model">—</strong></div>
-                            <div class="mled-info-row"><span>Firmware</span><strong id="mled-info-firmware">—</strong></div>
-                            <div class="mled-info-row"><span>Memoria libre</span><strong id="mled-info-heap">—</strong></div>
-                            <div class="mled-info-row"><span>Tipo de matriz</span><strong>RGB 16×32</strong></div>
-                            <div class="mled-info-row"><span>Último envío</span><strong id="mled-diag-last-sent">—</strong></div>
-                            <div class="mled-info-row"><span>Último error</span><strong id="mled-diag-last-error">—</strong></div>
+                            <div class="mled-card-head-row"><h2>${tr('diagnosticsTitle')}</h2><button type="button" class="mled-btn mled-btn-small" id="mled-diag-test-btn">${tr('testConnectionBtn')}</button></div>
+                            <div class="mled-info-row"><span>${tr('bleConnection')}</span><strong id="mled-diag-connection">—</strong></div>
+                            <div class="mled-info-row"><span>${tr('modelLabel')}</span><strong id="mled-info-model">—</strong></div>
+                            <div class="mled-info-row"><span>${tr('firmwareLabel')}</span><strong id="mled-info-firmware">—</strong></div>
+                            <div class="mled-info-row"><span>${tr('freeMemory')}</span><strong id="mled-info-heap">—</strong></div>
+                            <div class="mled-info-row"><span>${tr('matrixType')}</span><strong>RGB 16×32</strong></div>
+                            <div class="mled-info-row"><span>${tr('lastSentLabel')}</span><strong id="mled-diag-last-sent">—</strong></div>
+                            <div class="mled-info-row"><span>${tr('lastErrorLabel')}</span><strong id="mled-diag-last-error">—</strong></div>
                         </article>
                         <article class="mled-card">
-                            <h2>Buenas prácticas</h2>
+                            <h2>${tr('goodPractices')}</h2>
                             <ul class="mled-tips-list">
-                                <li>Usa mensajes cortos y claros.</li>
-                                <li>Evita parpadeos excesivos.</li>
-                                <li>Prioriza colores por nivel de urgencia.</li>
+                                <li>${tr('tipShortMessages')}</li>
+                                <li>${tr('tipAvoidBlinking')}</li>
+                                <li>${tr('tipPrioritizeColors')}</li>
                             </ul>
                         </article>
                         <article class="mled-card">
-                            <h2>Prioridades por color</h2>
-                            <div class="mled-priority-row"><span class="mled-dot" style="background:#22c55e"></span>Verde -- estado normal / OK</div>
-                            <div class="mled-priority-row"><span class="mled-dot" style="background:#f59e0b"></span>Ámbar -- advertencia / atención</div>
-                            <div class="mled-priority-row"><span class="mled-dot" style="background:#ef4444"></span>Rojo -- alerta / peligro</div>
-                            <div class="mled-priority-row"><span class="mled-dot" style="background:#3b82f6"></span>Azul -- información / proceso</div>
+                            <h2>${tr('colorPriorities')}</h2>
+                            <div class="mled-priority-row"><span class="mled-dot" style="background:#22c55e"></span>${tr('greenPriority')}</div>
+                            <div class="mled-priority-row"><span class="mled-dot" style="background:#f59e0b"></span>${tr('amberPriority')}</div>
+                            <div class="mled-priority-row"><span class="mled-dot" style="background:#ef4444"></span>${tr('redPriority')}</div>
+                            <div class="mled-priority-row"><span class="mled-dot" style="background:#3b82f6"></span>${tr('bluePriority')}</div>
                         </article>
                     </aside>
                 </div>
@@ -1820,11 +2343,11 @@
                 <div id="mled-view-editor" class="mled-view" hidden>
                 <aside class="mled-sidebar mled-sidebar-left">
                     <article class="mled-card mled-colors-card">
-                        <h2>Colores</h2>
-                        <span class="mled-field-label">Paleta rápida</span>
+                        <h2>${tr('colorsTitle')}</h2>
+                        <span class="mled-field-label">${tr('quickPalette')}</span>
                         <div class="mled-palette" id="mled-palette"></div>
 
-                        <span class="mled-field-label">Selector de color</span>
+                        <span class="mled-field-label">${tr('colorPicker')}</span>
                         <div class="mled-color-gamut" id="mled-color-gamut"><div class="mled-color-gamut-cursor" id="mled-color-gamut-cursor"></div></div>
                         <div class="mled-color-hue" id="mled-color-hue"><div class="mled-color-hue-cursor" id="mled-color-hue-cursor"></div></div>
                         <div class="mled-color-custom">
@@ -1833,93 +2356,93 @@
                         </div>
 
                         <div class="mled-color-saved-head">
-                            <span class="mled-field-label">Colores guardados</span>
-                            <button type="button" class="mled-btn mled-btn-small" id="mled-color-save-btn" title="Guardar el color actual">+</button>
+                            <span class="mled-field-label">${tr('savedColors')}</span>
+                            <button type="button" class="mled-btn mled-btn-small" id="mled-color-save-btn" title="${tr('saveColorTitle')}">+</button>
                         </div>
                         <div class="mled-palette mled-color-saved" id="mled-color-saved-list"></div>
                     </article>
                 </aside>
                 <div class="mled-shell">
                     <div class="mled-top-fields">
-                        <label class="mled-field"><span>Nombre del anuncio</span><input type="text" id="mled-name" placeholder="Alerta Temperatura Alta"></label>
-                        <label class="mled-field"><span>Asignar a máquina</span><select id="mled-machine"></select></label>
-                        <label class="mled-field"><span>Prioridad</span><select id="mled-priority">${PRIORITIES.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
+                        <label class="mled-field"><span>${tr('announcementNameLabel')}</span><input type="text" id="mled-name" placeholder="${tr('announcementNamePlaceholder')}"></label>
+                        <label class="mled-field"><span>${tr('assignMachineLabel')}</span><select id="mled-machine"></select></label>
+                        <label class="mled-field"><span>${tr('priorityLabel')}</span><select id="mled-priority">${PRIORITIES.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
                     </div>
 
                     <div class="mled-editor-card">
                         <div class="mled-editor-card-head">
-                            <h2>Editor 16x32</h2>
-                            <small>16 x 32 píxeles</small>
+                            <h2>${tr('editor1632')}</h2>
+                            <small>${tr('pixels1632')}</small>
                         </div>
                         <div class="mled-toolbar" id="mled-toolbar">
-                            <button type="button" class="mled-tool" data-tool="pencil" title="Lápiz">✏</button>
-                            <button type="button" class="mled-tool" data-tool="eraser" title="Borrador">⌫</button>
-                            <button type="button" class="mled-tool" data-tool="line" title="Línea">╱</button>
-                            <button type="button" class="mled-tool" data-tool="rect" title="Rectángulo">▭</button>
-                            <button type="button" class="mled-tool" data-tool="ellipse" title="Elipse">◯</button>
-                            <button type="button" class="mled-tool" data-tool="bucket" title="Cubeta">▨</button>
-                            <button type="button" class="mled-tool" data-tool="eyedropper" title="Gotero">✒</button>
-                            <label class="mled-tool mled-tool-file" title="Importar imagen">🖼<input type="file" id="mled-import-input" accept="image/*" hidden></label>
-                            <button type="button" class="mled-tool" data-tool="text" title="Texto">T</button>
-                            <button type="button" class="mled-tool mled-tool-danger" id="mled-clear-all-btn" title="Borrar todo">🗑</button>
+                            <button type="button" class="mled-tool" data-tool="pencil" title="${tr('pencilTitle')}">✏</button>
+                            <button type="button" class="mled-tool" data-tool="eraser" title="${tr('eraserTitle')}">⌫</button>
+                            <button type="button" class="mled-tool" data-tool="line" title="${tr('lineTitle')}">╱</button>
+                            <button type="button" class="mled-tool" data-tool="rect" title="${tr('rectTitle')}">▭</button>
+                            <button type="button" class="mled-tool" data-tool="ellipse" title="${tr('ellipseTitle')}">◯</button>
+                            <button type="button" class="mled-tool" data-tool="bucket" title="${tr('bucketTitle')}">▨</button>
+                            <button type="button" class="mled-tool" data-tool="eyedropper" title="${tr('eyedropperTitle')}">✒</button>
+                            <label class="mled-tool mled-tool-file" title="${tr('importImageTitle')}">🖼<input type="file" id="mled-import-input" accept="image/*" hidden></label>
+                            <button type="button" class="mled-tool" data-tool="text" title="${tr('textTitle')}">T</button>
+                            <button type="button" class="mled-tool mled-tool-danger" id="mled-clear-all-btn" title="${tr('clearAllTitle')}">🗑</button>
                         </div>
                         <div class="mled-text-tool" id="mled-text-tool" hidden>
-                            <input type="text" id="mled-text-tool-input" placeholder="TEXTO" maxlength="20">
-                            <label class="mled-text-tool-num"><span>Fila</span><input type="number" id="mled-text-tool-row" min="0" max="15" value="1" title="Fila inicial"></label>
-                            <label class="mled-text-tool-num"><span>Columna</span><input type="number" id="mled-text-tool-col" min="0" max="31" value="0" title="Columna inicial"></label>
-                            <button type="button" class="mled-btn mled-btn-small" id="mled-text-tool-place">Colocar</button>
+                            <input type="text" id="mled-text-tool-input" placeholder="${tr('textPlaceholder')}" maxlength="20">
+                            <label class="mled-text-tool-num"><span>${tr('rowLabel')}</span><input type="number" id="mled-text-tool-row" min="0" max="15" value="1" title="${tr('rowTitle')}"></label>
+                            <label class="mled-text-tool-num"><span>${tr('columnLabel')}</span><input type="number" id="mled-text-tool-col" min="0" max="31" value="0" title="${tr('columnTitle')}"></label>
+                            <button type="button" class="mled-btn mled-btn-small" id="mled-text-tool-place">${tr('placeBtn')}</button>
                         </div>
                         <div class="mled-grid" id="mled-editor-grid"></div>
-                        <button type="button" class="mled-btn mled-btn-primary mled-btn-large" id="mled-send-btn">▷ Vista previa en vivo</button>
+                        <button type="button" class="mled-btn mled-btn-primary mled-btn-large" id="mled-send-btn">▷ ${tr('livePreviewBtn')}</button>
                     </div>
 
                     <div class="mled-templates-card">
-                        <h2>Marcos / Plantillas</h2>
+                        <h2>${tr('templatesTitle')}</h2>
                         <div class="mled-templates" id="mled-templates"></div>
                     </div>
 
                     <div class="mled-main-columns">
                         <article class="mled-card">
-                            <h2>Programación</h2>
-                            <label class="mled-field"><span>Modo de reproducción</span><select id="mled-mode"><option value="manual">Manual</option><option value="programado">Programado</option></select></label>
-                            <label class="mled-field"><span>Fecha de inicio</span><input type="datetime-local" id="mled-start-at"></label>
-                            <label class="mled-field"><span>Fecha de fin (opcional)</span><input type="datetime-local" id="mled-end-at"></label>
-                            <span class="mled-field-label">Repetir</span>
+                            <h2>${tr('schedulingTitle')}</h2>
+                            <label class="mled-field"><span>${tr('playbackModeLabel')}</span><select id="mled-mode"><option value="manual">${tr('manualOption')}</option><option value="programado">${tr('scheduledOption')}</option></select></label>
+                            <label class="mled-field"><span>${tr('startDateLabel')}</span><input type="datetime-local" id="mled-start-at"></label>
+                            <label class="mled-field"><span>${tr('endDateLabel')}</span><input type="datetime-local" id="mled-end-at"></label>
+                            <span class="mled-field-label">${tr('repeatLabel')}</span>
                             <div class="mled-repeat-days" id="mled-repeat-days"></div>
                         </article>
 
                         <article class="mled-card">
-                            <h2>Duración del anuncio</h2>
-                            <label class="mled-field"><span>Tiempo en pantalla (seg)</span><input type="range" id="mled-duration-range" min="1" max="30" value="5"><input type="number" id="mled-duration" min="1" max="60" value="5"></label>
-                            <label class="mled-field"><span>Transición (seg)</span><input type="range" id="mled-transition-range" min="0" max="5" value="1"><input type="number" id="mled-transition" min="0" max="10" value="1"></label>
+                            <h2>${tr('durationTitle')}</h2>
+                            <label class="mled-field"><span>${tr('screenTimeLabel')}</span><input type="range" id="mled-duration-range" min="1" max="30" value="5"><input type="number" id="mled-duration" min="1" max="60" value="5"></label>
+                            <label class="mled-field"><span>${tr('transitionLabel')}</span><input type="range" id="mled-transition-range" min="0" max="5" value="1"><input type="number" id="mled-transition" min="0" max="10" value="1"></label>
                         </article>
 
                         <article class="mled-card">
-                            <h2>Asignación</h2>
-                            <label class="mled-field"><span>Grupo (opcional)</span><select id="mled-group-select"></select><input type="hidden" id="mled-group"></label>
-                            <span class="mled-field-label">Etiquetas</span>
+                            <h2>${tr('assignmentTitle')}</h2>
+                            <label class="mled-field"><span>${tr('groupLabel')}</span><select id="mled-group-select"></select><input type="hidden" id="mled-group"></label>
+                            <span class="mled-field-label">${tr('tagsLabel')}</span>
                             <div class="mled-tags" id="mled-tags-list"></div>
                             <div class="mled-tag-add">
-                                <input type="text" id="mled-tag-input" placeholder="Agregar etiqueta" maxlength="24">
+                                <input type="text" id="mled-tag-input" placeholder="${tr('addTagPlaceholder')}" maxlength="24">
                                 <button type="button" class="mled-btn mled-btn-small" id="mled-tag-add-btn">+</button>
                             </div>
                         </article>
                     </div>
 
                     <div class="mled-actions-row">
-                        <button type="button" class="mled-btn mled-btn-primary" id="mled-save-btn">Guardar Anuncio</button>
-                        <button type="button" class="mled-btn" id="mled-cancel-btn">Cancelar</button>
+                        <button type="button" class="mled-btn mled-btn-primary" id="mled-save-btn">${tr('saveAnnouncementBtn')}</button>
+                        <button type="button" class="mled-btn" id="mled-cancel-btn">${tr('cancelBtn')}</button>
                         <span class="mled-inline-msg" id="mled-save-msg"></span>
                     </div>
 
                     <div class="mled-table-card">
                         <div class="mled-table-head">
-                            <h2>Anuncios guardados</h2>
-                            <input type="search" id="mled-search" placeholder="Buscar anuncios…">
+                            <h2>${tr('savedAnnouncementsTitle')}</h2>
+                            <input type="search" id="mled-search" placeholder="${tr('searchAnnouncementsPlaceholder')}">
                         </div>
                         <div class="mled-table-scroll">
                             <table class="mled-table">
-                                <thead><tr><th>Nombre</th><th>Máquina</th><th>Resolución</th><th>Duración</th><th>Prioridad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <thead><tr><th>${tr('colName')}</th><th>${tr('colMachine')}</th><th>${tr('colResolution')}</th><th>${tr('colDuration')}</th><th>${tr('colPriority')}</th><th>${tr('colStatus')}</th><th>${tr('colActions')}</th></tr></thead>
                                 <tbody id="mled-announcements-body"></tbody>
                             </table>
                         </div>
@@ -1927,12 +2450,12 @@
 
                     <div class="mled-table-card">
                         <div class="mled-table-head">
-                            <h2>Alertas por máquina</h2>
+                            <h2>${tr('machineAlertsTitle')}</h2>
                         </div>
-                        <p class="mled-sub">Para cada máquina, elige qué anuncio mostrar cuando cambie a cada estado -- reusa los anuncios de arriba en vez de un color fijo por estado.</p>
+                        <p class="mled-sub">${tr('machineAlertsHint')}</p>
                         <div class="mled-table-scroll">
                             <table class="mled-table">
-                                <thead><tr><th>Máquina</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <thead><tr><th>${tr('colMachine')}</th><th>${tr('colStatus')}</th><th>${tr('colActions')}</th></tr></thead>
                                 <tbody id="mled-machine-alerts-body"></tbody>
                             </table>
                         </div>
@@ -1941,25 +2464,25 @@
 
                 <aside class="mled-sidebar">
                     <article class="mled-card">
-                        <h2>Vista previa</h2>
+                        <h2>${tr('previewTitle')}</h2>
                         <div class="mled-preview-display"><div class="mled-preview-grid" id="mled-preview-grid"></div></div>
-                        <small class="mled-preview-caption">16 x 32 píxeles</small>
+                        <small class="mled-preview-caption">${tr('pixels1632')}</small>
                     </article>
 
                     <article class="mled-card">
-                        <h2>Anuncios guardados</h2>
+                        <h2>${tr('savedAnnouncementsTitle')}</h2>
                         <div class="mled-sidebar-scenes" id="mled-sidebar-announcements"></div>
                     </article>
 
                     <article class="mled-card">
-                        <h2>Efectos</h2>
-                        <label class="mled-field"><span>Efecto de entrada</span><select id="mled-entry-effect">${ENTRY_EFFECTS.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
-                        <span class="mled-field-label">Animación al enviar (combinables)</span>
-                        <label class="mled-checkbox"><input type="checkbox" id="mled-animate-col"><span>Animar por columna</span></label>
-                        <label class="mled-checkbox"><input type="checkbox" id="mled-animate-row"><span>Animar por fila</span></label>
-                        <label class="mled-field"><span>Velocidad</span><input type="range" id="mled-speed" min="0" max="100" value="80"></label>
-                        <label class="mled-field"><span>Efecto de salida</span><select id="mled-exit-effect">${EXIT_EFFECTS.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
-                        <label class="mled-field"><span>Pausa (seg)</span><input type="number" id="mled-pause" min="0" max="30" value="2"></label>
+                        <h2>${tr('effectsTitle')}</h2>
+                        <label class="mled-field"><span>${tr('entryEffectLabel')}</span><select id="mled-entry-effect">${ENTRY_EFFECTS.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
+                        <span class="mled-field-label">${tr('sendAnimationLabel')}</span>
+                        <label class="mled-checkbox"><input type="checkbox" id="mled-animate-col"><span>${tr('animateColumnLabel')}</span></label>
+                        <label class="mled-checkbox"><input type="checkbox" id="mled-animate-row"><span>${tr('animateRowLabel')}</span></label>
+                        <label class="mled-field"><span>${tr('speedLabel')}</span><input type="range" id="mled-speed" min="0" max="100" value="80"></label>
+                        <label class="mled-field"><span>${tr('exitEffectLabel')}</span><select id="mled-exit-effect">${EXIT_EFFECTS.map((item) => `<option value="${item.value}">${item.label}</option>`).join('')}</select></label>
+                        <label class="mled-field"><span>${tr('pauseLabel')}</span><input type="number" id="mled-pause" min="0" max="30" value="2"></label>
                     </article>
                 </aside>
                 </div>
@@ -1967,14 +2490,14 @@
                 <div class="mled-modal" id="mled-config-modal" hidden>
                     <div class="mled-modal-backdrop" data-mled-config-close></div>
                     <div class="mled-modal-dialog">
-                        <div class="mled-modal-head"><strong>Configuración del accesorio</strong><button type="button" data-mled-config-close>×</button></div>
-                        <p class="mled-sub">La IP y credenciales del ESP32 que hace de puente BLE.</p>
-                        <label class="mled-field"><span>IP del accesorio</span><input type="text" id="mled-ip" placeholder="192.168.0.85"></label>
-                        <label class="mled-field"><span>Usuario</span><input type="text" id="mled-username" placeholder="nopal"></label>
-                        <label class="mled-field"><span id="mled-password-label">Contraseña</span><input type="password" id="mled-password" placeholder="•••••••••"></label>
-                        <label class="mled-checkbox"><input type="checkbox" id="mled-auto-alerts"><span>Avisar solo cuando un trabajo termine o falle</span></label>
+                        <div class="mled-modal-head"><strong>${tr('accessoryConfigTitle')}</strong><button type="button" data-mled-config-close>×</button></div>
+                        <p class="mled-sub">${tr('accessoryConfigModalDesc')}</p>
+                        <label class="mled-field"><span>${tr('accessoryIpLabel')}</span><input type="text" id="mled-ip" placeholder="192.168.0.85"></label>
+                        <label class="mled-field"><span>${tr('usernameLabel')}</span><input type="text" id="mled-username" placeholder="nopal"></label>
+                        <label class="mled-field"><span id="mled-password-label">${tr('passwordLabel')}</span><input type="password" id="mled-password" placeholder="•••••••••"></label>
+                        <label class="mled-checkbox"><input type="checkbox" id="mled-auto-alerts"><span>${tr('jobDoneOnlyAlert')}</span></label>
                         <div class="mled-row">
-                            <button type="button" class="mled-btn mled-btn-primary" id="mled-save-config-btn">Guardar</button>
+                            <button type="button" class="mled-btn mled-btn-primary" id="mled-save-config-btn">${tr('saveBtn')}</button>
                             <span class="mled-inline-msg" id="mled-config-msg"></span>
                         </div>
                     </div>
@@ -1985,19 +2508,19 @@
                     <div class="mled-modal-dialog">
                         <div class="mled-modal-head">
                             <div>
-                                <small class="mled-modal-eyebrow">ALERTAS POR MÁQUINA</small>
-                                <strong id="mled-machine-alerts-title">Alertas visuales</strong>
+                                <small class="mled-modal-eyebrow">${tr('machineAlertsEyebrow')}</small>
+                                <strong id="mled-machine-alerts-title">${tr('visualAlertsTitle')}</strong>
                             </div>
                             <button type="button" data-mled-machine-alerts-close>×</button>
                         </div>
                         <label class="mled-checkbox">
                             <input type="checkbox" id="mled-machine-alerts-enabled">
-                            <span>Esta máquina mandará sus cambios de estado a la Matriz LED.</span>
+                            <span>${tr('machineAlertsCheckboxLabel')}</span>
                         </label>
-                        <span class="mled-field-label">Anuncio para cada estado</span>
+                        <span class="mled-field-label">${tr('announcementPerState')}</span>
                         <div id="mled-machine-alerts-states"></div>
                         <div class="mled-row">
-                            <button type="button" class="mled-btn mled-btn-primary" id="mled-machine-alerts-save-btn">Guardar</button>
+                            <button type="button" class="mled-btn mled-btn-primary" id="mled-machine-alerts-save-btn">${tr('saveBtn')}</button>
                             <span class="mled-inline-msg" id="mled-machine-alerts-msg"></span>
                         </div>
                     </div>
@@ -2019,8 +2542,8 @@
         root.querySelector('[data-tool="pencil"]')?.classList.add('is-active');
 
         root.querySelector('#mled-clear-all-btn').addEventListener('click', async () => {
-            const message = 'Vas a borrar todo el dibujo actual. Esta acción no se puede deshacer.';
-            const confirmed = window.appConfirm ? await window.appConfirm(message, 'Borrar todo', 'danger') : window.confirm(message);
+            const message = tr('confirmClearAll');
+            const confirmed = window.appConfirm ? await window.appConfirm(message, tr('clearAllConfirmTitle'), 'danger') : window.confirm(message);
             if (!confirmed) return;
             draft.matrix = emptyMatrix();
             renderEditor();
@@ -2109,11 +2632,11 @@
         root.querySelector('#mled-diag-test-btn').addEventListener('click', async (event) => {
             const button = event.currentTarget;
             button.disabled = true;
-            button.textContent = 'Probando…';
+            button.textContent = tr('testing');
             await refreshStatus();
             await loadLastError();
             button.disabled = false;
-            button.textContent = 'Probar conexión';
+            button.textContent = tr('testConnectionBtn');
         });
 
         root.querySelector('#mled-scenes-prev').addEventListener('click', () => scrollQuickScenes(-1));
@@ -2142,7 +2665,7 @@
         // .nav-item span en style.css), así que un ícono envuelto en
         // <span> desaparecía entero al contraer. El resto de los plugins
         // ya usa <svg> (inmune a esa regla) por esta misma razón.
-        navButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>Matriz LED</span>';
+        navButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>${esc(tr('matrixLedNavLabel'))}</span>`;
         navButton.addEventListener('click', () => window.switchSection?.(PLUGIN_ID));
         pluginsContainer?.appendChild(navButton);
 
@@ -2174,6 +2697,6 @@
     }
 
     window.NopalPluginRegistry = window.NopalPluginRegistry || {};
-    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.5.0' };
+    window.NopalPluginRegistry[PLUGIN_ID] = { mount, unmount, version: '0.9.0' };
     mount();
 })();
