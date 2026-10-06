@@ -27,6 +27,11 @@ Ningún lado de NOPAL habla BLE directo -- ver
 
 Además de instalar este plugin desde NOPAL, hace falta:
 
+0. **Python 3.10 o superior** en el equipo que corre NOPAL. `pypixelcolor`
+   declara soportar 3.9, pero en 3.9 falla al importarse (usa `X | None` en
+   firmas que se evalúan al cargar), así que el plugin no puede enviar nada a
+   la pantalla. El manifiesto lo declara (`python_requires: ">=3.10"`) y NOPAL
+   no instala ni carga el plugin en un Python más viejo.
 1. Un accesorio ESP32 con `Nopal_FF.ino` (protocolo 4, firmware ≥4.4.0-ff)
    flasheado, con `NOPAL_BLE_SCREEN_MAC` configurado en su `secrets.h`
    apuntando a la MAC de tu pantalla.
