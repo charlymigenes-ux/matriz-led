@@ -169,6 +169,9 @@ láser y CNC nunca calientan; va debajo de "trabajando" en la prioridad):
   mantiene** hasta que se mande imprimir o se apague el calentador.
 - *Enfriando*: el calentador está apagado (objetivo 0) y aún pasa de 50 °C:
   muestra la temperatura bajando; al llegar a 50 °C vuelve a lo normal.
+Si otra máquina está trabajando, la que calienta, está en temperatura o se enfría
+**no se oculta**: su pantalla entra al ciclo y alterna con las vistas de trabajo
+(15 s cada una). Error, pausa, desconectada, mensaje y terminado siguen tapando todo.
 Con todo en reposo, "Todo normal" y "Todas en reposo" se alternan cada 15 s.
 
 **Contorno por situación** (`situation_styles`): cada situación puede tener su

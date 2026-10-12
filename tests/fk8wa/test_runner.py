@@ -375,3 +375,13 @@ class TestSituationContours:
                                cfg={"effects": {**config.DEFAULTS["effects"], "ready": "flash_1"}})
         await r.tick()
         assert header(FakeClient.last_program)["effect"] == (7, 1)
+
+    async def test_working_and_heating_machines_share_one_program(self):
+        machines = [{"id": "a", "name": "TTS", "type": "laser", "online": True,
+                     "status": {"state": "printing", "job": {"filename": "x.nc", "percent": 30}}},
+                    *self.hot((120, 200))[:1]]
+        machines[1]["id"] = "b"
+        r, clock, state = make(machines=machines, cfg={"machines": ["a", "b"]})
+        await r.tick()
+        assert [n for n, _, _ in r.current] == ["print1", "print2", "heating"]
+        assert header(FakeClient.last_program)["pages"] == 15      # 3 vistas x 5 páginas de contorno

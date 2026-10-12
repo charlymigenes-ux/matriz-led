@@ -214,6 +214,41 @@ class TestReadyAndCooling:
         assert segs == [("ready", {"printer": "ET4", "temp": 200, "target": 200}, None)]
 
 
+class TestWorkingMixedWithHeat:
+    def play(self, ms, ids, mem=None):
+        return sm.playlist(ms, ids, 100.0, mem or sm.Memory(started_at=0.0), CLOCK, None, 15.0, 60.0)
+
+    def test_working_machine_alternates_with_the_one_heating(self):
+        ms = [mach("a", "TTS 55 PRO", "printing", kind="laser", filename="x.nc", percent=30),
+              mach("b", "Klipper ET4", hotend=(120, 200))]
+        segs = self.play(ms, ["a", "b"])
+        assert [n for n, _, _ in segs] == ["print1", "print2", "heating"]
+        assert segs[2] == ("heating", {"printer": "ET4", "temp": 120, "target": 200}, 15.0)
+
+    def test_ready_and_cooling_also_join_in_that_order(self):
+        ms = [mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4", hotend=(90, 0)),
+              mach("c", "ET5", hotend=(200, 200)), mach("d", "ET6", hotend=(50, 200))]
+        segs = self.play(ms, list("abcd"))
+        assert [n for n, _, _ in segs] == ["print1", "print2", "heating", "ready", "cooling"]
+
+    def test_many_working_keeps_its_groups_and_adds_the_heat(self):
+        ms = [mach(c, c.upper(), "printing", filename="x.gc") for c in "abc"] + [mach("d", "ET4", hotend=(100, 200))]
+        segs = self.play(ms, list("abcd"))
+        assert [n for n, _, _ in segs] == ["many", "heating"]
+
+    def test_cooling_peak_is_tracked_while_another_machine_works(self):
+        mem = sm.Memory(started_at=0.0)
+        self.play([mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4", hotend=(200, 200))],
+                  ["a", "b"], mem)
+        segs = self.play([mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4", hotend=(150, 0))],
+                         ["a", "b"], mem)
+        assert segs[-1][:2] == ("cooling", {"printer": "ET4", "temp": 150, "peak": 200})
+
+    def test_nothing_extra_when_nobody_is_hot(self):
+        segs = self.play([mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4")], ["a", "b"])
+        assert [n for n, _, _ in segs] == ["print1", "print2"]
+
+
 class TestPlaylistRestAndMessages:
     def play(self, ms, ids, message=None, seconds=None):
         return sm.playlist(ms, ids, 100.0, sm.Memory(started_at=0.0), CLOCK, message, 15.0, 60.0, seconds)

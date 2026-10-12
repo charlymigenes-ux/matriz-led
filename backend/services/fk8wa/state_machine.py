@@ -132,6 +132,21 @@ def _track_done(entries: List[Dict[str, Any]], memory: Memory, now: float, done_
         memory.prev_state[e["id"]] = e["state"]
 
 
+def _thermal_data(e: Dict[str, Any], memory: Memory) -> Screen:
+    phase, temp, target = e["thermal"]
+    if phase == "cooling":
+        return phase, {"printer": e["label"], "temp": temp, "peak": max(temp, memory.peak.get(e["id"], temp))}
+    return phase, {"printer": e["label"], "temp": temp, "target": target}
+
+
+def _thermal_segments(entries: List[Dict[str, Any]], memory: Memory, seconds: float):
+    """Una vista por máquina que calienta, está en temperatura o se enfría
+    (las que imprimen no cuentan: su estado manda)."""
+    order = {"heating": 0, "ready": 1, "cooling": 2}
+    hot = sorted((e for e in entries if e["thermal"]), key=lambda e: order[e["thermal"][0]])
+    return [(*_thermal_data(e, memory), seconds) for e in hot]
+
+
 def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[str], now: float,
            memory: Memory, clock: datetime, message: Optional[str] = None,
            view_seconds: float = 15.0, done_seconds: float = 60.0,
@@ -145,6 +160,11 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
 
     entries = _entries(machines, selected_ids, short_names)
     _track_done(entries, memory, now, done_seconds)
+    for e in entries:       # la máxima de cada máquina, para saber qué tanto falta al enfriar
+        if e["thermal"]:
+            memory.peak[e["id"]] = max(memory.peak.get(e["id"], 0), e["thermal"][1])
+        else:
+            memory.peak.pop(e["id"], None)
 
     for state, screen in (("error", "error"), ("paused", "pause"), ("offline", "offline")):
         hit = next((e for e in entries if e["state"] == state), None)
@@ -179,18 +199,10 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
         memory.many_groups = [tags[i:i + 3] for i in range(0, len(tags), 3)]
         return "many", {"machines": tags[:3]}
 
-    for e in entries:       # la máxima de cada máquina, para saber qué tanto falta al enfriar
-        if e["thermal"]:
-            memory.peak[e["id"]] = max(memory.peak.get(e["id"], 0), e["thermal"][1])
-        else:
-            memory.peak.pop(e["id"], None)
     for phase in ("heating", "ready", "cooling"):
         hit = next((e for e in entries if e["thermal"] and e["thermal"][0] == phase), None)
         if hit:
-            _, temp, target = hit["thermal"]
-            if phase == "cooling":
-                return phase, {"printer": hit["label"], "temp": temp, "peak": max(temp, memory.peak.get(hit["id"], temp))}
-            return phase, {"printer": hit["label"], "temp": temp, "target": target}
+            return _thermal_data(hit, memory)
     if entries and all(e["state"] in QUIET_STATES for e in entries):
         return "idle", {"total": len(entries), "time": time_text}
     online = sum(1 for e in entries if e["state"] != "offline")
@@ -209,15 +221,20 @@ def playlist(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequenc
              short_names: Optional[Dict[str, str]] = None) -> List[Tuple[str, Dict[str, Any], Optional[float]]]:
     """Serie de vistas que el panel recorre solo, cada una con su duración
     (None = pantalla fija, sin contador). Misma prioridad que select():
-    - trabajando: vista 1 y vista 2 (una máquina) o grupos de 3 (varias);
+    - trabajando: vista 1 y vista 2 (una máquina) o grupos de 3 (varias), y
+      además una vista por cada máquina que calienta / está en temperatura /
+      enfría, para que no se oculten;
     - en reposo: "todo normal" y "todas en reposo" se alternan;
     - terminado y mensaje: lo que les falta por mostrarse;
     - un mensaje largo es un texto que corre (pantalla "scroll")."""
     name, data = select(machines, selected_ids, now, memory, clock, message, view_seconds, done_seconds, short_names)
-    if name in ("print1", "print2") and memory.print_views:
-        return [("print1", memory.print_views[0], view_seconds), ("print2", memory.print_views[1], view_seconds)]
-    if name == "many":
-        return [("many", {"machines": group}, view_seconds) for group in memory.many_groups]
+    if name in ("print1", "print2", "many"):
+        # lo que trabaja alterna con lo que calienta, está en temperatura o se enfría
+        extra = _thermal_segments(_entries(machines, selected_ids, short_names), memory, view_seconds)
+        if name == "many":
+            return [("many", {"machines": group}, view_seconds) for group in memory.many_groups] + extra
+        return [("print1", memory.print_views[0], view_seconds),
+                ("print2", memory.print_views[1], view_seconds)] + extra
     if name == "done" and memory.done:
         return [("done", data, max(1.0, memory.done["until"] - now))]
     if name == "special":
