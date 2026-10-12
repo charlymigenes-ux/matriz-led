@@ -320,6 +320,8 @@
             fkPrioNormal: 'Normal',
             fkPrioNormalTip: 'Todo en línea y sin pendientes.',
             fkPrioNow: 'ahora',
+            fkPrioCycle: 'En el ciclo',
+            fkPrioCycleSr: 'En el ciclo de pantallas de tu panel',
             fkPrioOffline: 'Desconectada',
             fkPrioOfflineTip: 'Una máquina de tu lista no responde.',
             fkPrioPause: 'Pausa',
@@ -742,6 +744,8 @@
             fkPrioNormal: 'Normal',
             fkPrioNormalTip: 'Everything online and nothing pending.',
             fkPrioNow: 'now',
+            fkPrioCycle: 'In cycle',
+            fkPrioCycleSr: 'In your panel\'s screen cycle',
             fkPrioOffline: 'Disconnected',
             fkPrioOfflineTip: 'A machine on your list is not responding.',
             fkPrioPause: 'Pause',
@@ -1164,6 +1168,8 @@
             fkPrioNormal: 'Normal',
             fkPrioNormalTip: 'Alles online und nichts offen.',
             fkPrioNow: 'jetzt',
+            fkPrioCycle: 'Im Zyklus',
+            fkPrioCycleSr: 'Im Bildschirmzyklus deines Panels',
             fkPrioOffline: 'Getrennt',
             fkPrioOfflineTip: 'Eine Maschine auf deiner Liste antwortet nicht.',
             fkPrioPause: 'Pause',
@@ -1586,6 +1592,8 @@
             fkPrioNormal: 'Normal',
             fkPrioNormalTip: 'Tout est en ligne et rien en attente.',
             fkPrioNow: 'maintenant',
+            fkPrioCycle: 'Dans le cycle',
+            fkPrioCycleSr: 'Dans le cycle d\'écrans de ton panneau',
             fkPrioOffline: 'Déconnectée',
             fkPrioOfflineTip: 'Une machine de votre liste ne répond pas.',
             fkPrioPause: 'Pause',
@@ -2008,6 +2016,8 @@
             fkPrioNormal: 'Normal',
             fkPrioNormalTip: 'Tudo online e sem pendências.',
             fkPrioNow: 'agora',
+            fkPrioCycle: 'No ciclo',
+            fkPrioCycleSr: 'No ciclo de telas do seu painel',
             fkPrioOffline: 'Desconectada',
             fkPrioOfflineTip: 'Uma máquina da sua lista não responde.',
             fkPrioPause: 'Pausa',
@@ -3941,6 +3951,13 @@
         ['cooling', '❄', 'fkPrioCooling', 'fkPrioCoolingTip'],
         ['normal', '●', 'fkPrioNormal', 'fkPrioNormalTip'],
     ];
+    // Pantalla -> paso de la tira (igual que PRIORITY_OF de service.py).
+    const FK_PRIORITY_OF = {
+        scroll: 'special', error: 'error', pause: 'pause', offline: 'offline', special: 'special', done: 'done',
+        print1: 'printing', print2: 'printing', many: 'printing',
+        heating: 'heating', ready: 'ready', cooling: 'cooling',
+        normal: 'normal', idle: 'normal', boot: 'normal', off: 'normal',
+    };
     // Nombres de los contornos (config.timer_style y situation_styles).
     // "marco" agrupa los 11 marco_* que anima el propio panel.
     const FK_STYLE_CARDS = [
@@ -4551,8 +4568,15 @@
         missingEl.textContent = missing.length ? tr('fkMissingMachines', { ids: missing.join(', ') }) : '';
         missingEl.hidden = !missing.length;
 
+        // Pasos cuyas pantallas también entran al ciclo (views) además del principal.
+        const inCycle = new Set((Array.isArray(s.views) ? s.views : [])
+            .map((view) => FK_PRIORITY_OF[view?.screen]).filter(Boolean));
         root.querySelectorAll('[data-fk-prio]').forEach((el) => {
             const isOn = el.dataset.fkPrio === s.priority;
+            const cyc = !isOn && inCycle.has(el.dataset.fkPrio);
+            el.classList.toggle('is-cycle', cyc);
+            const cycSr = el.querySelector('[data-fk-cycle-sr]');
+            if (cycSr) cycSr.hidden = !cyc;
             el.classList.toggle('is-on', isOn);
             if (isOn) el.setAttribute('aria-current', 'step');
             else el.removeAttribute('aria-current');
@@ -5636,9 +5660,10 @@
 
     function fkViewHtml() {
         const prio = FK_PRIORITY.map(([key, icon, labelKey, tipKey]) => `
-                            <li class="mled-fk-step" data-fk-prio="${key}" data-now="${esc(tr('fkPrioNow'))}" title="${esc(tr(tipKey))}">
+                            <li class="mled-fk-step" data-fk-prio="${key}" data-now="${esc(tr('fkPrioNow'))}" data-cycle="${esc(tr('fkPrioCycle'))}" title="${esc(tr(tipKey))}">
                                 <i aria-hidden="true">${icon}</i><span>${esc(tr(labelKey))}</span>
                                 <span class="mled-fk-sr">${esc(tr(tipKey))}</span>
+                                <span class="mled-fk-sr" data-fk-cycle-sr hidden>${esc(tr('fkPrioCycleSr'))}</span>
                             </li>`).join('');
         const minutes = FK_MINUTES.map((n) => `<button type="button" data-fk-minutes="${n}" aria-pressed="false">${esc(tr('fkMinutesShort', { n }))}</button>`).join('');
         const patterns = FK_PATTERNS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');

@@ -1476,6 +1476,29 @@
     white-space: nowrap;
 }
 
+.mled-fk-step.is-cycle {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    border-style: dashed;
+    background: color-mix(in srgb, var(--accent) 7%, var(--card-bg));
+}
+
+.mled-fk-step.is-cycle::after {
+    content: attr(data-cycle);
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+    padding: 0 6px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
 .mled-fk-sr {
     position: absolute;
     width: 1px;
