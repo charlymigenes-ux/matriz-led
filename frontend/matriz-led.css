@@ -1725,8 +1725,11 @@
     top: 0;
     z-index: 10;
     padding: 6px 0;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
+    /* Sin fondo, borde ni sombra de barra: solo se ven los botones con su
+       resplandor (cada uno conserva su propio fondo para leerse). */
+    background: transparent;
+    border: 0;
+    box-shadow: none;
     /* Color de resplandor de cada pestaña, declarado una sola vez con los
        colores semánticos del tema de NOPAL (cambian solos con dark/green/
        red/custom/light). */
@@ -1749,8 +1752,28 @@
     cursor: pointer;
     --mled-fk-glow: var(--accent);
     box-shadow: 0 0 6px 0 color-mix(in srgb, var(--mled-fk-glow) 30%, transparent);
-    transition: box-shadow 0.2s ease;
+    transition: border-color 0.2s ease;
+    /* Latido copiado de NOPAL (.sidebar-settings-btn / sidebarSettingsPulse:
+       2.2 s, ease-in-out, infinito), adaptado al color de cada pestaña. */
+    animation: mledFkTabPulse 2.2s ease-in-out infinite;
 }
+
+@keyframes mledFkTabPulse {
+    0%, 100% { box-shadow: 0 0 6px 0 color-mix(in srgb, var(--mled-fk-glow) 25%, transparent); }
+    50% { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--mled-fk-glow) 65%, transparent); }
+}
+
+@keyframes mledFkTabPulseActive {
+    0%, 100% { box-shadow: 0 0 10px 1px color-mix(in srgb, var(--mled-fk-glow) 45%, transparent); }
+    50% { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--mled-fk-glow) 90%, transparent); }
+}
+
+/* Desfase escalonado para que no latan todas al unísono. */
+#mled-fk-tab-panel { animation-delay: 0s; }
+#mled-fk-tab-mach { animation-delay: -0.44s; }
+#mled-fk-tab-clock { animation-delay: -0.88s; }
+#mled-fk-tab-fx { animation-delay: -1.32s; }
+#mled-fk-tab-screens { animation-delay: -1.76s; }
 
 #mled-fk-tab-panel { --mled-fk-glow: var(--mled-fk-tab-glow-1); }
 #mled-fk-tab-mach { --mled-fk-glow: var(--mled-fk-tab-glow-2); }
@@ -1769,6 +1792,7 @@
     background: color-mix(in srgb, var(--accent) 18%, var(--panel-bg));
     color: var(--text);
     box-shadow: 0 0 16px 2px color-mix(in srgb, var(--mled-fk-glow) 75%, transparent);
+    animation-name: mledFkTabPulseActive;
 }
 
 .mled-fk-grid {
@@ -2257,6 +2281,7 @@
 @media (prefers-reduced-motion: reduce) {
     .mled-fk-tab {
         transition: none;
+        animation: none;
     }
 
     .mled-fk-tip {
