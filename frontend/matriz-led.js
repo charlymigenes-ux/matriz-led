@@ -136,6 +136,81 @@
             confirmClearAll: 'Vas a borrar todo el dibujo actual. Esta acción no se puede deshacer.', clearAllConfirmTitle: 'Borrar todo',
             testing: 'Probando…', matrixLedNavLabel: 'Matriz LED',
             dayInitials: 'L,M,M,J,V,S,D',
+            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
+            fkTab: 'Panel FK-8Wa',
+            fkTitle: 'Panel FK-8Wa · 96×16',
+            fkSub: 'Panel LED rojo de 96×16 que muestra el estado de las máquinas del taller.',
+            fkStatusTitle: 'Estado del panel',
+            fkStateDisabled: 'Desactivado',
+            fkStateOk: 'Conectado',
+            fkStateUnreachable: 'Sin respuesta',
+            fkStateSizeMismatch: 'Tamaño incorrecto',
+            fkStateUnknown: 'Desconocido',
+            fkStatusLoadError: 'No se pudo leer el estado del panel',
+            fkCurrentScreen: 'Pantalla actual',
+            fkNextRetry: 'Próximo reintento',
+            fkInSeconds: 'en {n} s',
+            fkPanelInfo: 'Panel detectado',
+            fkSendsLabel: 'Envíos desde el arranque',
+            fkSizeMismatch: 'El panel reporta {size} en vez de 96x16. Probablemente se mantuvo presionado 15 s el botón de prueba de la placa; reconfigúralo con FKShow y luego presiona Probar conexión.',
+            fkMissingMachines: 'Estas máquinas ya no existen en NOPAL; quítalas de la lista y guarda: {ids}',
+            fkPreviewTitle: 'Vista previa en vivo',
+            fkPreviewScreenLabel: 'Pantalla a mostrar',
+            fkPreviewLive: 'En vivo (pantalla actual)',
+            fkPreviewAlt: 'Vista previa del panel FK-8Wa',
+            fkPreviewError: 'No se pudo cargar la vista previa.',
+            fkScreenBoot: 'Arranque',
+            fkScreenNormal: 'Todo normal',
+            fkScreenPrint1: 'Impresión activa (vista 1)',
+            fkScreenPrint2: 'Impresión activa (vista 2)',
+            fkScreenMany: 'Varias máquinas',
+            fkScreenPause: 'Pausada',
+            fkScreenError: 'Error',
+            fkScreenOffline: 'Desconectada',
+            fkScreenIdle: 'Todas detenidas',
+            fkScreenDone: 'Trabajo terminado',
+            fkScreenSpecial: 'Mensaje especial',
+            fkScreenOff: 'Apagado',
+            fkConfigTitle: 'Configuración del panel',
+            fkReadOnlyNote: 'Solo un administrador puede cambiar esta configuración.',
+            fkEnabledLabel: 'Activar el panel',
+            fkIpLabel: 'IP del panel',
+            fkBrightnessLabel: 'Brillo (1 a 16)',
+            fkBrightnessApplied: 'Brillo aplicado: {level}',
+            fkMachinesLabel: 'Máquinas en el panel (P1, P2…)',
+            fkMachinesEmpty: 'Todavía no hay máquinas elegidas.',
+            fkAddMachineLabel: 'Agregar máquina',
+            fkAddBtn: 'Agregar',
+            fkNoMoreMachines: 'No hay más máquinas para agregar',
+            fkMoveUp: 'Subir',
+            fkMoveDown: 'Bajar',
+            fkRemove: 'Quitar',
+            fkUnknownMachine: '{id} (ya no existe)',
+            fkMinIntervalLabel: 'Intervalo mínimo entre envíos (s, 10 a 600)',
+            fkViewSecondsLabel: 'Duración de cada vista (s, 5 a 300)',
+            fkDoneSecondsLabel: 'Duración de "terminado" (s, 5 a 3600)',
+            fkTestResult: 'El panel responde: IP {ip}, puerto {port}, tamaño {width}x{height}',
+            fkMessageTitle: 'Mensaje especial',
+            fkMessageTextLabel: 'Texto (máx. 200 caracteres)',
+            fkMessagePlaceholder: 'Junta a las 5',
+            fkMinutesLabel: 'Minutos en pantalla (1 a 1440)',
+            fkSendBtn: 'Enviar al panel',
+            fkOrAnnouncement: 'O muestra un anuncio guardado',
+            fkAnnouncementLabel: 'Anuncio',
+            fkChooseAnnouncement: 'Elige un anuncio…',
+            fkSendAnnouncementBtn: 'Mostrar anuncio',
+            fkNoMessage: 'Sin mensaje especial vigente.',
+            fkCurrentMessage: 'Mensaje vigente',
+            fkExpiresAt: 'Vence a las {time}',
+            fkClearMessageBtn: 'Quitar mensaje',
+            fkSending: 'Enviando…',
+            fkMessageSent: 'Mensaje enviado',
+            fkMessageCleared: 'Mensaje quitado',
+            fkMissingText: 'Escribe un texto primero',
+            fkMissingAnnouncement: 'Elige un anuncio primero',
+            fkNote: 'Una sola sesión a la vez con el panel; NOPAL solo envía cuando la pantalla cambia (como mucho cada intervalo mínimo).',
+            fkRuleCheckbox: 'También mostrar en el panel FK-8Wa',
+            fkRuleBadgeTitle: 'Esta regla también se muestra en el panel FK-8Wa',
         },
         en: {
             effectStatic: 'Static', effectBlink: 'Blink',
@@ -234,6 +309,81 @@
             confirmClearAll: 'You are about to clear the entire current drawing. This action cannot be undone.', clearAllConfirmTitle: 'Clear all',
             testing: 'Testing…', matrixLedNavLabel: 'LED Matrix',
             dayInitials: 'M,T,W,T,F,S,S',
+            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
+            fkTab: 'FK-8Wa panel',
+            fkTitle: 'FK-8Wa panel · 96×16',
+            fkSub: 'Red 96×16 LED panel that shows the status of the workshop machines.',
+            fkStatusTitle: 'Panel status',
+            fkStateDisabled: 'Disabled',
+            fkStateOk: 'Connected',
+            fkStateUnreachable: 'Not responding',
+            fkStateSizeMismatch: 'Wrong size',
+            fkStateUnknown: 'Unknown',
+            fkStatusLoadError: 'Could not read the panel status',
+            fkCurrentScreen: 'Current screen',
+            fkNextRetry: 'Next retry',
+            fkInSeconds: 'in {n} s',
+            fkPanelInfo: 'Detected panel',
+            fkSendsLabel: 'Sends since startup',
+            fkSizeMismatch: 'The panel reports {size} instead of 96x16. The board\'s test button was probably held down for 15 s; reconfigure it with FKShow and then press Test connection.',
+            fkMissingMachines: 'These machines no longer exist in NOPAL; remove them from the list and save: {ids}',
+            fkPreviewTitle: 'Live preview',
+            fkPreviewScreenLabel: 'Screen to show',
+            fkPreviewLive: 'Live (current screen)',
+            fkPreviewAlt: 'FK-8Wa panel preview',
+            fkPreviewError: 'Could not load the preview.',
+            fkScreenBoot: 'Startup',
+            fkScreenNormal: 'All normal',
+            fkScreenPrint1: 'Active print (view 1)',
+            fkScreenPrint2: 'Active print (view 2)',
+            fkScreenMany: 'Several machines',
+            fkScreenPause: 'Paused',
+            fkScreenError: 'Error',
+            fkScreenOffline: 'Disconnected',
+            fkScreenIdle: 'All stopped',
+            fkScreenDone: 'Job finished',
+            fkScreenSpecial: 'Special message',
+            fkScreenOff: 'Off',
+            fkConfigTitle: 'Panel settings',
+            fkReadOnlyNote: 'Only an administrator can change these settings.',
+            fkEnabledLabel: 'Enable the panel',
+            fkIpLabel: 'Panel IP',
+            fkBrightnessLabel: 'Brightness (1 to 16)',
+            fkBrightnessApplied: 'Brightness applied: {level}',
+            fkMachinesLabel: 'Machines on the panel (P1, P2…)',
+            fkMachinesEmpty: 'No machines chosen yet.',
+            fkAddMachineLabel: 'Add machine',
+            fkAddBtn: 'Add',
+            fkNoMoreMachines: 'No more machines to add',
+            fkMoveUp: 'Move up',
+            fkMoveDown: 'Move down',
+            fkRemove: 'Remove',
+            fkUnknownMachine: '{id} (no longer exists)',
+            fkMinIntervalLabel: 'Minimum interval between sends (s, 10 to 600)',
+            fkViewSecondsLabel: 'Duration of each view (s, 5 to 300)',
+            fkDoneSecondsLabel: 'Duration of "finished" (s, 5 to 3600)',
+            fkTestResult: 'The panel responds: IP {ip}, port {port}, size {width}x{height}',
+            fkMessageTitle: 'Special message',
+            fkMessageTextLabel: 'Text (max. 200 characters)',
+            fkMessagePlaceholder: 'Meeting at 5',
+            fkMinutesLabel: 'Minutes on screen (1 to 1440)',
+            fkSendBtn: 'Send to panel',
+            fkOrAnnouncement: 'Or show a saved announcement',
+            fkAnnouncementLabel: 'Announcement',
+            fkChooseAnnouncement: 'Choose an announcement…',
+            fkSendAnnouncementBtn: 'Show announcement',
+            fkNoMessage: 'No active special message.',
+            fkCurrentMessage: 'Active message',
+            fkExpiresAt: 'Expires at {time}',
+            fkClearMessageBtn: 'Remove message',
+            fkSending: 'Sending…',
+            fkMessageSent: 'Message sent',
+            fkMessageCleared: 'Message removed',
+            fkMissingText: 'Type some text first',
+            fkMissingAnnouncement: 'Choose an announcement first',
+            fkNote: 'Only one session at a time with the panel; NOPAL only sends when the screen changes (at most once per minimum interval).',
+            fkRuleCheckbox: 'Also show on the FK-8Wa panel',
+            fkRuleBadgeTitle: 'This rule is also shown on the FK-8Wa panel',
         },
         de: {
             effectStatic: 'Statisch', effectBlink: 'Blinken',
@@ -332,6 +482,81 @@
             confirmClearAll: 'Du wirst die gesamte aktuelle Zeichnung löschen. Diese Aktion kann nicht rückgängig gemacht werden.', clearAllConfirmTitle: 'Alles löschen',
             testing: 'Wird getestet…', matrixLedNavLabel: 'LED-Matrix',
             dayInitials: 'M,D,M,D,F,S,S',
+            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
+            fkTab: 'FK-8Wa-Panel',
+            fkTitle: 'FK-8Wa-Panel · 96×16',
+            fkSub: 'Rotes 96×16-LED-Panel, das den Status der Werkstattmaschinen anzeigt.',
+            fkStatusTitle: 'Panel-Status',
+            fkStateDisabled: 'Deaktiviert',
+            fkStateOk: 'Verbunden',
+            fkStateUnreachable: 'Keine Antwort',
+            fkStateSizeMismatch: 'Falsche Größe',
+            fkStateUnknown: 'Unbekannt',
+            fkStatusLoadError: 'Panel-Status konnte nicht gelesen werden',
+            fkCurrentScreen: 'Aktueller Bildschirm',
+            fkNextRetry: 'Nächster Versuch',
+            fkInSeconds: 'in {n} s',
+            fkPanelInfo: 'Erkanntes Panel',
+            fkSendsLabel: 'Sendungen seit dem Start',
+            fkSizeMismatch: 'Das Panel meldet {size} statt 96x16. Vermutlich wurde die Testtaste der Platine 15 s lang gedrückt gehalten; konfiguriere es mit FKShow neu und drücke dann auf Verbindung testen.',
+            fkMissingMachines: 'Diese Maschinen gibt es in NOPAL nicht mehr; entferne sie aus der Liste und speichere: {ids}',
+            fkPreviewTitle: 'Live-Vorschau',
+            fkPreviewScreenLabel: 'Anzuzeigender Bildschirm',
+            fkPreviewLive: 'Live (aktueller Bildschirm)',
+            fkPreviewAlt: 'Vorschau des FK-8Wa-Panels',
+            fkPreviewError: 'Vorschau konnte nicht geladen werden.',
+            fkScreenBoot: 'Start',
+            fkScreenNormal: 'Alles normal',
+            fkScreenPrint1: 'Aktiver Druck (Ansicht 1)',
+            fkScreenPrint2: 'Aktiver Druck (Ansicht 2)',
+            fkScreenMany: 'Mehrere Maschinen',
+            fkScreenPause: 'Pausiert',
+            fkScreenError: 'Fehler',
+            fkScreenOffline: 'Getrennt',
+            fkScreenIdle: 'Alle gestoppt',
+            fkScreenDone: 'Auftrag beendet',
+            fkScreenSpecial: 'Sondermeldung',
+            fkScreenOff: 'Aus',
+            fkConfigTitle: 'Panel-Konfiguration',
+            fkReadOnlyNote: 'Nur ein Administrator kann diese Konfiguration ändern.',
+            fkEnabledLabel: 'Panel aktivieren',
+            fkIpLabel: 'Panel-IP',
+            fkBrightnessLabel: 'Helligkeit (1 bis 16)',
+            fkBrightnessApplied: 'Helligkeit übernommen: {level}',
+            fkMachinesLabel: 'Maschinen auf dem Panel (P1, P2…)',
+            fkMachinesEmpty: 'Noch keine Maschinen ausgewählt.',
+            fkAddMachineLabel: 'Maschine hinzufügen',
+            fkAddBtn: 'Hinzufügen',
+            fkNoMoreMachines: 'Keine weiteren Maschinen verfügbar',
+            fkMoveUp: 'Nach oben',
+            fkMoveDown: 'Nach unten',
+            fkRemove: 'Entfernen',
+            fkUnknownMachine: '{id} (existiert nicht mehr)',
+            fkMinIntervalLabel: 'Mindestabstand zwischen Sendungen (s, 10 bis 600)',
+            fkViewSecondsLabel: 'Dauer jeder Ansicht (s, 5 bis 300)',
+            fkDoneSecondsLabel: 'Dauer von "beendet" (s, 5 bis 3600)',
+            fkTestResult: 'Das Panel antwortet: IP {ip}, Port {port}, Größe {width}x{height}',
+            fkMessageTitle: 'Sondermeldung',
+            fkMessageTextLabel: 'Text (max. 200 Zeichen)',
+            fkMessagePlaceholder: 'Besprechung um 5',
+            fkMinutesLabel: 'Minuten auf dem Bildschirm (1 bis 1440)',
+            fkSendBtn: 'An das Panel senden',
+            fkOrAnnouncement: 'Oder eine gespeicherte Anzeige zeigen',
+            fkAnnouncementLabel: 'Anzeige',
+            fkChooseAnnouncement: 'Anzeige auswählen…',
+            fkSendAnnouncementBtn: 'Anzeige zeigen',
+            fkNoMessage: 'Keine aktive Sondermeldung.',
+            fkCurrentMessage: 'Aktive Meldung',
+            fkExpiresAt: 'Läuft um {time} ab',
+            fkClearMessageBtn: 'Meldung entfernen',
+            fkSending: 'Wird gesendet…',
+            fkMessageSent: 'Meldung gesendet',
+            fkMessageCleared: 'Meldung entfernt',
+            fkMissingText: 'Gib zuerst einen Text ein',
+            fkMissingAnnouncement: 'Wähle zuerst eine Anzeige aus',
+            fkNote: 'Nur eine Sitzung gleichzeitig mit dem Panel; NOPAL sendet nur, wenn sich der Bildschirm ändert (höchstens einmal pro Mindestabstand).',
+            fkRuleCheckbox: 'Auch auf dem FK-8Wa-Panel anzeigen',
+            fkRuleBadgeTitle: 'Diese Regel wird auch auf dem FK-8Wa-Panel angezeigt',
         },
         fr: {
             effectStatic: 'Statique', effectBlink: 'Clignotement',
@@ -430,6 +655,81 @@
             confirmClearAll: 'Vous allez effacer tout le dessin actuel. Cette action est irréversible.', clearAllConfirmTitle: 'Tout effacer',
             testing: 'Test en cours…', matrixLedNavLabel: 'Matrice LED',
             dayInitials: 'L,M,M,J,V,S,D',
+            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
+            fkTab: 'Panneau FK-8Wa',
+            fkTitle: 'Panneau FK-8Wa · 96×16',
+            fkSub: 'Panneau LED rouge de 96×16 qui affiche l\'état des machines de l\'atelier.',
+            fkStatusTitle: 'État du panneau',
+            fkStateDisabled: 'Désactivé',
+            fkStateOk: 'Connecté',
+            fkStateUnreachable: 'Aucune réponse',
+            fkStateSizeMismatch: 'Taille incorrecte',
+            fkStateUnknown: 'Inconnu',
+            fkStatusLoadError: 'Impossible de lire l\'état du panneau',
+            fkCurrentScreen: 'Écran actuel',
+            fkNextRetry: 'Prochaine tentative',
+            fkInSeconds: 'dans {n} s',
+            fkPanelInfo: 'Panneau détecté',
+            fkSendsLabel: 'Envois depuis le démarrage',
+            fkSizeMismatch: 'Le panneau indique {size} au lieu de 96x16. Le bouton de test de la carte a probablement été maintenu enfoncé 15 s ; reconfigurez-le avec FKShow puis appuyez sur Tester la connexion.',
+            fkMissingMachines: 'Ces machines n\'existent plus dans NOPAL ; retirez-les de la liste et enregistrez : {ids}',
+            fkPreviewTitle: 'Aperçu en direct',
+            fkPreviewScreenLabel: 'Écran à afficher',
+            fkPreviewLive: 'En direct (écran actuel)',
+            fkPreviewAlt: 'Aperçu du panneau FK-8Wa',
+            fkPreviewError: 'Impossible de charger l\'aperçu.',
+            fkScreenBoot: 'Démarrage',
+            fkScreenNormal: 'Tout est normal',
+            fkScreenPrint1: 'Impression en cours (vue 1)',
+            fkScreenPrint2: 'Impression en cours (vue 2)',
+            fkScreenMany: 'Plusieurs machines',
+            fkScreenPause: 'En pause',
+            fkScreenError: 'Erreur',
+            fkScreenOffline: 'Déconnectée',
+            fkScreenIdle: 'Toutes à l\'arrêt',
+            fkScreenDone: 'Travail terminé',
+            fkScreenSpecial: 'Message spécial',
+            fkScreenOff: 'Éteint',
+            fkConfigTitle: 'Configuration du panneau',
+            fkReadOnlyNote: 'Seul un administrateur peut modifier cette configuration.',
+            fkEnabledLabel: 'Activer le panneau',
+            fkIpLabel: 'IP du panneau',
+            fkBrightnessLabel: 'Luminosité (1 à 16)',
+            fkBrightnessApplied: 'Luminosité appliquée : {level}',
+            fkMachinesLabel: 'Machines sur le panneau (P1, P2…)',
+            fkMachinesEmpty: 'Aucune machine choisie pour le moment.',
+            fkAddMachineLabel: 'Ajouter une machine',
+            fkAddBtn: 'Ajouter',
+            fkNoMoreMachines: 'Plus aucune machine à ajouter',
+            fkMoveUp: 'Monter',
+            fkMoveDown: 'Descendre',
+            fkRemove: 'Retirer',
+            fkUnknownMachine: '{id} (n\'existe plus)',
+            fkMinIntervalLabel: 'Intervalle minimal entre les envois (s, 10 à 600)',
+            fkViewSecondsLabel: 'Durée de chaque vue (s, 5 à 300)',
+            fkDoneSecondsLabel: 'Durée de « terminé » (s, 5 à 3600)',
+            fkTestResult: 'Le panneau répond : IP {ip}, port {port}, taille {width}x{height}',
+            fkMessageTitle: 'Message spécial',
+            fkMessageTextLabel: 'Texte (200 caractères max.)',
+            fkMessagePlaceholder: 'Réunion à 17 h',
+            fkMinutesLabel: 'Minutes à l\'écran (1 à 1440)',
+            fkSendBtn: 'Envoyer au panneau',
+            fkOrAnnouncement: 'Ou afficher une annonce enregistrée',
+            fkAnnouncementLabel: 'Annonce',
+            fkChooseAnnouncement: 'Choisissez une annonce…',
+            fkSendAnnouncementBtn: 'Afficher l\'annonce',
+            fkNoMessage: 'Aucun message spécial en cours.',
+            fkCurrentMessage: 'Message en cours',
+            fkExpiresAt: 'Expire à {time}',
+            fkClearMessageBtn: 'Retirer le message',
+            fkSending: 'Envoi…',
+            fkMessageSent: 'Message envoyé',
+            fkMessageCleared: 'Message retiré',
+            fkMissingText: 'Saisissez d\'abord un texte',
+            fkMissingAnnouncement: 'Choisissez d\'abord une annonce',
+            fkNote: 'Une seule session à la fois avec le panneau ; NOPAL n\'envoie que lorsque l\'écran change (au plus une fois par intervalle minimal).',
+            fkRuleCheckbox: 'Afficher aussi sur le panneau FK-8Wa',
+            fkRuleBadgeTitle: 'Cette règle s\'affiche aussi sur le panneau FK-8Wa',
         },
         'pt-BR': {
             effectStatic: 'Estático', effectBlink: 'Piscar',
@@ -528,6 +828,81 @@
             confirmClearAll: 'Você vai apagar todo o desenho atual. Esta ação não pode ser desfeita.', clearAllConfirmTitle: 'Limpar tudo',
             testing: 'Testando…', matrixLedNavLabel: 'Matriz LED',
             dayInitials: 'S,T,Q,Q,S,S,D',
+            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
+            fkTab: 'Painel FK-8Wa',
+            fkTitle: 'Painel FK-8Wa · 96×16',
+            fkSub: 'Painel LED vermelho de 96×16 que mostra o status das máquinas da oficina.',
+            fkStatusTitle: 'Status do painel',
+            fkStateDisabled: 'Desativado',
+            fkStateOk: 'Conectado',
+            fkStateUnreachable: 'Sem resposta',
+            fkStateSizeMismatch: 'Tamanho incorreto',
+            fkStateUnknown: 'Desconhecido',
+            fkStatusLoadError: 'Não foi possível ler o status do painel',
+            fkCurrentScreen: 'Tela atual',
+            fkNextRetry: 'Próxima tentativa',
+            fkInSeconds: 'em {n} s',
+            fkPanelInfo: 'Painel detectado',
+            fkSendsLabel: 'Envios desde a inicialização',
+            fkSizeMismatch: 'O painel informa {size} em vez de 96x16. Provavelmente o botão de teste da placa foi mantido pressionado por 15 s; reconfigure-o com o FKShow e depois clique em Testar conexão.',
+            fkMissingMachines: 'Estas máquinas não existem mais no NOPAL; remova-as da lista e salve: {ids}',
+            fkPreviewTitle: 'Pré-visualização ao vivo',
+            fkPreviewScreenLabel: 'Tela a mostrar',
+            fkPreviewLive: 'Ao vivo (tela atual)',
+            fkPreviewAlt: 'Pré-visualização do painel FK-8Wa',
+            fkPreviewError: 'Não foi possível carregar a pré-visualização.',
+            fkScreenBoot: 'Inicialização',
+            fkScreenNormal: 'Tudo normal',
+            fkScreenPrint1: 'Impressão ativa (vista 1)',
+            fkScreenPrint2: 'Impressão ativa (vista 2)',
+            fkScreenMany: 'Várias máquinas',
+            fkScreenPause: 'Pausada',
+            fkScreenError: 'Erro',
+            fkScreenOffline: 'Desconectada',
+            fkScreenIdle: 'Todas paradas',
+            fkScreenDone: 'Trabalho concluído',
+            fkScreenSpecial: 'Mensagem especial',
+            fkScreenOff: 'Desligado',
+            fkConfigTitle: 'Configuração do painel',
+            fkReadOnlyNote: 'Somente um administrador pode alterar esta configuração.',
+            fkEnabledLabel: 'Ativar o painel',
+            fkIpLabel: 'IP do painel',
+            fkBrightnessLabel: 'Brilho (1 a 16)',
+            fkBrightnessApplied: 'Brilho aplicado: {level}',
+            fkMachinesLabel: 'Máquinas no painel (P1, P2…)',
+            fkMachinesEmpty: 'Nenhuma máquina escolhida ainda.',
+            fkAddMachineLabel: 'Adicionar máquina',
+            fkAddBtn: 'Adicionar',
+            fkNoMoreMachines: 'Não há mais máquinas para adicionar',
+            fkMoveUp: 'Subir',
+            fkMoveDown: 'Descer',
+            fkRemove: 'Remover',
+            fkUnknownMachine: '{id} (não existe mais)',
+            fkMinIntervalLabel: 'Intervalo mínimo entre envios (s, 10 a 600)',
+            fkViewSecondsLabel: 'Duração de cada vista (s, 5 a 300)',
+            fkDoneSecondsLabel: 'Duração de "concluído" (s, 5 a 3600)',
+            fkTestResult: 'O painel responde: IP {ip}, porta {port}, tamanho {width}x{height}',
+            fkMessageTitle: 'Mensagem especial',
+            fkMessageTextLabel: 'Texto (máx. 200 caracteres)',
+            fkMessagePlaceholder: 'Reunião às 5',
+            fkMinutesLabel: 'Minutos na tela (1 a 1440)',
+            fkSendBtn: 'Enviar ao painel',
+            fkOrAnnouncement: 'Ou mostre um anúncio salvo',
+            fkAnnouncementLabel: 'Anúncio',
+            fkChooseAnnouncement: 'Escolha um anúncio…',
+            fkSendAnnouncementBtn: 'Mostrar anúncio',
+            fkNoMessage: 'Nenhuma mensagem especial ativa.',
+            fkCurrentMessage: 'Mensagem ativa',
+            fkExpiresAt: 'Expira às {time}',
+            fkClearMessageBtn: 'Remover mensagem',
+            fkSending: 'Enviando…',
+            fkMessageSent: 'Mensagem enviada',
+            fkMessageCleared: 'Mensagem removida',
+            fkMissingText: 'Digite um texto primeiro',
+            fkMissingAnnouncement: 'Escolha um anúncio primeiro',
+            fkNote: 'Só uma sessão por vez com o painel; o NOPAL só envia quando a tela muda (no máximo uma vez por intervalo mínimo).',
+            fkRuleCheckbox: 'Mostrar também no painel FK-8Wa',
+            fkRuleBadgeTitle: 'Esta regra também é mostrada no painel FK-8Wa',
         },
     };
 
@@ -1994,6 +2369,16 @@
         syncMachinePolling();
     }
 
+    // Casilla "También mostrar en el panel FK-8Wa" de las reglas
+    // (campo booleano `fk8wa`; las reglas viejas sin el campo valen false).
+    // Si la regla todavía no existe, la elección se guarda aquí y viaja en
+    // el POST que la crea al pulsar "Activar".
+    const fkRulePending = { idle_timeout: false, material_low: false };
+
+    function ruleFk8wa(rule, trigger) {
+        return rule ? !!rule.fk8wa : !!fkRulePending[trigger];
+    }
+
     function renderSuggestions() {
         const container = root.querySelector('#mled-suggestions');
         if (!container) return;
@@ -2009,12 +2394,14 @@
                 title: tr('suggestionIdleTitle'),
                 detail: tr('suggestionIdleDetail', { suffix: anyIdleMachine ? tr('detectedNowSuffix') : '' }),
                 active: !!idleRule?.enabled,
+                rule: idleRule, trigger: 'idle_timeout',
                 onToggle: async () => {
+                    const fk8wa = ruleFk8wa(idleRule, 'idle_timeout');
                     if (idleRule) {
-                        await api(`/rules/${encodeURIComponent(idleRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !idleRule.enabled }) });
+                        await api(`/rules/${encodeURIComponent(idleRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !idleRule.enabled, fk8wa }) });
                     } else {
                         const announcement = await ensureAnnouncementByName(tr('tplNightMode'), 'tpl-nocturno');
-                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('suggestionIdleTitle'), trigger: 'idle_timeout', idle_minutes: 5, announcement_id: announcement.id, enabled: true }) });
+                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('suggestionIdleTitle'), trigger: 'idle_timeout', idle_minutes: 5, announcement_id: announcement.id, enabled: true, fk8wa }) });
                     }
                     await loadRules();
                 },
@@ -2024,12 +2411,14 @@
                 title: tr('suggestionMaterialTitle'),
                 detail: tr('suggestionMaterialDetail', { suffix: materialDetected ? tr('detectedNowSuffix') : '' }),
                 active: !!materialRule?.enabled,
+                rule: materialRule, trigger: 'material_low',
                 onToggle: async () => {
+                    const fk8wa = ruleFk8wa(materialRule, 'material_low');
                     if (materialRule) {
-                        await api(`/rules/${encodeURIComponent(materialRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !materialRule.enabled }) });
+                        await api(`/rules/${encodeURIComponent(materialRule.id)}`, { method: 'PUT', body: JSON.stringify({ enabled: !materialRule.enabled, fk8wa }) });
                     } else {
                         const announcement = await ensureAnnouncementByName(tr('tplLowMaterial'), 'tpl-material-bajo');
-                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('tplLowMaterial'), trigger: 'material_low', announcement_id: announcement.id, enabled: true }) });
+                        await api('/rules', { method: 'POST', body: JSON.stringify({ name: tr('tplLowMaterial'), trigger: 'material_low', announcement_id: announcement.id, enabled: true, fk8wa }) });
                     }
                     await loadRules();
                 },
@@ -2061,14 +2450,35 @@
             <div class="mled-suggestion ${item.available ? '' : 'mled-suggestion-unavailable'}">
                 <span class="mled-suggestion-icon">${item.icon}</span>
                 <div class="mled-suggestion-copy">
-                    <strong>${esc(item.title)}</strong>
+                    <strong>${esc(item.title)}${item.trigger && item.active && ruleFk8wa(item.rule, item.trigger) ? ` <span class="mled-fk-rule-badge" title="${esc(tr('fkRuleBadgeTitle'))}">FK-8Wa</span>` : ''}</strong>
                     <small>${esc(item.detail)}</small>
+                    ${item.trigger ? `<label class="mled-checkbox mled-fk-rule-check"><input type="checkbox" data-fk-rule="${item.trigger}" ${ruleFk8wa(item.rule, item.trigger) ? 'checked' : ''}><span>${esc(tr('fkRuleCheckbox'))}</span></label>` : ''}
                 </div>
                 ${item.available
                     ? `<button type="button" class="mled-btn mled-btn-small ${item.active ? 'mled-btn-primary' : ''}" data-suggestion="${item.id}" title="${item.active ? tr('clickToDeactivate') : tr('clickToActivate')}">${item.active ? tr('activeBadge') : tr('activateBtn')}</button>`
                     : `<span class="mled-badge mled-badge-estado">${tr('notAvailableBadge')}</span>`}
             </div>
         `).join('');
+
+        container.querySelectorAll('[data-fk-rule]').forEach((checkbox) => {
+            checkbox.addEventListener('change', async () => {
+                const item = items.find((entry) => entry.trigger === checkbox.dataset.fkRule);
+                if (!item) return;
+                if (!item.rule) {
+                    fkRulePending[item.trigger] = checkbox.checked;
+                    return;
+                }
+                checkbox.disabled = true;
+                try {
+                    await api(`/rules/${encodeURIComponent(item.rule.id)}`, { method: 'PUT', body: JSON.stringify({ fk8wa: checkbox.checked }) });
+                    await loadRules();
+                } catch (error) {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.disabled = false;
+                    root.querySelector('#mled-save-msg').textContent = error.message || tr('genericError');
+                }
+            });
+        });
 
         container.querySelectorAll('[data-suggestion]').forEach((button) => {
             button.addEventListener('click', async () => {
@@ -2177,21 +2587,527 @@
         root.querySelectorAll('.mled-view-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.view === view));
         root.querySelector('#mled-view-dashboard').hidden = view !== 'dashboard';
         root.querySelector('#mled-view-editor').hidden = view !== 'editor';
+        root.querySelector('#mled-view-fk8wa').hidden = view !== 'fk8wa';
         const title = root.querySelector('#mled-page-title');
         const sub = root.querySelector('#mled-page-sub');
         if (view === 'dashboard') {
             title.textContent = tr('dashboardTitle');
             sub.textContent = tr('dashboardSub');
+        } else if (view === 'fk8wa') {
+            title.textContent = tr('fkTitle');
+            sub.textContent = tr('fkSub');
         } else {
             title.textContent = tr('editorTitle');
             sub.textContent = tr('editorSub');
         }
         if (view === 'dashboard') updateScenesArrowVisibility();
+        // El sondeo del panel FK-8Wa solo corre con su pestaña abierta.
+        if (view === 'fk8wa') fkEnter();
+        else fkStopPolling();
     }
 
     async function loadDashboard() {
         await Promise.all([loadDeviceInfo(), loadLastSent(), loadLastError(), loadStats(), loadRules(), loadMaterialAlerts(), loadMachineAlerts()]);
         renderKPIs();
+    }
+
+    // ── Panel FK-8Wa (96x16 monocromo, rojo) ──
+    // Panel LED físico por WiFi, independiente de la matriz iPixel BLE de
+    // arriba: el backend (backend/services/fk8wa/) decide qué pantalla
+    // mostrar y la manda solo; esta vista nada más lee su estado, enseña la
+    // vista previa (PNG que renderiza el backend, nunca se dibuja acá) y
+    // edita su configuración. PUT config, /test y /brightness son
+    // require_role("admin"): al operador se le muestra la configuración en
+    // solo lectura (sin botones), igual que el core oculta lo admin-only en
+    // updateTopbarUser(); el mensaje especial sí es de operador y admin.
+    const FK_SCREENS = ['boot', 'normal', 'print1', 'print2', 'many', 'pause', 'error', 'offline', 'idle', 'done', 'special', 'off'];
+    const FK_SCREEN_TR_KEYS = {
+        boot: 'fkScreenBoot', normal: 'fkScreenNormal', print1: 'fkScreenPrint1', print2: 'fkScreenPrint2',
+        many: 'fkScreenMany', pause: 'fkScreenPause', error: 'fkScreenError', offline: 'fkScreenOffline',
+        idle: 'fkScreenIdle', done: 'fkScreenDone', special: 'fkScreenSpecial', off: 'fkScreenOff',
+    };
+    // Mismas clases que el pill del header (mled-status-ok/warn/off).
+    const FK_STATE_META = {
+        disabled: { key: 'fkStateDisabled', cls: 'mled-status-off' },
+        ok: { key: 'fkStateOk', cls: 'mled-status-ok' },
+        unreachable: { key: 'fkStateUnreachable', cls: 'mled-status-warn' },
+        size_mismatch: { key: 'fkStateSizeMismatch', cls: 'mled-status-warn' },
+    };
+    const FK_POLL_MS = 5000;
+    const FK_PREVIEW_SCALE = 8;
+    const FK_LOCALES = { es: 'es-MX', en: 'en-US', de: 'de-DE', fr: 'fr-FR', 'pt-BR': 'pt-BR' };
+
+    const fk = {
+        status: null,
+        statusError: false,
+        config: null,
+        machinesDraft: [],
+        isAdmin: false,
+        roleLoaded: false,
+        previewScreen: '',
+        timer: null,
+    };
+
+    function fkScreenLabel(name) { return FK_SCREEN_TR_KEYS[name] ? tr(FK_SCREEN_TR_KEYS[name]) : String(name); }
+
+    // api() lanza Error(JSON.stringify(detail)): para el usuario se quita el
+    // entrecomillado de JSON cuando el detail es un string simple.
+    function fkErrorText(error) {
+        const raw = error?.message || '';
+        try {
+            const parsed = JSON.parse(raw);
+            return typeof parsed === 'string' ? parsed : raw;
+        } catch {
+            return raw || tr('genericError');
+        }
+    }
+
+    function fkSetMsg(selector, text, kind) {
+        const el = root?.querySelector(selector);
+        if (!el) return;
+        el.textContent = text || '';
+        el.className = 'mled-inline-msg';
+        if (kind === 'ok') el.classList.add('mled-inline-msg-ok');
+        if (kind === 'error') el.classList.add('mled-inline-msg-error');
+    }
+
+    // Solo hay red mientras esta pestaña está elegida, la sección del plugin
+    // está en pantalla (el core la oculta con display:none al cambiar de
+    // sección) y la pestaña del navegador está visible.
+    function fkIsVisible() {
+        return !!root && state.view === 'fk8wa' && document.visibilityState !== 'hidden' && root.getClientRects().length > 0;
+    }
+
+    async function fkLoadRole() {
+        try {
+            const response = await fetch('/api/auth/me', { credentials: 'same-origin' });
+            const user = response.ok ? await response.json() : null;
+            fk.isAdmin = user?.role === 'admin';
+        } catch {
+            fk.isAdmin = false;
+        }
+        fk.roleLoaded = true;
+        fkApplyRole();
+    }
+
+    function fkApplyRole() {
+        if (!root) return;
+        root.querySelectorAll('[data-fk-admin-input]').forEach((el) => { el.disabled = !fk.isAdmin; });
+        root.querySelectorAll('[data-fk-admin-only]').forEach((el) => { el.hidden = !fk.isAdmin; });
+        const note = root.querySelector('#mled-fk-readonly-note');
+        if (note) note.hidden = fk.isAdmin || !fk.roleLoaded;
+        fkRenderMachines();
+    }
+
+    async function fkRefreshStatus() {
+        try {
+            fk.status = await api('/fk8wa/status');
+            fk.statusError = false;
+        } catch {
+            fk.statusError = true;
+        }
+        fkRenderStatus();
+        fkRenderMessage();
+    }
+
+    function fkRenderStatus() {
+        if (!root) return;
+        const s = fk.status || {};
+        const meta = FK_STATE_META[s.state] || { key: 'fkStateUnknown', cls: 'mled-status-off' };
+        const chip = root.querySelector('#mled-fk-state-chip');
+        chip.classList.remove('mled-status-ok', 'mled-status-warn', 'mled-status-off');
+        chip.classList.add(fk.statusError ? 'mled-status-warn' : meta.cls);
+        root.querySelector('#mled-fk-state-text').textContent = fk.statusError ? tr('fkStatusLoadError') : tr(meta.key);
+
+        const screen = s.current || s.screen;
+        const retry = Number(s.next_retry_in_s);
+        const lastError = s.last_error
+            ? `${s.last_error.message || ''} (${formatRelativeTime(s.last_error.at) || s.last_error.at || '—'})`
+            : tr('noErrorsLogged');
+        const rows = [
+            [tr('fkCurrentScreen'), screen ? fkScreenLabel(screen) : '—'],
+            [tr('lastSentLabel'), formatRelativeTime(s.last_sent_at) || tr('never')],
+            [tr('fkNextRetry'), s.next_retry_in_s != null && Number.isFinite(retry) ? tr('fkInSeconds', { n: Math.max(0, Math.round(retry)) }) : '—'],
+            [tr('fkPanelInfo'), s.panel ? `${s.panel.ip}:${s.panel.port} · ${s.panel.width}×${s.panel.height}` : '—'],
+            [tr('fkSendsLabel'), String(s.sends ?? 0)],
+            [tr('lastErrorLabel'), lastError],
+        ];
+        root.querySelector('#mled-fk-status-rows').innerHTML = rows
+            .map(([label, value]) => `<div class="mled-status-row"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`)
+            .join('');
+
+        const sizeWarning = root.querySelector('#mled-fk-size-warning');
+        if (s.state === 'size_mismatch') {
+            const size = s.panel ? `${s.panel.width}x${s.panel.height}` : '?';
+            sizeWarning.textContent = tr('fkSizeMismatch', { size });
+            sizeWarning.hidden = false;
+        } else {
+            sizeWarning.hidden = true;
+        }
+
+        const missing = Array.isArray(s.missing_machines) ? s.missing_machines : [];
+        const missingWarning = root.querySelector('#mled-fk-missing-warning');
+        missingWarning.textContent = missing.length ? tr('fkMissingMachines', { ids: missing.join(', ') }) : '';
+        missingWarning.hidden = !missing.length;
+    }
+
+    function fkPreviewUrl() {
+        const params = new URLSearchParams({ scale: String(FK_PREVIEW_SCALE), t: String(Date.now()) });
+        if (fk.previewScreen) params.set('screen', fk.previewScreen);
+        return `${API_BASE}/fk8wa/preview?${params.toString()}`;
+    }
+
+    function fkRefreshPreview() {
+        const img = root?.querySelector('#mled-fk-preview');
+        if (img) img.src = fkPreviewUrl();
+    }
+
+    function fkTick() {
+        if (!fkIsVisible()) return;
+        fkRefreshStatus();
+        // Las 11 pantallas de ejemplo no cambian: solo se refresca "en vivo".
+        if (!fk.previewScreen) fkRefreshPreview();
+    }
+
+    function fkStopPolling() {
+        if (fk.timer) { window.clearInterval(fk.timer); fk.timer = null; }
+    }
+
+    function fkStartPolling() {
+        fkStopPolling();
+        fk.timer = window.setInterval(fkTick, FK_POLL_MS);
+    }
+
+    function fkOnVisibilityChange() {
+        if (document.visibilityState === 'visible') fkTick();
+    }
+
+    async function fkLoadConfig() {
+        try {
+            fk.config = await api('/fk8wa/config');
+        } catch (error) {
+            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
+            return;
+        }
+        fkFillConfigForm();
+    }
+
+    function fkFillConfigForm() {
+        const c = fk.config;
+        if (!c || !root) return;
+        root.querySelector('#mled-fk-enabled').checked = !!c.enabled;
+        root.querySelector('#mled-fk-ip').value = c.ip || '';
+        root.querySelector('#mled-fk-brightness').value = c.brightness ?? 8;
+        root.querySelector('#mled-fk-brightness-range').value = c.brightness ?? 8;
+        root.querySelector('#mled-fk-min-interval').value = c.min_interval_s ?? '';
+        root.querySelector('#mled-fk-view-seconds').value = c.view_seconds ?? '';
+        root.querySelector('#mled-fk-done-seconds').value = c.done_seconds ?? '';
+        fk.machinesDraft = Array.isArray(c.machines) ? [...c.machines] : [];
+        fkRenderMachines();
+    }
+
+    function fkMachineName(id) {
+        const machine = state.machines.find((item) => item.id === id);
+        return machine ? (machine.name || machine.id) : null;
+    }
+
+    function fkRenderMachines() {
+        const list = root?.querySelector('#mled-fk-machines');
+        if (!list) return;
+        if (!fk.machinesDraft.length) {
+            list.innerHTML = `<li class="mled-fk-empty">${esc(tr('fkMachinesEmpty'))}</li>`;
+        } else {
+            const last = fk.machinesDraft.length - 1;
+            list.innerHTML = fk.machinesDraft.map((id, index) => {
+                const name = fkMachineName(id);
+                const label = name ?? tr('fkUnknownMachine', { id });
+                const controls = fk.isAdmin ? `
+                    <span class="mled-fk-machine-actions">
+                        <button type="button" class="mled-btn mled-btn-small" data-fk-move="-1" data-fk-index="${index}" ${index === 0 ? 'disabled' : ''} title="${esc(tr('fkMoveUp'))}" aria-label="${esc(`${tr('fkMoveUp')}: ${label}`)}">↑</button>
+                        <button type="button" class="mled-btn mled-btn-small" data-fk-move="1" data-fk-index="${index}" ${index === last ? 'disabled' : ''} title="${esc(tr('fkMoveDown'))}" aria-label="${esc(`${tr('fkMoveDown')}: ${label}`)}">↓</button>
+                        <button type="button" class="mled-btn mled-btn-small" data-fk-remove="${index}" title="${esc(tr('fkRemove'))}" aria-label="${esc(`${tr('fkRemove')}: ${label}`)}">×</button>
+                    </span>` : '';
+                return `<li class="mled-fk-machine${name ? '' : ' is-missing'}"><span class="mled-fk-slot">P${index + 1}</span><span class="mled-fk-machine-name">${esc(label)}</span>${controls}</li>`;
+            }).join('');
+        }
+
+        const select = root.querySelector('#mled-fk-add-machine');
+        const available = state.machines.filter((machine) => !fk.machinesDraft.includes(machine.id));
+        select.innerHTML = available.length
+            ? available.map((machine) => `<option value="${esc(machine.id)}">${esc(machine.name || machine.id)}</option>`).join('')
+            : `<option value="">${esc(state.machines.length ? tr('fkNoMoreMachines') : tr('noMachinesDetected'))}</option>`;
+        select.disabled = !fk.isAdmin || !available.length;
+        root.querySelector('#mled-fk-add-machine-btn').disabled = !fk.isAdmin || !available.length;
+    }
+
+    function fkOnMachinesClick(event) {
+        if (!fk.isAdmin) return;
+        const moveBtn = event.target.closest('[data-fk-move]');
+        const removeBtn = event.target.closest('[data-fk-remove]');
+        if (moveBtn) {
+            const index = Number(moveBtn.dataset.fkIndex);
+            const target = index + Number(moveBtn.dataset.fkMove);
+            if (target < 0 || target >= fk.machinesDraft.length) return;
+            [fk.machinesDraft[index], fk.machinesDraft[target]] = [fk.machinesDraft[target], fk.machinesDraft[index]];
+            fkRenderMachines();
+        } else if (removeBtn) {
+            fk.machinesDraft.splice(Number(removeBtn.dataset.fkRemove), 1);
+            fkRenderMachines();
+        }
+    }
+
+    function fkAddMachine() {
+        const id = root.querySelector('#mled-fk-add-machine').value;
+        if (!fk.isAdmin || !id || fk.machinesDraft.includes(id)) return;
+        fk.machinesDraft.push(id);
+        fkRenderMachines();
+    }
+
+    function fkNumber(selector) {
+        const raw = root.querySelector(selector).value.trim();
+        return raw === '' ? null : Number(raw);
+    }
+
+    async function fkSaveConfig() {
+        const button = root.querySelector('#mled-fk-save-btn');
+        button.disabled = true;
+        fkSetMsg('#mled-fk-config-msg', tr('saving'));
+        try {
+            fk.config = await api('/fk8wa/config', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    enabled: root.querySelector('#mled-fk-enabled').checked,
+                    ip: root.querySelector('#mled-fk-ip').value.trim(),
+                    brightness: fkNumber('#mled-fk-brightness'),
+                    machines: [...fk.machinesDraft],
+                    min_interval_s: fkNumber('#mled-fk-min-interval'),
+                    view_seconds: fkNumber('#mled-fk-view-seconds'),
+                    done_seconds: fkNumber('#mled-fk-done-seconds'),
+                }),
+            });
+            fkFillConfigForm();
+            fkSetMsg('#mled-fk-config-msg', tr('savedGeneric'), 'ok');
+            fkRefreshStatus();
+            fkRefreshPreview();
+        } catch (error) {
+            fkSetMsg('#mled-fk-config-msg', fkErrorText(error) || tr('errorSaving'), 'error');
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    async function fkTestConnection() {
+        const button = root.querySelector('#mled-fk-test-btn');
+        button.disabled = true;
+        button.textContent = tr('testing');
+        try {
+            const result = await api('/fk8wa/test', { method: 'POST' });
+            fkSetMsg('#mled-fk-config-msg', tr('fkTestResult', {
+                ip: result.ip ?? '—', port: result.port ?? '—', width: result.width ?? '?', height: result.height ?? '?',
+            }), 'ok');
+        } catch (error) {
+            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
+        } finally {
+            button.disabled = false;
+            button.textContent = tr('testConnectionBtn');
+            fkRefreshStatus();
+        }
+    }
+
+    // El slider aplica el brillo al soltarlo (POST /fk8wa/brightness, que
+    // también lo guarda en la config), sin esperar a "Guardar".
+    async function fkApplyBrightness() {
+        if (!fk.isAdmin) return;
+        const level = fkNumber('#mled-fk-brightness');
+        try {
+            fk.config = await api('/fk8wa/brightness', { method: 'POST', body: JSON.stringify({ level }) });
+            fkSetMsg('#mled-fk-config-msg', tr('fkBrightnessApplied', { level: fk.config.brightness ?? level }), 'ok');
+        } catch (error) {
+            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
+        }
+    }
+
+    function fkRenderAnnouncementOptions() {
+        const select = root?.querySelector('#mled-fk-announcement');
+        if (!select) return;
+        const selected = select.value;
+        select.innerHTML = `<option value="">${esc(tr('fkChooseAnnouncement'))}</option>`
+            + state.announcements.map((item) => `<option value="${esc(item.id)}">${esc(item.name || item.id)}</option>`).join('');
+        if (state.announcements.some((item) => item.id === selected)) select.value = selected;
+    }
+
+    function fkRenderMessage() {
+        const box = root?.querySelector('#mled-fk-current-message');
+        if (!box) return;
+        const message = fk.status?.message;
+        const clearBtn = root.querySelector('#mled-fk-clear-message-btn');
+        if (!message || !message.text) {
+            box.textContent = tr('fkNoMessage');
+            clearBtn.hidden = true;
+            return;
+        }
+        const expires = new Date(Number(message.expires_at) * 1000);
+        const time = Number.isNaN(expires.getTime())
+            ? '—'
+            : expires.toLocaleTimeString(FK_LOCALES[lang()] || undefined, { hour: '2-digit', minute: '2-digit' });
+        box.innerHTML = `<small>${esc(tr('fkCurrentMessage'))}</small><strong>${esc(message.text)}</strong><small>${esc(tr('fkExpiresAt', { time }))}</small>`;
+        clearBtn.hidden = false;
+    }
+
+    async function fkSendMessage(useAnnouncement) {
+        const minutes = fkNumber('#mled-fk-minutes') ?? 5;
+        let body;
+        if (useAnnouncement) {
+            const announcementId = root.querySelector('#mled-fk-announcement').value;
+            if (!announcementId) { fkSetMsg('#mled-fk-message-msg', tr('fkMissingAnnouncement'), 'error'); return; }
+            body = { announcement_id: announcementId, minutes };
+        } else {
+            const text = root.querySelector('#mled-fk-message-text').value.trim();
+            if (!text) { fkSetMsg('#mled-fk-message-msg', tr('fkMissingText'), 'error'); return; }
+            body = { text, minutes };
+        }
+        fkSetMsg('#mled-fk-message-msg', tr('fkSending'));
+        try {
+            const result = await api('/fk8wa/message', { method: 'POST', body: JSON.stringify(body) });
+            fk.status = { ...(fk.status || {}), message: result.message };
+            fkRenderMessage();
+            if (!useAnnouncement) root.querySelector('#mled-fk-message-text').value = '';
+            fkSetMsg('#mled-fk-message-msg', tr('fkMessageSent'), 'ok');
+            fkRefreshStatus();
+            fkRefreshPreview();
+        } catch (error) {
+            fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
+        }
+    }
+
+    async function fkClearMessage() {
+        try {
+            await api('/fk8wa/message', { method: 'DELETE' });
+            fk.status = { ...(fk.status || {}), message: null };
+            fkRenderMessage();
+            fkSetMsg('#mled-fk-message-msg', tr('fkMessageCleared'), 'ok');
+            fkRefreshStatus();
+            fkRefreshPreview();
+        } catch (error) {
+            fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
+        }
+    }
+
+    // Al entrar a la pestaña: rol (una vez), config, máquinas y anuncios
+    // frescos, estado y vista previa; luego el sondeo de 5 s.
+    async function fkEnter() {
+        fkStartPolling();
+        fkRenderAnnouncementOptions();
+        fkRefreshStatus();
+        fkRefreshPreview();
+        if (!fk.roleLoaded) await fkLoadRole();
+        await loadMachinesForForm();
+        await fkLoadConfig();
+        fkRenderAnnouncementOptions();
+    }
+
+    function fkBindEvents() {
+        root.querySelector('#mled-fk-preview-screen').addEventListener('change', (event) => {
+            fk.previewScreen = event.target.value;
+            fkRefreshPreview();
+        });
+        const preview = root.querySelector('#mled-fk-preview');
+        preview.addEventListener('load', () => { root.querySelector('#mled-fk-preview-msg').hidden = true; });
+        preview.addEventListener('error', () => {
+            const msg = root.querySelector('#mled-fk-preview-msg');
+            msg.textContent = tr('fkPreviewError');
+            msg.hidden = false;
+        });
+        root.querySelector('#mled-fk-machines').addEventListener('click', fkOnMachinesClick);
+        root.querySelector('#mled-fk-add-machine-btn').addEventListener('click', fkAddMachine);
+        root.querySelector('#mled-fk-save-btn').addEventListener('click', fkSaveConfig);
+        root.querySelector('#mled-fk-test-btn').addEventListener('click', fkTestConnection);
+        root.querySelector('#mled-fk-brightness-range').addEventListener('change', fkApplyBrightness);
+        root.querySelector('#mled-fk-brightness').addEventListener('change', fkApplyBrightness);
+        root.querySelector('#mled-fk-send-message-btn').addEventListener('click', () => fkSendMessage(false));
+        root.querySelector('#mled-fk-message-text').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') { event.preventDefault(); fkSendMessage(false); }
+        });
+        root.querySelector('#mled-fk-send-announcement-btn').addEventListener('click', () => fkSendMessage(true));
+        root.querySelector('#mled-fk-clear-message-btn').addEventListener('click', fkClearMessage);
+        document.addEventListener('visibilitychange', fkOnVisibilityChange);
+        fkApplyRole();
+    }
+
+    function fkViewHtml() {
+        const screenOptions = FK_SCREENS.map((name) => `<option value="${name}">${esc(fkScreenLabel(name))}</option>`).join('');
+        return `
+                <div id="mled-view-fk8wa" class="mled-fk-view" hidden>
+                    <div class="mled-fk-grid">
+                        <article class="mled-card mled-fk-preview-card">
+                            <h2>${esc(tr('fkPreviewTitle'))}</h2>
+                            <label class="mled-field"><span>${esc(tr('fkPreviewScreenLabel'))}</span><select id="mled-fk-preview-screen"><option value="">${esc(tr('fkPreviewLive'))}</option>${screenOptions}</select></label>
+                            <div class="mled-fk-preview-frame">
+                                <img id="mled-fk-preview" class="mled-fk-preview-img" alt="${esc(tr('fkPreviewAlt'))}" width="768" height="128">
+                            </div>
+                            <small class="mled-inline-msg mled-inline-msg-error" id="mled-fk-preview-msg" hidden></small>
+                        </article>
+
+                        <article class="mled-card mled-fk-status-card">
+                            <div class="mled-card-head-row">
+                                <h2>${esc(tr('fkStatusTitle'))}</h2>
+                                <span class="mled-status-pill mled-status-off" id="mled-fk-state-chip" role="status" aria-live="polite">
+                                    <span class="mled-status-dot"></span>
+                                    <span id="mled-fk-state-text">${esc(tr('checking'))}</span>
+                                </span>
+                            </div>
+                            <p class="mled-fk-alert" id="mled-fk-size-warning" role="alert" hidden></p>
+                            <p class="mled-fk-alert" id="mled-fk-missing-warning" hidden></p>
+                            <div class="mled-fk-status-rows" id="mled-fk-status-rows"></div>
+                        </article>
+
+                        <article class="mled-card mled-fk-message-card">
+                            <h2>${esc(tr('fkMessageTitle'))}</h2>
+                            <div class="mled-fk-current" id="mled-fk-current-message" aria-live="polite">${esc(tr('fkNoMessage'))}</div>
+                            <button type="button" class="mled-btn mled-btn-small mled-fk-clear-btn" id="mled-fk-clear-message-btn" hidden>${esc(tr('fkClearMessageBtn'))}</button>
+                            <label class="mled-field"><span>${esc(tr('fkMessageTextLabel'))}</span><input type="text" id="mled-fk-message-text" maxlength="200" placeholder="${esc(tr('fkMessagePlaceholder'))}" autocomplete="off"></label>
+                            <label class="mled-field"><span>${esc(tr('fkMinutesLabel'))}</span><input type="number" id="mled-fk-minutes" min="1" max="1440" step="1" value="5"></label>
+                            <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-send-message-btn">${esc(tr('fkSendBtn'))}</button>
+                            <span class="mled-field-label mled-fk-or">${esc(tr('fkOrAnnouncement'))}</span>
+                            <div class="mled-fk-add-row">
+                                <label class="mled-field"><span>${esc(tr('fkAnnouncementLabel'))}</span><select id="mled-fk-announcement"></select></label>
+                                <button type="button" class="mled-btn" id="mled-fk-send-announcement-btn">${esc(tr('fkSendAnnouncementBtn'))}</button>
+                            </div>
+                            <span class="mled-inline-msg" id="mled-fk-message-msg" role="status" aria-live="polite"></span>
+                        </article>
+
+                        <article class="mled-card mled-fk-config-card">
+                            <h2>${esc(tr('fkConfigTitle'))}</h2>
+                            <p class="mled-sub" id="mled-fk-readonly-note" hidden>${esc(tr('fkReadOnlyNote'))}</p>
+                            <div class="mled-fk-config-cols">
+                                <div>
+                                    <label class="mled-checkbox"><input type="checkbox" id="mled-fk-enabled" data-fk-admin-input disabled><span>${esc(tr('fkEnabledLabel'))}</span></label>
+                                    <label class="mled-field"><span>${esc(tr('fkIpLabel'))}</span><input type="text" id="mled-fk-ip" inputmode="decimal" placeholder="192.168.0.50" autocomplete="off" data-fk-admin-input disabled></label>
+                                    <label class="mled-field"><span>${esc(tr('fkBrightnessLabel'))}</span><input type="range" id="mled-fk-brightness-range" min="1" max="16" step="1" value="8" data-fk-admin-input disabled><input type="number" id="mled-fk-brightness" min="1" max="16" step="1" value="8" aria-label="${esc(tr('fkBrightnessLabel'))}" data-fk-admin-input disabled></label>
+                                    <div class="mled-fk-numbers">
+                                        <label class="mled-field"><span>${esc(tr('fkMinIntervalLabel'))}</span><input type="number" id="mled-fk-min-interval" min="10" max="600" step="1" data-fk-admin-input disabled></label>
+                                        <label class="mled-field"><span>${esc(tr('fkViewSecondsLabel'))}</span><input type="number" id="mled-fk-view-seconds" min="5" max="300" step="1" data-fk-admin-input disabled></label>
+                                        <label class="mled-field"><span>${esc(tr('fkDoneSecondsLabel'))}</span><input type="number" id="mled-fk-done-seconds" min="5" max="3600" step="1" data-fk-admin-input disabled></label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="mled-field-label" id="mled-fk-machines-label">${esc(tr('fkMachinesLabel'))}</span>
+                                    <ol class="mled-fk-machines" id="mled-fk-machines" aria-labelledby="mled-fk-machines-label"></ol>
+                                    <div class="mled-fk-add-row" data-fk-admin-only hidden>
+                                        <label class="mled-field"><span>${esc(tr('fkAddMachineLabel'))}</span><select id="mled-fk-add-machine" disabled></select></label>
+                                        <button type="button" class="mled-btn" id="mled-fk-add-machine-btn" disabled>${esc(tr('fkAddBtn'))}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mled-row mled-fk-actions" data-fk-admin-only hidden>
+                                <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-save-btn">${esc(tr('saveBtn'))}</button>
+                                <button type="button" class="mled-btn" id="mled-fk-test-btn">${esc(tr('testConnectionBtn'))}</button>
+                            </div>
+                            <span class="mled-inline-msg" id="mled-fk-config-msg" role="status" aria-live="polite"></span>
+                        </article>
+                    </div>
+                    <p class="mled-fk-note">${esc(tr('fkNote'))}</p>
+                </div>`;
     }
 
     // ── Layout ──
@@ -2215,6 +3131,7 @@
                 <div class="mled-view-tabs">
                     <button type="button" class="mled-view-tab is-active" data-view="dashboard">${tr('tabMainPanel')}</button>
                     <button type="button" class="mled-view-tab" data-view="editor">${tr('editorTitle')}</button>
+                    <button type="button" class="mled-view-tab" data-view="fk8wa">${esc(tr('fkTab'))}</button>
                 </div>
 
                 <div id="mled-view-dashboard" class="mled-view">
@@ -2486,6 +3403,7 @@
                     </article>
                 </aside>
                 </div>
+${fkViewHtml()}
 
                 <div class="mled-modal" id="mled-config-modal" hidden>
                     <div class="mled-modal-backdrop" data-mled-config-close></div>
@@ -2646,6 +3564,8 @@
             scenesResizeObserver.observe(root.querySelector('#mled-quick-scenes'));
         }
 
+        fkBindEvents();
+
         renderTemplates();
         renderPalette();
         renderSavedColors();
@@ -2690,6 +3610,8 @@
         if (materialsTimer) { window.clearInterval(materialsTimer); materialsTimer = null; }
         if (machineAlertRotationTimer) { window.clearInterval(machineAlertRotationTimer); machineAlertRotationTimer = null; }
         if (scenesResizeObserver) { scenesResizeObserver.disconnect(); scenesResizeObserver = null; }
+        fkStopPolling();
+        document.removeEventListener('visibilitychange', fkOnVisibilityChange);
         document.querySelector(`[data-plugin-nav="${PLUGIN_ID}"]`)?.remove();
         document.getElementById(`${PLUGIN_ID}-section`)?.remove();
         root?.remove();

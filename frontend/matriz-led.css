@@ -1169,3 +1169,248 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ── Panel FK-8Wa ──
+   Pestaña del panel LED físico de 96x16. Solo variables del tema (nada de
+   colores fijos): la vista previa es un PNG que ya trae sus propios
+   píxeles, aquí solo se enmarca y se escala sin suavizado. */
+
+/* Con una tercera pestaña, en celular las pestañas bajan de renglón en vez
+   de desbordar a lo ancho. */
+.mled-view-tabs {
+    flex-wrap: wrap;
+}
+
+.mled-fk-view {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+/* Varias piezas de esta vista tienen display propio (flex/grid): sin esto
+   el atributo hidden no las ocultaría. */
+.mled-fk-view[hidden],
+.mled-fk-view [hidden] {
+    display: none !important;
+}
+
+.mled-fk-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.mled-fk-preview-card,
+.mled-fk-config-card {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.mled-fk-status-card,
+.mled-fk-message-card {
+    min-width: 0;
+}
+
+.mled-fk-preview-frame {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    padding: 10px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.mled-fk-preview-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 6 / 1;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+.mled-fk-alert {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--orange);
+    border-left-width: 4px;
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-status-rows .mled-status-row {
+    gap: 12px;
+}
+
+.mled-fk-status-rows .mled-status-row span {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.mled-fk-status-rows .mled-status-row strong {
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+    font-weight: 600;
+}
+
+.mled-fk-config-cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.mled-fk-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.mled-fk-machines {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mled-fk-machine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    min-width: 0;
+}
+
+.mled-fk-machine.is-missing {
+    border-color: var(--orange);
+}
+
+.mled-fk-slot {
+    flex-shrink: 0;
+    min-width: 2.4em;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.mled-fk-machine-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-machine-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.mled-fk-empty {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.mled-fk-add-row {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mled-fk-add-row .mled-field {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.mled-fk-add-row .mled-btn {
+    margin-bottom: 12px;
+}
+
+.mled-fk-actions {
+    flex-wrap: wrap;
+    margin: 4px 0 8px;
+}
+
+.mled-fk-current {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm, 8px);
+    font-size: 13px;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-current strong {
+    color: var(--text);
+    font-size: 15px;
+}
+
+.mled-fk-clear-btn {
+    margin-bottom: 14px;
+}
+
+.mled-fk-or {
+    margin-top: 16px;
+}
+
+.mled-fk-note {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.mled-fk-view .mled-btn:disabled,
+.mled-fk-view input:disabled,
+.mled-fk-view select:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+    .mled-fk-config-cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .mled-fk-grid,
+    .mled-fk-numbers {
+        grid-template-columns: 1fr;
+    }
+}
+/* ── fin Panel FK-8Wa ── */
+
+/* ── Panel FK-8Wa: casilla y marca en las reglas ── */
+.mled-fk-rule-check {
+    margin: 6px 0 0;
+    font-size: 12px;
+}
+
+.mled-fk-rule-badge {
+    display: inline-flex;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+/* ── fin Panel FK-8Wa: reglas ── */

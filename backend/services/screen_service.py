@@ -714,6 +714,9 @@ def _build_rule(payload: Dict[str, Any], base: Optional[Dict[str, Any]] = None) 
         "idle_minutes": idle_minutes,
         "announcement_id": announcement_id,
         "enabled": bool(field("enabled", True)),
+        # También mostrar el nombre del anuncio como mensaje especial en el
+        # panel FK-8Wa. Las reglas guardadas antes no lo tienen: falso.
+        "fk8wa": bool(payload["fk8wa"] if "fk8wa" in payload else (base or {}).get("fk8wa", False)),
         "created_at": base["created_at"] if base else now,
         "updated_at": now,
     }
@@ -762,7 +765,20 @@ def run_rule(rule_id: str) -> Dict[str, Any]:
     cuando detecta, del lado del navegador, que la condición ya se
     cumplió (ver el comentario grande arriba de VALID_RULE_TRIGGERS)."""
     rule = get_rule(rule_id)
-    return send_announcement(rule["announcement_id"])
+    result = send_announcement(rule["announcement_id"])
+    if rule.get("fk8wa"):
+        # Independiente de la iPixel: el panel FK-8Wa muestra el aviso aunque
+        # la otra pantalla no esté configurada o falle. Import diferido:
+        # fk8wa.service importa este módulo.
+        from .fk8wa import service as fk8wa_service
+
+        try:
+            fk8wa_service.show_announcement(rule["announcement_id"], source="rule")
+            result = {**result, "fk8wa": True}
+        except ValueError as exc:
+            logger.warning(f"Regla {rule_id}: no se pudo mostrar en el panel FK-8Wa ({exc})")
+            result = {**result, "fk8wa": False}
+    return result
 
 
 # ── Alertas por máquina (modal "Alertas visuales" de Matriz LED) ──

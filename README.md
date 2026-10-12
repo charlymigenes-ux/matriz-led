@@ -2,7 +2,9 @@
 
 Plugin de NOPAL para conectar una pantalla LED matriz BLE (probado contra
 una **iPixel Color 16x32**) y mandarle texto y animaciones según el estado
-de tus máquinas.
+de tus máquinas. Desde v0.10.0 maneja además un **panel FK-8Wa de 96x16**
+(monocromo, por red), con su propia configuración: ver
+["Panel FK-8Wa"](#panel-fk-8wa-v0100).
 
 ## Cómo funciona
 
@@ -128,6 +130,61 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
   (`GET /api/plugins/matriz-led/stats`, contados dentro de
   `send_windows`, se resetea solo al cambiar de día). Uso de CPU/RAM no
   se incluye -- no hay ninguna fuente real de esos datos en NOPAL.
+
+## Panel FK-8Wa (v0.10.0)
+
+Panel LED de **96x16 monocromo (rojo)** con controlador **FK-8Wa** (3 módulos
+P10 de 32x16), en la **misma red que NOPAL**, por TCP al puerto 5858. Muestra
+el estado de las máquinas que elijas con 12 pantallas (arranque, todo
+normal, impresión vista 1 y 2, varias, pausa, error, desconectada, todas
+detenidas, terminado, mensaje especial, apagado). Convive con la iPixel:
+cada una tiene su configuración y su estado.
+
+**Configurar** (pestaña "Panel FK-8Wa", solo admin):
+1. Conecta el panel a la red con **FKShow** (la red y el Wi-Fi del panel no
+   se configuran desde NOPAL, a propósito) y anota su IP.
+2. Escribe la IP y presiona **Probar conexión**: debe leer 96x16.
+3. Elige las máquinas en orden (P1, P2, P3...), el brillo (1-16) y activa
+   el panel.
+
+**Cómo decide qué mostrar** (prioridad): error > pausa > desconectada >
+mensaje especial > terminado (60 s) > impresión (vista 1 y 2 alternan cada
+15 s; con dos o más activas, "varias") > todas detenidas / normal.
+"Apagado" (HASTA PRONTO) se muestra al detener NOPAL. La pantalla de error
+dice "ERROR": el estado de las máquinas no trae el texto del error.
+
+**Mensaje especial**: texto libre o un anuncio (se muestra su nombre) desde
+la pestaña (operador y admin), las reglas con la casilla "También mostrar en
+el panel FK-8Wa" y NOPAL Intelligence (acción `show_panel_message`, en NOPAL
+core). Vence solo (por omisión 5 min).
+
+**Cómo envía**: el panel atiende **una sola sesión TCP** y cada subida
+recarga el programa completo, así que NOPAL solo envía cuando la imagen
+cambia y como mucho cada "intervalo mínimo" (15 s por omisión). Si el panel
+no responde, reintenta a los 15, 30, 60, 120 y 300 s sin afectar a NOPAL ni
+a la iPixel, y al reconectar reenvía el brillo.
+
+> **Aviso importante: el botón de prueba de la placa.** Mantenerlo 15 s
+> restaura el Wi-Fi **y los parámetros de pantalla**: la placa pasa a creer
+> que mide 288x16 y dibuja puntitos y texto cortado. NOPAL **lee el tamaño
+> antes de cada envío y no envía nada si no es 96x16**; la pestaña lo avisa.
+> Reconfigura la placa con FKShow y presiona "Probar conexión".
+
+**Reglas que respeta el código**: no configura la red ni el Wi-Fi del panel
+ni guarda claves; no cambia sus parámetros de pantalla; nunca abre dos
+sesiones TCP a la vez; solo usa los comandos documentados en el protocolo
+(`01 09`, `01 02`, `01 1b`, `01 37`, `01 01`, `01 15`).
+
+**Código**: `backend/services/fk8wa/` (protocolo, generador de programas
+copiado de la referencia y verificado byte a byte contra capturas de
+FKShow, fuente de píxeles en código, pantallas, máquina de estados, ciclo de
+fondo). La spec, el plan y las tareas están en `specs/`. Configuración en
+`data/plugins/matriz-led/fk8wa.json` (no se sube a git).
+
+**Probar sin panel**: `pytest tests/fk8wa` (panel y máquinas simulados; nada
+abre la red). Las 12 pantallas se comparan píxel a píxel con
+`tests/fixtures/fk8wa/`; para actualizarlas tras una nueva aprobación:
+`FK8WA_UPDATE_FIXTURES=1 pytest tests/fk8wa/test_screens_approved.py`.
 
 ## Estado actual (v0.4.0)
 

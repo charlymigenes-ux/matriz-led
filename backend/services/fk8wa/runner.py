@@ -1,0 +1,201 @@
+"""Ciclo de fondo del panel FK-8Wa (spec RF15-RF20, RNF1-RNF3).
+
+Cada TICK_S segundos: lee la configuración y el estado de las máquinas, elige
+la pantalla, la dibuja y, solo si la imagen cambió y ya pasó el intervalo
+mínimo, la sube al panel. El trabajo de red y de dibujo corre en un hilo
+aparte (asyncio.to_thread) para no frenar el bucle de eventos de NOPAL, y
+toda sesión TCP pasa por un único Lock: nunca hay dos a la vez.
+
+Errores:
+- Panel sin respuesta o respuesta inesperada: reintentos con espera creciente
+  (RETRY_STEPS_S) sin afectar a NOPAL; al reconectar se reenvía el brillo.
+- Tamaño distinto de 96x16: no se envía nada más hasta que cambie la
+  configuración o se pruebe la conexión a mano (probablemente se usó el botón
+  de 15 s de la placa y hay que reconfigurarla con FKShow).
+"""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import time
+from datetime import datetime
+from typing import Any, Awaitable, Callable, Dict, List, Optional
+
+from . import config as config_mod
+from . import messages as messages_mod
+from . import program, screens, state_machine
+from .protocol import Fk8waClient, Fk8waError, SizeMismatch
+
+logger = logging.getLogger(__name__)
+
+TICK_S = 5.0
+RETRY_STEPS_S = (15, 30, 60, 120, 300)
+SHUTDOWN_WAIT_S = 5.0
+
+
+class Runner:
+    def __init__(
+        self,
+        list_machines: Callable[[], Awaitable[List[Dict[str, Any]]]],
+        client_factory: Callable[[str], Any] = Fk8waClient,
+        load_config: Callable[[], Dict[str, Any]] = config_mod.load,
+        current_message: Callable[[], Optional[Dict[str, Any]]] = messages_mod.current,
+        clock: Callable[[], float] = time.monotonic,
+        now_local: Callable[[], datetime] = datetime.now,
+        sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        to_thread: Callable[..., Awaitable[Any]] = asyncio.to_thread,
+    ):
+        self._list_machines = list_machines
+        self._client_factory = client_factory
+        self._load_config = load_config
+        self._current_message = current_message
+        self._clock, self._now_local, self._sleep, self._to_thread = clock, now_local, sleep, to_thread
+        self._lock = asyncio.Lock()
+        self._task: Optional[asyncio.Task] = None
+        self._stopping = False
+        self._reset_panel(None)
+        self.memory = state_machine.Memory(started_at=self._clock())
+        self._machines: Optional[List[Dict[str, Any]]] = None
+        self.current: Optional[tuple] = None      # (pantalla, datos) de la última selección
+        self.status: Dict[str, Any] = {
+            "state": "disabled", "screen": None, "last_sent_at": None, "last_error": None,
+            "next_retry_in_s": None, "panel": None, "missing_machines": [], "sends": 0,
+        }
+
+    # ------------------------------------------------------------ estado interno
+    def _reset_panel(self, ip: Optional[str]) -> None:
+        self._ip = ip
+        self._last_image: Optional[bytes] = None
+        self._last_send: Optional[float] = None
+        self._retry_step = 0
+        self._retry_at: Optional[float] = None
+        self._size_blocked = False
+        self._brightness_pending = True
+
+    def _set_error(self, state: str, message: str) -> None:
+        self.status["state"] = state
+        self.status["last_error"] = {"message": message, "at": self._now_local().isoformat(timespec="seconds")}
+
+    # ------------------------------------------------------------ ciclo
+    def start(self) -> None:
+        if self._task is None or self._task.done():
+            self._stopping = False
+            self._task = asyncio.get_running_loop().create_task(self._loop())
+
+    async def _loop(self) -> None:
+        while not self._stopping:
+            try:
+                await self.tick()
+            except Exception:  # nunca debe morir el ciclo por un error inesperado
+                logger.exception("Panel FK-8Wa: error inesperado en el ciclo")
+            await self._sleep(TICK_S)
+
+    async def tick(self) -> None:
+        cfg = self._load_config()
+        if not cfg["enabled"] or not cfg["ip"]:
+            self.status.update(state="disabled", next_retry_in_s=None)
+            return
+        if cfg["ip"] != self._ip:
+            self._reset_panel(cfg["ip"])
+        if self._size_blocked:
+            return
+        now = self._clock()
+        if self._retry_at is not None and now < self._retry_at:
+            self.status["next_retry_in_s"] = round(self._retry_at - now)
+            return
+
+        try:
+            self._machines = await self._list_machines()
+        except Exception as exc:  # sin estado nuevo: se queda con el último
+            logger.warning(f"Panel FK-8Wa: no se pudo leer el estado de las máquinas ({exc})")
+        message = self._current_message()
+        name, data = state_machine.select(
+            self._machines, cfg["machines"], now, self.memory, self._now_local(),
+            message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"])
+        self.current = (name, data)
+        self.status["missing_machines"] = state_machine.missing_ids(self._machines or [], cfg["machines"])
+        image = await self._to_thread(screens.render, name, data)
+        payload = image.tobytes()
+
+        if payload == self._last_image and not self._brightness_pending:
+            return
+        if self._last_send is not None and now - self._last_send < cfg["min_interval_s"]:
+            return  # se enviará en un tick posterior, ya con el estado más reciente
+        await self._send(image, payload, name, cfg)
+
+    async def _send(self, image, payload: bytes, name: str, cfg: Dict[str, Any]) -> None:
+        client = self._client_factory(cfg["ip"])
+        self._last_send = self._clock()
+        try:
+            async with self._lock:
+                if payload != self._last_image:
+                    info = await self._to_thread(client.upload, program.screen_program(image))
+                    self.status["panel"] = info
+                if self._brightness_pending:
+                    await self._to_thread(client.brightness, cfg["brightness"])
+        except SizeMismatch as exc:
+            self._size_blocked = True
+            self.status["panel"] = {"width": exc.width, "height": exc.height}
+            self._set_error("size_mismatch", str(exc))
+            logger.error(f"Panel FK-8Wa: {exc}")
+            return
+        except Fk8waError as exc:
+            delay = RETRY_STEPS_S[min(self._retry_step, len(RETRY_STEPS_S) - 1)]
+            self._retry_step += 1
+            self._retry_at = self._clock() + delay
+            self._brightness_pending = True   # tras un corte, el brillo pudo no conservarse
+            self._set_error("unreachable", str(exc))
+            self.status["next_retry_in_s"] = delay
+            logger.warning(f"Panel FK-8Wa: {exc}; reintento en {delay} s")
+            return
+        self._last_image = payload
+        self._brightness_pending = False
+        self._retry_step, self._retry_at = 0, None
+        self.status.update(state="ok", screen=name, next_retry_in_s=None,
+                           last_sent_at=self._now_local().isoformat(timespec="seconds"))
+        self.status["sends"] += 1
+
+    # ------------------------------------------------------------ acciones manuales
+    async def test_connection(self) -> Dict[str, Any]:
+        """Solo 01 09. Quita el bloqueo por tamaño si ahora sí es 96x16."""
+        cfg = self._load_config()
+        if not cfg["ip"]:
+            raise Fk8waError("Falta la IP del panel")
+        async with self._lock:
+            info = await self._to_thread(self._client_factory(cfg["ip"]).info)
+        self.status["panel"] = info
+        if (info["width"], info["height"]) == (96, 16):
+            self._reset_panel(cfg["ip"])
+        else:
+            self._size_blocked = True
+            self._set_error("size_mismatch", str(SizeMismatch(info["width"], info["height"])))
+        return info
+
+    def brightness_changed(self) -> None:
+        """La configuración cambió el brillo: se envía en el próximo tick."""
+        self._brightness_pending = True
+
+    # ------------------------------------------------------------ apagado
+    async def stop(self) -> None:
+        """Detiene el ciclo y, si el panel estaba activo, muestra HASTA PRONTO."""
+        self._stopping = True
+        if self._task is not None:
+            self._task.cancel()
+        cfg = self._load_config()
+        if not cfg["enabled"] or not cfg["ip"] or self._size_blocked:
+            return
+        try:
+            await asyncio.wait_for(self._lock.acquire(), timeout=SHUTDOWN_WAIT_S)
+        except asyncio.TimeoutError:
+            logger.warning("Panel FK-8Wa: la subida en curso no terminó a tiempo; no se envía HASTA PRONTO")
+            return
+        try:
+            image = screens.render("off")
+            await asyncio.wait_for(
+                self._to_thread(self._client_factory(cfg["ip"]).upload, program.screen_program(image)),
+                timeout=SHUTDOWN_WAIT_S)
+        except (Fk8waError, asyncio.TimeoutError) as exc:
+            logger.warning(f"Panel FK-8Wa: no se pudo mostrar HASTA PRONTO ({exc})")
+        finally:
+            self._lock.release()
