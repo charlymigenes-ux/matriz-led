@@ -338,3 +338,40 @@ class TestDemoEffect:
             await r.demo_effect("nope")
         with pytest.raises(protocol.Fk8waError):
             await r.demo_effect("cover_5")
+
+
+class TestSituationContours:
+    @staticmethod
+    def hot(hotend):
+        return [{"id": "a", "name": "ET4", "type": "printer", "online": True,
+                 "status": {"state": "idle", "job": None, "hotend": {"current": hotend[0], "target": hotend[1]}}}]
+
+    async def test_ready_machine_keeps_its_screen_with_its_own_contour(self):
+        r, clock, state = make(machines=self.hot((200, 200)))
+        await r.tick()
+        assert r.status["screen"] == "ready" and header(FakeClient.last_program)["effect"] == (1, 0)
+        clock.t += 600                                 # sigue ahí aunque pase el tiempo
+        await r.tick()
+        assert r.status["screen"] == "ready" and len(uploads()) == 1
+
+    async def test_heating_resends_as_the_temperature_rises(self):
+        r, clock, state = make(machines=self.hot((100, 200)))
+        await r.tick()
+        state["machines"] = self.hot((150, 200))
+        clock.t += 30
+        await r.tick()
+        assert len(uploads()) == 2
+
+    async def test_changing_a_situation_contour_resends(self):
+        r, clock, state = make(machines=self.hot((200, 200)))
+        await r.tick()
+        state["cfg"] = {**state["cfg"], "situation_styles": {**state["cfg"]["situation_styles"], "ready": "ninguno"}}
+        clock.t += 30
+        await r.tick()
+        assert len(uploads()) == 2
+
+    async def test_effect_applies_to_a_ready_screen(self):
+        r, clock, state = make(machines=self.hot((200, 200)),
+                               cfg={"effects": {**config.DEFAULTS["effects"], "ready": "flash_1"}})
+        await r.tick()
+        assert header(FakeClient.last_program)["effect"] == (7, 1)

@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from . import effects, names, program
-from .timer import STYLES as TIMER_STYLES
+from .timer import SITUATION_STYLES, STYLES as TIMER_STYLES, TEMP
 
 CONFIG_PATH = Path("data/plugins/matriz-led/fk8wa.json")
 MAX_MACHINES = 20
@@ -27,6 +27,8 @@ DEFAULTS: Dict[str, Any] = {
     "view_seconds": 15,
     "done_seconds": 60,
     "timer_style": "contorno",   # ver timer.STYLES
+    # situación -> contorno propio (solo las que difieren de "timer_style"); ver allowed_styles()
+    "situation_styles": {"heating": "temp", "ready": "marco_cw", "cooling": "temp"},
     "border_pattern": "dash",    # solo para los marcos del panel (marco_*)
     "border_speed": 10,
     "short_names": {},           # id de máquina -> nombre corto (hasta 4 caracteres); sin él, uno automático
@@ -37,6 +39,17 @@ DEFAULTS: Dict[str, Any] = {
 
 RANGES = {"brightness": (1, 16), "min_interval_s": (10, 600), "view_seconds": (5, 300), "done_seconds": (5, 3600),
           "border_speed": (1, 60), "scroll_speed": (1, 10)}
+
+
+def allowed_styles(situation: str):
+    """Contornos que tienen sentido para una situación: las que tienen reloj
+    usan cualquiera de los de reloj; calentando, en temperatura y enfriando
+    pueden seguir la temperatura; el resto solo marco animado o ninguno."""
+    timed = effects.SITUATIONS[situation][1]
+    if timed:
+        return TIMER_STYLES
+    base = ("ninguno",) + tuple(x for x in TIMER_STYLES if x.startswith("marco_"))
+    return ((TEMP,) if situation in ("heating", "ready", "cooling") else ()) + base
 
 
 class ConfigError(ValueError):
@@ -52,6 +65,11 @@ def _int_in(value: Any, key: str) -> int:
     if not low <= number <= high:
         raise ConfigError(f"{key} debe estar entre {low} y {high}")
     return number
+
+
+def style_for(situation: str, cfg: Dict[str, Any]) -> str:
+    """Contorno de una situación: el suyo, o el general (timer_style)."""
+    return (cfg.get("situation_styles") or {}).get(situation) or cfg["timer_style"]
 
 
 def validate(payload: Any) -> Dict[str, Any]:
@@ -95,6 +113,19 @@ def validate(payload: Any) -> Dict[str, Any]:
         if effect_id not in effects.CATALOG:
             raise ConfigError(f"Efecto desconocido: {effect_id}")
         cleaned_effects[situation] = effect_id
+    chosen_styles = merged["situation_styles"]
+    if not isinstance(chosen_styles, dict):
+        raise ConfigError("Los contornos por situación no son válidos")
+    cleaned_styles = dict(DEFAULTS["situation_styles"])
+    for situation, style in chosen_styles.items():
+        if situation not in effects.SITUATIONS:
+            raise ConfigError(f"Situación desconocida: {situation}")
+        if style in (None, ""):
+            cleaned_styles.pop(situation, None)    # sin contorno propio: usa el general
+            continue
+        if style not in SITUATION_STYLES or style not in allowed_styles(situation):
+            raise ConfigError(f"Contorno no válido para {effects.SITUATIONS[situation][0]}: {style}")
+        cleaned_styles[situation] = style
     if merged["scroll_dir"] not in effects.SCROLL_DIRS:
         raise ConfigError("Dirección del texto corrido desconocida")
     if merged["timer_style"] not in TIMER_STYLES:
@@ -110,6 +141,7 @@ def validate(payload: Any) -> Dict[str, Any]:
         "view_seconds": _int_in(merged["view_seconds"], "view_seconds"),
         "done_seconds": _int_in(merged["done_seconds"], "done_seconds"),
         "timer_style": merged["timer_style"],
+        "situation_styles": cleaned_styles,
         "border_pattern": merged["border_pattern"],
         "border_speed": _int_in(merged["border_speed"], "border_speed"),
         "short_names": cleaned_names,

@@ -41,6 +41,7 @@ PRIORITY_OF = {
     "scroll": "special",
     "error": "error", "pause": "pause", "offline": "offline", "special": "special", "done": "done",
     "print1": "printing", "print2": "printing", "many": "printing",
+    "heating": "heating", "ready": "ready", "cooling": "cooling",
     "normal": "normal", "idle": "normal", "boot": "normal", "off": "normal",
 }
 
@@ -50,14 +51,19 @@ SAMPLE_PRINTING = [
     ("print2", {"printer": "ET4", "file": "soporte_motor", "pct": 72, "elapsed": "01:24"}, 15.0),
 ]
 
-# Datos de ejemplo de la galería de las 13 pantallas.
+# Ejemplo para la tarjeta del contorno que sigue la temperatura.
+SAMPLE_HEATING = [("heating", {"printer": "ET4", "temp": 165, "target": 200}, None)]
+
+# Datos de ejemplo de la galería de pantallas.
 GALLERY_SAMPLE = {
     "boot": {"progress": 45}, "normal": {"online": 3, "time": "17:42"}, "idle": {"total": 3, "time": "17:42"},
     "print1": {"printer": "ET4", "file": "soporte_motor", "pct": 72},
     "print2": {"printer": "ET4", "pct": 72, "elapsed": "01:24"},
     "many": {"machines": [{"label": "ET4", "state": "printing"}, {"label": "TTS", "state": "printing"},
                           {"label": "CNC", "state": "printing"}]},
-    "heating": {"printer": "ET4", "temp": 165, "target": 200}, "pause": {"printer": "TTS"},
+    "heating": {"printer": "ET4", "temp": 165, "target": 200},
+    "ready": {"printer": "ET4", "temp": 200, "target": 200},
+    "cooling": {"printer": "ET4", "temp": 120, "peak": 200}, "pause": {"printer": "TTS"},
     "error": {"printer": "ET4", "error": "ERROR"}, "offline": {"printer": "CNC"},
     "done": {"printer": "ET4", "file": "soporte_motor"}, "special": {"msg": "TODO BIEN"}, "off": {},
 }
@@ -116,26 +122,27 @@ def scroll_payload(text: str, direction: str, level: int) -> Dict[str, Any]:
 def frames(style: Optional[str] = None, screen: Optional[str] = None) -> Dict[str, Any]:
     """Páginas tal como las mostrará el panel, para dibujarlas LED por LED en
     la pestaña (sin tocar el panel):
-    - sin parámetros: lo que tiene ahora, con el estilo y el efecto configurados
+    - sin parámetros: lo que tiene ahora, con el contorno y el efecto configurados
       (o, si es un mensaje largo, cómo corre el texto);
     - `style`: un ejemplo de impresión con ese estilo (tarjetas del reloj);
     - `screen`: una de las 13 pantallas de ejemplo (galería)."""
     cfg = config.load()
-    chosen = style or cfg["timer_style"]
-    if chosen not in timer.STYLES:
+    if style and style not in timer.SITUATION_STYLES:
         raise ValueError("Estilo de contador desconocido")
+    chosen = style or cfg["timer_style"]
     effect = None
     if screen:
         segments: List = [(screen, GALLERY_SAMPLE.get(screen, {}), None)]
     elif style:
-        segments = SAMPLE_PRINTING
+        segments = SAMPLE_HEATING if style == timer.TEMP else SAMPLE_PRINTING
     else:
         segments = runner().current or [("boot", {"progress": 0}, None)]
         if segments[0][0] == "scroll":
             return {"style": chosen, "marco": False, "stay_ms": 0, "pages": [], "effect": None,
                     "views": [{"screen": "scroll", "seconds": segments[0][2]}],
                     "scroll": scroll_payload(segments[0][1]["text"], cfg["scroll_dir"], cfg["scroll_speed"])}
-        picked = effect_for(segments, {**cfg, "timer_style": chosen})
+        chosen = config.style_for(effects.SITUATION_OF.get(segments[0][0], ""), cfg)
+        picked = effect_for(segments, cfg)
         if picked:
             effect = {"id": picked[0], "type": picked[1], "subtype": picked[2]}
     pages, stay = timer.build_pages(segments, chosen)
@@ -146,7 +153,8 @@ def frames(style: Optional[str] = None, screen: Optional[str] = None) -> Dict[st
 
 def effects_catalog() -> Dict[str, Any]:
     return {"effects": effects.listing(),
-            "situations": [{"id": key, "name": name, "timed": timed} for key, (name, timed) in effects.SITUATIONS.items()],
+            "situations": [{"id": key, "name": name, "timed": timed, "styles": list(config.allowed_styles(key))}
+                          for key, (name, timed) in effects.SITUATIONS.items()],
             "scroll_dirs": list(effects.SCROLL_DIRS)}
 
 
@@ -166,7 +174,7 @@ async def test_effect(effect_id: str) -> None:
 
 def preview(screen: Optional[str] = None, scale: int = 6) -> Tuple[bytes, str]:
     """Vista previa sin tocar el panel: GIF animado de la serie actual (con el
-    contador avanzando), o PNG de una de las 12 pantallas de ejemplo con el
+    contador avanzando), o PNG de una de las pantallas de ejemplo con el
     estilo configurado."""
     scale = max(1, min(PREVIEW_SCALE_MAX, int(scale)))
     style = config.load()["timer_style"]
@@ -177,6 +185,8 @@ def preview(screen: Optional[str] = None, scale: int = 6) -> Tuple[bytes, str]:
         big.convert("L").save(out, format="PNG")
         return out.getvalue(), "image/png"
     segments = runner().current or [("boot", {"progress": 0}, None)]
+    cfg = config.load()
+    style = config.style_for(effects.SITUATION_OF.get(segments[0][0], ""), cfg)
     return timer.preview_gif(segments, style, scale), "image/gif"
 
 

@@ -1630,106 +1630,78 @@
     align-items: center;
 }
 
-/* Reloj de cada vista */
-.mled-fk-styles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-    gap: 10px;
-}
-
-.mled-fk-style {
-    display: grid;
-    gap: 5px;
-    padding: 8px;
-    text-align: left;
-    font: inherit;
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm, 8px);
-    background: var(--panel-bg);
-    cursor: pointer;
-}
-
-.mled-fk-style strong {
-    font-size: 14px;
-}
-
-.mled-fk-style > span:last-child {
-    font-size: 12.5px;
-    color: var(--text-secondary);
-}
-
-.mled-fk-style[aria-pressed="true"] {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
-}
-
-.mled-fk-style[aria-disabled="true"] {
-    cursor: default;
-}
-
 .mled-fk-marco-opts {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-}
-
-
-/* Mosaico: en escritorio DOS COLUMNAS INDEPENDIENTES (izquierda 7/12,
-   derecha 5/12): cada una apila sus tarjetas sin dejar huecos entre ellas.
-   La galería de efectos, el texto corrido y las 13 pantallas ocupan el
-   ancho completo debajo. En pantallas angostas las columnas desaparecen
-   (display: contents, sin duplicar el DOM) y las tarjetas siguen el orden
-   lógico del usuario con `order`: ahora, por qué, mensaje, máquinas +
-   brillo, reloj, efecto por situación, galería, texto corrido, pantallas. */
-.mled-fk-mosaic {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 12px;
     align-items: start;
 }
 
-.mled-fk-col {
-    display: grid;
-    gap: 12px;
-    align-content: start;
-    min-width: 0;
+.mled-fk-marco-opts > .mled-fk-hint {
+    grid-column: 1 / -1;
 }
 
-.mled-fk-col-l { grid-column: span 7; }
-.mled-fk-col-r { grid-column: span 5; }
+
+/* Pestañas internas de la ficha del panel (distintas de las fichas del
+   plugin) y cuadrícula de 12 columnas por pestaña. Las tarjetas de una fila
+   se estiran al mismo alto (align-items: stretch), así no quedan huecos. La
+   barra de pestañas se queda pegada arriba al desplazarse; si no caben, se
+   acomodan en dos renglones en vez de desplazarse de lado. */
+.mled-fk-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 6px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.mled-fk-tab {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.mled-fk-tab[aria-selected="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 18%, var(--panel-bg));
+    color: var(--text);
+}
+
+.mled-fk-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+
+.mled-fk-grid > .mled-fk-card {
+    align-self: stretch;
+}
+
+.mled-fk-s4 { grid-column: span 4; }
+.mled-fk-s5 { grid-column: span 5; }
 .mled-fk-s6 { grid-column: span 6; }
+.mled-fk-s7 { grid-column: span 7; }
+.mled-fk-s8 { grid-column: span 8; }
 .mled-fk-s12 { grid-column: span 12; }
 
-.mled-fk-o1 { order: 1; }
-.mled-fk-o2 { order: 2; }
-.mled-fk-o3 { order: 3; }
-.mled-fk-o4 { order: 4; }
-.mled-fk-o5 { order: 5; }
-.mled-fk-o6 { order: 6; }
-.mled-fk-o7 { order: 7; }
-.mled-fk-o8 { order: 8; }
-.mled-fk-o9 { order: 9; }
-
-.mled-fk-stack {
-    display: grid;
-    gap: 12px;
-    min-width: 0;
+/* La tira de prioridad reparte el alto sobrante de su tarjeta. */
+.mled-fk-fill {
+    grid-template-rows: auto 1fr;
 }
 
-@media (max-width: 980px) {
-    .mled-fk-mosaic {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .mled-fk-col {
-        display: contents;
-    }
-
-    .mled-fk-s6,
-    .mled-fk-s12 {
-        grid-column: auto;
-    }
+.mled-fk-fill .mled-fk-prio {
+    grid-template-rows: repeat(3, minmax(0, 1fr));
 }
 
 /* Máquinas: asa, tipo, nombre, nombre corto y acciones */
@@ -1780,39 +1752,79 @@
     color: var(--text-secondary);
 }
 
-/* Efecto por situación */
-.mled-fk-warnbox {
-    border: 1px solid color-mix(in srgb, var(--orange) 60%, transparent);
-    background: color-mix(in srgb, var(--orange) 12%, transparent);
-    border-radius: var(--radius-sm, 8px);
-    padding: 8px 10px;
-    font-size: 13px;
-}
-
-.mled-fk-sit {
+/* Cómo se ve cada situación: una ficha por situación */
+.mled-fk-sitcards {
     display: grid;
-    gap: 6px;
-}
-
-.mled-fk-sitrow {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 10px;
-    align-items: center;
-    padding: 6px 8px;
+}
+
+.mled-fk-sitcard {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+    padding: 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm, 8px);
     background: var(--panel-bg);
 }
 
-.mled-fk-sitrow.is-off {
+.mled-fk-sitcard.is-on {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mled-fk-sitcard h4 {
+    margin: 0;
+    font-size: 14.5px;
+}
+
+.mled-fk-sitcard p {
+    margin: 0;
+    font-size: 12.5px;
+}
+
+.mled-fk-sitcard select {
+    width: 100%;
+    min-width: 0;
+}
+
+.mled-fk-generalstyle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.mled-fk-generalstyle select {
+    width: auto;
+    min-width: 180px;
+}
+
+.mled-fk-sitsels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.mled-fk-sitcard.is-off [data-fk-sit-fx] {
     opacity: .55;
 }
 
-.mled-fk-sitrow small {
-    display: block;
+.mled-fk-sitnote {
     color: var(--text-secondary);
     font-size: 12px;
+}
+
+.mled-fk-sitnote:empty {
+    display: none;
+}
+
+.mled-fk-new {
+    color: var(--accent);
+    font-size: 11.5px;
+    font-weight: 700;
 }
 
 /* Galería de efectos */
@@ -1964,39 +1976,8 @@
     font-size: 14px;
 }
 
-/* Conexión y tiempos (plegado) */
-.mled-fk-details {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    background: var(--card-bg);
-}
-
-.mled-fk-details summary {
-    cursor: pointer;
-    padding: 12px 14px;
-    font-weight: 700;
-    font-size: 15px;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mled-fk-details summary::-webkit-details-marker {
-    display: none;
-}
-
-.mled-fk-details summary::after {
-    content: "+";
-    color: var(--text-secondary);
-}
-
-.mled-fk-details[open] summary::after {
-    content: "−";
-}
-
+/* Conexión y tiempos */
 .mled-fk-inner {
-    padding: 0 14px 14px;
     display: grid;
     gap: 10px;
 }
@@ -2111,8 +2092,9 @@
     opacity: 1;
 }
 
-@media (max-width: 1100px) {
-    .mled-fk-marco-opts {
+@media (max-width: 720px) {
+    .mled-fk-marco-opts,
+    .mled-fk-sitsels {
         grid-template-columns: 1fr;
     }
 }
@@ -2126,6 +2108,54 @@
 
 @media (max-width: 520px) {
     .mled-fk-prio {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Pantallas angostas: va al final del bloque para ganar a las reglas base
+   de la galería y de los globos de ayuda. */
+@media (max-width: 980px) {
+    .mled-fk-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mled-fk-grid > .mled-fk-card {
+        grid-column: auto;
+    }
+
+    /* Los globos de ayuda se anclan a su encabezado y ocupan su ancho, así
+       nunca se salen de la página. */
+    .mled-fk-head,
+    .mled-fk-title,
+    .mled-fk-field-label {
+        position: relative;
+    }
+
+    .mled-fk-help,
+    .mled-fk-help-end {
+        position: static;
+    }
+
+    .mled-fk-help .mled-fk-tip,
+    .mled-fk-help-end .mled-fk-tip {
+        left: 0;
+        right: 0;
+        top: calc(100% + 6px);
+        bottom: auto;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .mled-fk-tab {
+        padding: 6px 11px;
+        font-size: 13px;
+    }
+
+    .mled-fk-gallery,
+    .mled-fk-fxgrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

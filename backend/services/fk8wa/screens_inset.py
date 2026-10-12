@@ -12,7 +12,7 @@ from PIL import Image
 
 from . import screens
 from .pixelfont import BIG, SMALL, TINY, draw_text, fits, normalize, text_width
-from .screens import (DEFAULTS, KIND_TAG, NAME_ZONE_MIN, STATE_ICON, THERMO, _bar, _clip, _elapsed_or_kind, _fit,
+from .screens import (DEFAULTS, cooling_percent, KIND_TAG, NAME_ZONE_MIN, STATE_ICON, THERMO, _bar, _clip, _elapsed_or_kind, _fit,
                       _icon, _message, _name, _right, _sep, _wrapped, display_file)
 
 IW, IH = 92, 12
@@ -191,6 +191,38 @@ def s_heating(data):
     return img
 
 
+def _thermo_icon(img, sep):
+    px = img.load()
+    for j, row in enumerate(THERMO):
+        for i, c in enumerate(row):
+            if c == "#":
+                px[sep + 3 + i, 1 + j] = 1
+
+
+def s_ready(data):
+    img = _base()
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep)
+    _thermo_icon(img, sep)
+    goal = int(data.get("target", data.get("temp", 0)))
+    text, font = _fit([f"LISTA {goal}", str(goal)], 92 - (sep + 11), (SMALL, TINY))
+    draw_text(img, sep + 11, 0 if font is SMALL else 1, text, font)
+    _bar(img, sep + 11, 8, 92 - (sep + 11) - 1, 100)
+    return img
+
+
+def s_cooling(data):
+    img = _base()
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep)
+    _thermo_icon(img, sep)
+    now = int(data.get("temp", 0))
+    text, font = _fit([f"ENFRIA {now}", str(now)], 92 - (sep + 11), (SMALL, TINY))
+    draw_text(img, sep + 11, 0 if font is SMALL else 1, text, font)
+    _bar(img, sep + 11, 8, 92 - (sep + 11) - 1, cooling_percent(data))
+    return img
+
+
 def s_idle(data):
     img = _base()
     time_text = str(data["time"])
@@ -235,7 +267,7 @@ def s_off(data):
 
 SCREENS = {
     "boot": s_boot, "normal": s_normal, "print1": s_print1, "print2": s_print2, "many": s_many,
-    "pause": s_pause, "error": s_error, "offline": s_offline, "heating": s_heating, "idle": s_idle, "done": s_done,
+    "pause": s_pause, "error": s_error, "offline": s_offline, "heating": s_heating, "ready": s_ready, "cooling": s_cooling, "idle": s_idle, "done": s_done,
     "special": s_special, "off": s_off,
 }
 

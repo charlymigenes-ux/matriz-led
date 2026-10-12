@@ -350,6 +350,47 @@ def s_heating(data):
     return img
 
 
+def _thermo(img, x, y):
+    px = img.load()
+    for j, row in enumerate(THERMO):
+        for i, c in enumerate(row):
+            if c == "#":
+                px[x + i, y + j] = 1
+
+
+def s_ready(data):
+    """Una máquina que ya llegó a su temperatura y espera (sin imprimir)."""
+    img = _base()
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep)
+    _thermo(img, sep + 3, 3)
+    goal = int(data.get("target", data.get("temp", 0)))
+    text, font = _fit([f"LISTA {goal}", str(goal)], 96 - (sep + 12))
+    draw_text(img, sep + 12, 1 if font is SMALL else 2, text, font)
+    _bar(img, sep + 12, 10, 96 - (sep + 12) - 2, 100)
+    return img
+
+
+def cooling_percent(data) -> float:
+    """Qué tanto falta para bajar del límite: 100 al inicio del enfriado, 0 en el límite."""
+    now, peak = int(data.get("temp", 0)), int(data.get("peak", data.get("temp", 0)))
+    limit = int(data.get("limit", 50))
+    return max(0.0, min(100.0, 100.0 * (now - limit) / max(1, peak - limit)))
+
+
+def s_cooling(data):
+    """Una máquina enfriándose (calentador apagado y todavía caliente)."""
+    img = _base()
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep)
+    _thermo(img, sep + 3, 3)
+    now = int(data.get("temp", 0))
+    text, font = _fit([f"ENFRIA {now}", str(now)], 96 - (sep + 12))
+    draw_text(img, sep + 12, 1 if font is SMALL else 2, text, font)
+    _bar(img, sep + 12, 10, 96 - (sep + 12) - 2, cooling_percent(data))
+    return img
+
+
 def s_idle(data):
     img = _base()
     time_text = str(data["time"])
@@ -403,6 +444,7 @@ SCREENS = {
     "print1": ("3. Impresion activa (vista 1)", s_print1), "print2": ("4. Impresion activa (vista 2)", s_print2),
     "many": ("5. Varias impresoras", s_many), "pause": ("6. Pausada", s_pause), "error": ("7. Error", s_error),
     "offline": ("8. Desconectada", s_offline), "heating": ("13. Calentando", s_heating),
+    "ready": ("14. En temperatura", s_ready), "cooling": ("15. Enfriando", s_cooling),
     "idle": ("9. Todas detenidas", s_idle),
     "done": ("10. Trabajo terminado", s_done), "special": ("11. Mensaje especial", s_special),
     "off": ("12. Apagado", s_off),

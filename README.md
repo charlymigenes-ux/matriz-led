@@ -149,7 +149,8 @@ cada una tiene su configuración y su estado.
 
 **Cómo decide qué mostrar** (prioridad): error > pausa > desconectada >
 mensaje especial > terminado (60 s) > trabajando (vista 1 y 2 alternan cada
-15 s; con dos o más activas, "varias", de 3 en 3) > calentando > todo
+15 s; con dos o más activas, "varias", de 3 en 3) > calentando / en
+temperatura / enfriando > todo
 normal / todas en reposo (alternan).
 "Apagado" (HASTA PRONTO) se muestra al detener NOPAL. La pantalla de error
 dice "ERROR": el estado de las máquinas no trae el texto del error.
@@ -160,11 +161,25 @@ TTS 55 PRO → TTS, CNC 3018 → CNC); se puede cambiar en la pestaña. Las
 impresoras 3D, los láser y los CNC entran igual. Un láser o CNC no informa
 el tiempo transcurrido: en su vista 2 aparece LASER o CNC en lugar de la hora.
 
-**Calentando**: una impresora 3D que tiene temperatura objetivo y aún le
-faltan más de 3 °C (boquilla o cama) sin estar imprimiendo muestra su
-temperatura actual/objetivo con una barra. Va debajo de "trabajando" en la
-prioridad. Con todo en reposo, "Todo normal" y "Todas en reposo" se alternan
-cada 15 s.
+**Calentando, en temperatura y enfriando** (solo impresoras 3D que no imprimen;
+láser y CNC nunca calientan; va debajo de "trabajando" en la prioridad):
+- *Calentando*: tiene temperatura objetivo y aún le faltan más de 3 °C
+  (boquilla o cama): muestra temperatura actual/objetivo con una barra.
+- *En temperatura*: ya llegó (a menos de 3 °C) y espera. La pantalla **se
+  mantiene** hasta que se mande imprimir o se apague el calentador.
+- *Enfriando*: el calentador está apagado (objetivo 0) y aún pasa de 50 °C:
+  muestra la temperatura bajando; al llegar a 50 °C vuelve a lo normal.
+Con todo en reposo, "Todo normal" y "Todas en reposo" se alternan cada 15 s.
+
+**Contorno por situación** (`situation_styles`): cada situación puede tener su
+propio contorno. Las que tienen reloj (reposo, trabajando, terminó, mensaje)
+usan los de siempre (contorno, contorno encima, barra, sin contorno o marco
+animado); calentando, en temperatura y enfriando pueden usar además
+*contorno según la temperatura* (`temp`: se llena al calentar y se vacía al
+enfriar; NOPAL vuelve a subir la pantalla cuando cambia la temperatura, cada
+`min_interval_s` como mínimo); pausa, error y desconectada solo marco animado
+o ninguno. Lo que no se elige usa `timer_style`. Por omisión: calentando y
+enfriando `temp`, en temperatura marco horario.
 
 **Efectos de entrada**: el panel solo anima cómo APARECE cada pantalla (36
 efectos de FKShow en 8 familias: Desplazar, Entrar, Cubrir, Persiana,

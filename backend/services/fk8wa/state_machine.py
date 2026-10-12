@@ -5,7 +5,10 @@ elegidos en orden (P1, P2, ...), la hora y una memoria que guarda lo que
 depende del tiempo (alternancia de vistas, aviso de terminado).
 
 Prioridad aprobada: error > pausa > desconectada > mensaje especial >
-terminado > impresión > inactivas / normal.
+terminado > impresión > calentando / en temperatura / enfriando >
+inactivas / normal. Una impresora que calentó y no imprime se queda en
+"en temperatura" hasta que se imprima o se apague el calentador; luego
+"enfriando" hasta bajar de COOL_LIMIT_C.
 
 El contrato de máquinas no trae el texto del error (solo el estado), así que
 la pantalla de error muestra "ERROR".
@@ -22,6 +25,7 @@ from .pixelfont import SMALL as SMALL_FONT, text_width
 
 BOOT_MAX_S = 30.0
 HEAT_MARGIN_C = 3          # falta más de esto para el objetivo = sigue calentando
+COOL_LIMIT_C = 50          # sin objetivo y por arriba de esto = sigue enfriando
 SCROLL_ABOVE_PX = 78       # un mensaje más ancho que esto (letra normal) corre en vez de quedarse quieto
 QUIET_STATES = {"idle", "standby", "complete", "cancelled"}
 ACTIVE_STATES = {"printing"}
@@ -40,6 +44,7 @@ class Memory:
     printing_since: Optional[float] = None
     print_views: Optional[Tuple[Dict[str, Any], Dict[str, Any]]] = None   # datos de vista 1 y 2
     many_groups: List[List[Dict[str, Any]]] = field(default_factory=list)  # activas de 3 en 3
+    peak: Dict[str, int] = field(default_factory=dict)   # máxima temperatura vista de cada máquina caliente
 
 
 def _elapsed(seconds: Any) -> Optional[str]:
@@ -60,20 +65,34 @@ def _pct(value: Any) -> int:
         return 0
 
 
-def _heat(machine: Dict[str, Any], state: str) -> Optional[Tuple[int, int]]:
-    """(temperatura actual, objetivo) de una impresora que está calentando
-    sin imprimir todavía; None si no. Los láser y CNC no calientan."""
+def _thermal(machine: Dict[str, Any], state: str) -> Optional[Tuple[str, int, int]]:
+    """(fase, temperatura actual, objetivo) de una impresora que no imprime:
+    "heating" (falta para el objetivo), "ready" (ya llegó y espera) o
+    "cooling" (sin objetivo pero todavía caliente); None si no aplica.
+    Los láser y CNC no calientan."""
     if machine.get("type") not in (None, "printer") or state not in QUIET_STATES:
         return None
     status = machine.get("status") or {}
+    heaters = []
     for key in ("hotend", "bed"):
         pair = status.get(key) or {}
-        current, target = pair.get("current"), pair.get("target")
         try:
-            if target and float(target) > 0 and current is not None and float(current) < float(target) - HEAT_MARGIN_C:
-                return int(round(float(current))), int(round(float(target)))
+            current = float(pair["current"]) if pair.get("current") is not None else None
+            target = float(pair.get("target") or 0)
         except (TypeError, ValueError):
             continue
+        if current is not None:
+            heaters.append((current, target))
+    wanted = [(c, t) for c, t in heaters if t > 0]
+    for current, target in wanted:
+        if current < target - HEAT_MARGIN_C:
+            return "heating", int(round(current)), int(round(target))
+    if wanted:
+        current, target = wanted[0]
+        return "ready", int(round(current)), int(round(target))
+    hottest = max((c for c, _ in heaters), default=None)
+    if hottest is not None and hottest > COOL_LIMIT_C:
+        return "cooling", int(round(hottest)), 0
     return None
 
 
@@ -90,7 +109,7 @@ def _entries(machines: Sequence[Dict[str, Any]], selected_ids: Sequence[str],
         label = (short_names or {}).get(str(machine_id)) or names_mod.short_name(machine.get("name") or str(machine_id))
         out.append({
             "id": str(machine_id), "label": label, "state": state, "job": status.get("job") or None,
-            "kind": machine.get("type") or "printer", "heat": _heat(machine, state),
+            "kind": machine.get("type") or "printer", "thermal": _thermal(machine, state),
         })
     return out
 
@@ -160,10 +179,18 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
         memory.many_groups = [tags[i:i + 3] for i in range(0, len(tags), 3)]
         return "many", {"machines": tags[:3]}
 
-    heating = next((e for e in entries if e["heat"]), None)
-    if heating:
-        temp, target = heating["heat"]
-        return "heating", {"printer": heating["label"], "temp": temp, "target": target}
+    for e in entries:       # la máxima de cada máquina, para saber qué tanto falta al enfriar
+        if e["thermal"]:
+            memory.peak[e["id"]] = max(memory.peak.get(e["id"], 0), e["thermal"][1])
+        else:
+            memory.peak.pop(e["id"], None)
+    for phase in ("heating", "ready", "cooling"):
+        hit = next((e for e in entries if e["thermal"] and e["thermal"][0] == phase), None)
+        if hit:
+            _, temp, target = hit["thermal"]
+            if phase == "cooling":
+                return phase, {"printer": hit["label"], "temp": temp, "peak": max(temp, memory.peak.get(hit["id"], temp))}
+            return phase, {"printer": hit["label"], "temp": temp, "target": target}
     if entries and all(e["state"] in QUIET_STATES for e in entries):
         return "idle", {"total": len(entries), "time": time_text}
     online = sum(1 for e in entries if e["state"] != "offline")

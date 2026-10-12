@@ -13,6 +13,9 @@ Estilos de contador (configurables):
 - "contorno_encima": igual, pero sobre las pantallas de tamaño completo.
 - "barra": pantallas achicadas y una barra que avanza en la fila de abajo.
 - "ninguno": sin contador (una página por vista).
+- "temp": contorno que sigue la temperatura (solo calentando, en temperatura y
+  enfriando): se llena al calentar y se vacía al enfriar. Una sola página que
+  NOPAL vuelve a subir cuando cambia la temperatura.
 - "marco_<estilo>": un marco que anima el propio panel (los de FKShow:
   horario, una línea, parpadeo...). Decorativo: el panel lo mueve a su
   ritmo, no marca el tiempo exacto. Usa la disposición con marco (94x14).
@@ -28,7 +31,10 @@ from . import program, screens, screens_inset
 
 PROGRESSIVE = ("contorno", "contorno_encima", "barra")
 STYLES = PROGRESSIVE + ("ninguno",) + tuple(f"marco_{k}" for k in program.BORDER_STYLES)
-INSET_STYLES = ("contorno", "barra")
+TEMP = "temp"
+INSET_STYLES = ("contorno", "barra", TEMP)
+# Estilos que se pueden elegir por situación: los de reloj (STYLES) y el de temperatura.
+SITUATION_STYLES = STYLES + (TEMP,)
 # Páginas por programa: 16 es lo verificado en el panel real (texto largo).
 MAX_PAGES = 16
 MAX_STAY_MS = 65535
@@ -75,8 +81,23 @@ def _border_page(name: str, data: Dict[str, Any]) -> Image.Image:
     return page
 
 
+def temp_fraction(name: str, data: Dict[str, Any]) -> float:
+    """Qué tanto del contorno se enciende en el estilo "temp": lo que lleva de
+    la temperatura objetivo al calentar, todo en temperatura y lo que falta
+    para bajar del límite al enfriar."""
+    if name == "ready":
+        return 1.0
+    if name == "cooling":
+        return screens.cooling_percent(data) / 100.0
+    target = max(1, int(data.get("target", 1)))
+    return max(0.0, min(1.0, int(data.get("temp", 0)) / target))
+
+
 def build_pages(segments: Sequence[Segment], style: str) -> Tuple[List[Image.Image], int]:
     """Páginas del programa y permanencia por página en ms."""
+    if style == TEMP:
+        return [_overlay(screen_image(name, data, style), temp_fraction(name, data), "contorno")
+                for name, data, _ in segments], 0
     timed = [s for s in segments if s[2]]
     seconds = timed[0][2] if timed else None
     if style.startswith("marco_"):

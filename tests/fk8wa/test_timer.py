@@ -114,3 +114,48 @@ class TestPlaylist:
             config.validate({"timer_style": "arcoiris"})
         with pytest.raises(config.ConfigError):
             config.validate({"border_pattern": "zigzag"})
+
+
+class TestTemperatureContour:
+    def test_fraction_follows_the_phase(self):
+        assert timer.temp_fraction("heating", {"temp": 100, "target": 200}) == 0.5
+        assert timer.temp_fraction("ready", {"temp": 200, "target": 200}) == 1.0
+        assert timer.temp_fraction("cooling", {"temp": 125, "peak": 200}) == 0.5
+        assert timer.temp_fraction("cooling", {"temp": 40, "peak": 200}) == 0.0
+
+    def test_one_page_that_changes_with_the_temperature(self):
+        low = timer.build_pages([("heating", {"printer": "ET4", "temp": 50, "target": 200}, None)], "temp")
+        high = timer.build_pages([("heating", {"printer": "ET4", "temp": 190, "target": 200}, None)], "temp")
+        assert len(low[0]) == 1 and low[1] == 0
+        assert sum(map(sum, [list(low[0][0].getdata())])) < sum(map(sum, [list(high[0][0].getdata())]))
+
+    def test_program_is_the_verified_static_one_without_effect(self):
+        seg = [("ready", {"printer": "ET4", "temp": 200, "target": 200}, None)]
+        data = timer.build_program(seg, "temp")
+        assert header(data)["effect"] == (1, 0)
+
+    def test_temp_is_not_a_general_clock_style(self):
+        assert "temp" not in timer.STYLES and "temp" in timer.SITUATION_STYLES
+        with pytest.raises(config.ConfigError):
+            config.validate({"timer_style": "temp"})
+
+
+class TestSituationStyles:
+    def test_defaults_for_the_new_situations(self):
+        saved = config.validate({})["situation_styles"]
+        assert saved == {"heating": "temp", "ready": "marco_cw", "cooling": "temp"}
+
+    def test_each_situation_accepts_only_its_own_styles(self):
+        ok = config.validate({"situation_styles": {"error": "marco_ccw", "printing": "barra", "ready": "ninguno"}})
+        assert ok["situation_styles"]["error"] == "marco_ccw" and ok["situation_styles"]["printing"] == "barra"
+        for situation, style in (("error", "barra"), ("pause", "temp"), ("printing", "temp"), ("heating", "contorno"),
+                                 ("cooling", "arcoiris")):
+            with pytest.raises(config.ConfigError):
+                config.validate({"situation_styles": {situation: style}})
+        with pytest.raises(config.ConfigError):
+            config.validate({"situation_styles": {"marte": "ninguno"}})
+
+    def test_empty_value_goes_back_to_the_general_style(self):
+        saved = config.validate({"timer_style": "barra", "situation_styles": {"heating": ""}})
+        assert "heating" not in saved["situation_styles"]
+        assert config.style_for("heating", saved) == "barra" and config.style_for("ready", saved) == "marco_cw"

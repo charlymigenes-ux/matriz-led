@@ -37,6 +37,9 @@ CASES.update({
     "many_nombres": ("many", {"machines": [{"label": "ET4", "state": "printing"}, {"label": "TTS", "state": "printing"},
                                            {"label": "CNC", "state": "printing"}]}),
     "heating_et4": ("heating", {"printer": "ET4", "temp": 165, "target": 200}),
+    "ready_et4": ("ready", {"printer": "ET4", "temp": 200, "target": 200}),
+    "cooling_et4": ("cooling", {"printer": "ET4", "temp": 120, "peak": 200}),
+    "cooling_casi_frio": ("cooling", {"printer": "TTS", "temp": 52, "peak": 210}),
     "error_cnc": ("error", {"printer": "CNC", "error": "ERROR"}),
     "offline_marl": ("offline", {"printer": "MARL"}),
 })

@@ -79,7 +79,7 @@ def test_js_uses_fk8wa_routes(route):
 def test_frames_with_and_without_params():
     assert "api('/fk8wa/frames')" in JS                       # lo que tiene el panel ahora
     assert "/fk8wa/frames?style=${" in JS                     # mini paneles del reloj
-    assert "/fk8wa/frames?screen=${" in JS                    # galería de las 13 pantallas
+    assert "/fk8wa/frames?screen=${" in JS                    # galería de las 15 pantallas
     assert "/fk8wa/frames?screen=normal" in JS and "/fk8wa/frames?screen=print1" in JS   # cuadros A y B
 
 
@@ -93,7 +93,7 @@ def test_methods_and_payloads():
     assert "announcement_id: announcementId" in JS
     # La config se guarda completa con los campos cambiados.
     assert "...fk.config, ...overrides" in JS
-    for field in ("timer_style:", "short_names:", "effects:", "scroll_dir:", "scroll_speed:", "border_pattern:", "border_speed:"):
+    for field in ("situation_styles:", "short_names:", "effects:", "scroll_dir:", "scroll_speed:", "border_pattern:", "border_speed:"):
         assert field in JS, field
 
 
@@ -153,9 +153,9 @@ def test_polling_and_animation_only_while_visible():
     assert "fkOnScreen(card.canvas)" in JS and "fkOnScreen(mini.canvas)" in JS
 
 
-def test_priority_strip_has_eight_steps():
+def test_priority_strip_has_ten_steps():
     steps = re.findall(r"\['([a-z]+)', '[^']+', 'fkPrio\w+', 'fkPrio\w+Tip'\]", _const_array("FK_PRIORITY"))
-    assert steps == ["error", "pause", "offline", "special", "done", "printing", "heating", "normal"]
+    assert steps == ["error", "pause", "offline", "special", "done", "printing", "heating", "ready", "cooling", "normal"]
     assert "s.priority" in JS
     assert "data-fk-prio" in JS
 
@@ -198,15 +198,15 @@ def test_contorno_encima_blocks_effects_like_the_other_exact_clocks():
     line = re.search(r"const FK_CLOCK_BLOCKS = \[([^\]]*)\];", JS).group(1)
     assert re.findall(r"'([a-z_]+)'", line) == ["contorno", "contorno_encima", "barra"]
     sit = _function_source("fkSyncSit")
-    assert "fkClockBlocks()" in sit and "row.dataset.timed === '1'" in sit
+    assert "fkClockBlocks(id)" in sit and "row.dataset.timed === '1'" in sit
     assert "select.disabled = off || !fk.isAdmin" in sit
-    assert "fkClockWarn" in JS
+    assert "fkSitBlocked" in sit
 
 
 def test_effect_gallery_and_situations():
     assert len(re.findall(r"\['[A-Z][a-z]+', 'fkFam\w+'\]", _const_array("FK_FAMILIES"))) == 8
     situations = re.findall(r"(\w+): 'fkSit\w+'", JS[JS.index("const FK_SIT_KEYS"):JS.index("};", JS.index("const FK_SIT_KEYS"))])
-    assert situations == ["rest", "heating", "printing", "pause", "error", "offline", "done", "special"]
+    assert situations == ["rest", "heating", "ready", "cooling", "printing", "pause", "error", "offline", "done", "special"]
     assert "'/fk8wa/frames?screen=normal'" in JS      # cuadros A y B de la galería
     assert "data-fk-try" in JS and "fkTryEffect" in JS
     assert "fkReplay" in JS and "await fkLoadEffects()" in _function_source("fkTryEffect")
@@ -234,10 +234,10 @@ def test_scroll_text_speed_and_direction():
     assert "/fk8wa/scroll-preview?" in JS
 
 
-def test_gallery_has_all_thirteen_screens():
+def test_gallery_has_all_fifteen_screens():
     line = re.search(r"const FK_SCREENS = \[([^\]]*)\];", JS).group(1)
     screens = re.findall(r"'([a-z0-9]+)'", line)
-    assert screens == ["boot", "normal", "idle", "print1", "print2", "many", "heating", "pause", "error", "offline", "done", "special", "off"]
+    assert screens == ["boot", "normal", "idle", "print1", "print2", "many", "heating", "ready", "cooling", "pause", "error", "offline", "done", "special", "off"]
     assert "FK_SCREEN_DESC_KEYS" in JS
 
 
@@ -255,7 +255,7 @@ def test_server_text_is_escaped():
     assert "esc(label)" in JS
 
 
-# ── Mosaico ──
+# ── Pestañas internas y cuadrícula de 12 columnas ──
 
 def _first_rules():
     """Como dict(_css_rules()) pero conserva la primera regla de cada selector (la de escritorio)."""
@@ -265,79 +265,72 @@ def _first_rules():
     return rules
 
 
-def _mosaic_sequence():
-    """[(tipo, valor)] del mosaico en el orden del HTML: columnas, tarjetas y la pila de máquinas + brillo."""
-    html = JS[JS.index("function fkViewHtml"):]
-    html = html[html.index('class="mled-fk-mosaic">'):html.index('<details class="mled-fk-details"')]
-    tokens = []
-    pattern = (r"(mled-fk-col mled-fk-col-[lr])|(mled-fk-stack (mled-fk-o\d))"
-               r"|fkCardHtml\('([^']*)', 'mled-fk-t-([\w-]+)'")
-    for match in re.finditer(pattern, html):
-        if match.group(1):
-            tokens.append(("col", match.group(1).split("-")[-1]))
-        elif match.group(2):
-            tokens.append(("card", "stack", match.group(3)))
-        else:
-            tokens.append(("card", match.group(5), match.group(4)))
-    return tokens
+def _fk_view_html():
+    html = JS[JS.index("function fkViewHtml"):JS.index("// ── Fichas de las pestañas ──")]
+    return html[html.index('class="mled-fk-tabs"'):]
 
 
-def _order_of(classes):
-    found = re.search(r"mled-fk-o(\d)", classes)
-    return int(found.group(1)) if found else None
+def _panes():
+    """{panel: [(clase de span, id de la tarjeta)]} en el orden del HTML."""
+    html = _fk_view_html()
+    panes = {}
+    for match in re.finditer(r'id="mled-fk-pn-(\w+)"[^>]*>(.*?)\n\s*</div>', html, re.S):
+        panes[match.group(1)] = re.findall(r"fkCardHtml\('([^']*)', 'mled-fk-t-([\w-]+)'", match.group(2))
+    return panes
 
 
-def test_mosaic_two_independent_columns():
+def test_grid_is_twelve_columns_stretching_rows():
     rules = _first_rules()
-    assert "repeat(12" in rules[".mled-fk-mosaic"] and "align-items: start" in rules[".mled-fk-mosaic"]
-    assert "span 7" in rules[".mled-fk-col-l"] and "span 5" in rules[".mled-fk-col-r"]
-    # Cada columna apila sus tarjetas por su cuenta (no comparten filas): sin huecos entre ellas.
-    assert "display: grid" in rules[".mled-fk-col"] and "align-content: start" in rules[".mled-fk-col"]
-    assert "gap: 12px" in rules[".mled-fk-col"]
-    for name, span in (("s6", 6), ("s12", 12)):
-        assert f"span {span}" in rules[f".mled-fk-{name}"]
-    assert ".mled-fk-s7" not in rules and ".mled-fk-s5" not in rules       # ya no hay filas de 7 + 5
+    assert "repeat(12" in rules[".mled-fk-grid"] and "align-items: stretch" in rules[".mled-fk-grid"]
+    for span in (4, 5, 6, 7, 8, 12):
+        assert f"span {span}" in rules[f".mled-fk-s{span}"]
+    assert ".mled-fk-mosaic" not in CSS and ".mled-fk-col" not in CSS and "mled-fk-details" not in CSS
+    assert "mled-fk-mosaic" not in JS and "<details" not in _fk_view_html()
 
 
-def test_mosaic_columns_content_and_full_width_cards():
-    tokens = _mosaic_sequence()
-    layout = []
-    for token in tokens:
-        if token[0] == "col":
-            layout.append(f"col-{token[1]}")
-        else:
-            layout.append(token[1])
-    assert layout == ["col-l", "now", "msg", "sit", "col-r", "why", "stack", "timer", "fx", "scroll", "screens"] or layout == [
-        "col-l", "now", "msg", "sit", "col-r", "why", "stack", "mach", "bright", "timer", "fx", "scroll", "screens"]
-    # Las tarjetas de ancho completo van debajo de las dos columnas.
-    wide = {token[1]: token[2] for token in tokens if token[0] == "card" and token[1] in ("fx", "scroll", "screens")}
-    assert "mled-fk-s12" in wide["fx"] and "mled-fk-s6" in wide["scroll"] and "mled-fk-s6" in wide["screens"]
+def test_inner_tabs_are_accessible_and_remembered():
+    html = _fk_view_html()
+    assert 'class="mled-fk-tabs" role="tablist"' in html
+    assert 'role="tab"' in html and "aria-selected" in html and "aria-controls" in html
+    assert len(re.findall(r'role="tabpanel" id="mled-fk-pn-', html)) == 5
+    body = JS[JS.index("function fkBindTabs"):JS.index("function fkBindHelp")]
+    for key in ("ArrowRight", "ArrowLeft", "Home", "End"):
+        assert f"'{key}'" in body
+    # localStorage siempre dentro de try/catch (puede no existir).
+    shown = JS[JS.index("function fkShowTab"):JS.index("function fkBindTabs")]
+    assert re.search(r"try \{ localStorage\.setItem\(FK_TAB_KEY", shown)
+    assert re.search(r"try \{\s*const saved = localStorage\.getItem\(FK_TAB_KEY\)", body)
+    # No se confunde con las fichas del plugin: ids propios.
+    assert 'id="mled-fk-tab-' in html and 'id="mled-tab-' not in html
+    rules = _first_rules()
+    assert "position: sticky" in rules[".mled-fk-tabs"] and "top: 0" in rules[".mled-fk-tabs"]
 
 
-def test_mosaic_mobile_order_and_no_duplicated_dom():
-    tokens = [t for t in _mosaic_sequence() if t[0] == "card" and t[1] not in ("mach", "bright")]
-    ordered = [t[1] for t in sorted(tokens, key=lambda t: _order_of(t[2]))]
-    assert ordered == ["now", "why", "msg", "stack", "timer", "sit", "fx", "scroll", "screens"]
-    # Dentro de cada columna el orden del HTML coincide con `order` (escritorio y móvil se ven igual).
-    for column in ("l", "r"):
-        start = [i for i, t in enumerate(_mosaic_sequence()) if t == ("col", column)][0]
-        values = []
-        for token in _mosaic_sequence()[start + 1:]:
-            if token[0] == "col" or token[1] in ("fx", "scroll", "screens"):
-                break
-            if token[1] in ("mach", "bright"):
-                continue
-            values.append(_order_of(token[2]))
-        assert values == sorted(values) and len(values) == 3, (column, values)
-    html = JS[JS.index("function fkViewHtml"):]
-    ids = re.findall(r"fkCardHtml\('[^']*', '(mled-fk-t-[\w-]+)'", html)
+def test_panes_content_and_spans():
+    panes = _panes()
+    assert list(panes) == ["panel", "mach", "clock", "fx", "screens"]
+    layout = {name: [(card, classes) for classes, card in cards] for name, cards in panes.items()}
+    assert [card for card, _ in layout["panel"]] == ["now", "why", "msg", "bright"]
+    assert [card for card, _ in layout["mach"]] == ["mach", "conn"]
+    assert [card for card, _ in layout["clock"]] == ["sit", "scroll"]
+    assert [card for card, _ in layout["fx"]] == ["fx"]
+    assert [card for card, _ in layout["screens"]] == ["screens"]
+    # Cada fila de la cuadrícula suma 12 columnas.
+    for name, cards in layout.items():
+        spans = [int(re.search(r"mled-fk-s(\d+)", classes).group(1)) for _, classes in cards]
+        assert sum(spans) % 12 == 0, (name, spans)
+    assert "mled-fk-fill" in dict(layout["panel"])["why"]
+    ids = re.findall(r"fkCardHtml\('[^']*', '(mled-fk-t-[\w-]+)'", _fk_view_html())
     assert len(ids) == len(set(ids)) == 10                  # sin ids duplicados: es un solo DOM
-    media = re.search(r"@media \(max-width: 980px\) \{(.*?)\n\}\n\n\.mled-fk-mosaic|@media \(max-width: 980px\) \{(.*?)\n\}", CSS[CSS.index(".mled-fk-o9"):], re.S)
-    narrow = media.group(1) or media.group(2)
-    assert "display: contents" in narrow and "minmax(0, 1fr)" in narrow
-    rules = _first_rules()
-    for number in range(1, 10):
-        assert f"order: {number}" in rules[f".mled-fk-o{number}"]
+    assert "mled-fk-t-conn" in ids and 'id="mled-fk-ip"' in JS
+
+
+def test_narrow_layout_single_column_two_column_galleries_and_contained_tips():
+    narrow = re.search(r"@media \(max-width: 980px\) \{(.*?)\n\}\n\n@media", CSS[CSS.index("Pantallas angostas"):], re.S).group(1)
+    assert "minmax(0, 1fr)" in narrow and "position: static" in narrow
+    assert "left: 0" in narrow and "right: 0" in narrow and "max-width: none" in narrow     # el globo no se sale
+    phone = re.search(r"@media \(max-width: 600px\) \{(.*?)\n\}", CSS[CSS.index("Pantallas angostas"):], re.S).group(1)
+    assert "mled-fk-gallery" in phone and "repeat(2, minmax(0, 1fr))" in phone
 
 
 # ── i18n ──
@@ -346,7 +339,7 @@ def test_fk_i18n_keys_in_every_language():
     blocks = _i18n_blocks()
     assert set(LANGS) <= set(blocks)
     reference = _keys(blocks["es"])
-    assert {"fkTitle", "fkSizeMismatch", "fkNowTitle", "fkWhyTitle", "fkMsgTitle", "fkTimerTitle", "fkSitTitle",
+    assert {"fkTitle", "fkSizeMismatch", "fkNowTitle", "fkWhyTitle", "fkMsgTitle", "fkSitTitle",
             "fkFxTitle", "fkScrollTitle", "fkGalleryTitle"} <= reference
     for lang in LANGS:
         assert _keys(blocks[lang]) == reference, lang

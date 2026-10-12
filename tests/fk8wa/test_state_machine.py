@@ -172,6 +172,48 @@ class TestHeating:
         assert pick(ms, ids=["a", "b", "c"])[0] == "error"
 
 
+class TestReadyAndCooling:
+    def test_at_temperature_stays_until_something_changes(self):
+        ms = [mach("a", "ET4", hotend=(200, 200))]
+        assert pick(ms, ids=["a"]) == ("ready", {"printer": "ET4", "temp": 200, "target": 200})
+        ms = [mach("a", "ET4", hotend=(198, 200))]       # dentro del margen sigue "en temperatura"
+        assert pick(ms, ids=["a"])[0] == "ready"
+
+    def test_heating_then_ready_then_cooling_with_the_peak(self):
+        mem = sm.Memory(started_at=0.0)
+        assert pick([mach("a", "ET4", hotend=(120, 200))], memory=mem, ids=["a"])[0] == "heating"
+        assert pick([mach("a", "ET4", hotend=(201, 200))], memory=mem, ids=["a"])[0] == "ready"
+        name, data = pick([mach("a", "ET4", hotend=(150, 0))], memory=mem, ids=["a"])
+        assert (name, data) == ("cooling", {"printer": "ET4", "temp": 150, "peak": 201})
+        assert pick([mach("a", "ET4", hotend=(51, 0))], memory=mem, ids=["a"])[0] == "cooling"
+        assert pick([mach("a", "ET4", hotend=(50, 0))], memory=mem, ids=["a"])[0] == "idle"
+        assert mem.peak == {}
+
+    def test_bed_alone_can_keep_ready_or_cool(self):
+        assert pick([mach("a", "ET4", hotend=(25, 0), bed=(60, 60))], ids=["a"])[0] == "ready"
+        assert pick([mach("a", "ET4", hotend=(25, 0), bed=(80, 0))], ids=["a"])[0] == "cooling"
+
+    def test_heating_beats_ready_and_ready_beats_cooling(self):
+        ms = [mach("a", "ET4", hotend=(200, 200)), mach("b", "ET5", hotend=(100, 200)), mach("c", "ET6", hotend=(90, 0))]
+        assert pick(ms)[0] == "heating"
+        assert pick(ms[:1] + ms[2:], ids=["a", "c"])[0] == "ready"
+        assert pick(ms[2:], ids=["c"])[0] == "cooling"
+
+    @pytest.mark.parametrize("kind", ["laser", "cnc"])
+    def test_laser_and_cnc_never_ready_or_cooling(self, kind):
+        assert pick([mach("a", "TTS", kind=kind, hotend=(200, 200))], ids=["a"])[0] == "idle"
+        assert pick([mach("a", "TTS", kind=kind, hotend=(90, 0))], ids=["a"])[0] == "idle"
+
+    def test_printing_and_done_win_over_ready_and_cooling(self):
+        ms = [mach("a", "ET4", hotend=(200, 200)), mach("b", "ET5", "printing", filename="x.gc")]
+        assert pick(ms, ids=["a", "b"])[0] in ("print1", "print2")
+
+    def test_playlists_are_fixed(self):
+        mem = sm.Memory(started_at=0.0)
+        segs = sm.playlist([mach("a", "ET4", hotend=(200, 200))], ["a"], 100.0, mem, CLOCK, None, 15.0, 60.0)
+        assert segs == [("ready", {"printer": "ET4", "temp": 200, "target": 200}, None)]
+
+
 class TestPlaylistRestAndMessages:
     def play(self, ms, ids, message=None, seconds=None):
         return sm.playlist(ms, ids, 100.0, sm.Memory(started_at=0.0), CLOCK, message, 15.0, 60.0, seconds)

@@ -44,7 +44,7 @@ def effect_for(segments, cfg: Dict[str, Any]) -> Optional[Tuple[str, int, int]]:
     pair = effects.effect(effect_id)
     if pair is None:
         return None
-    if cfg["timer_style"] in timer.PROGRESSIVE and any(seconds for _, _, seconds in segments):
+    if config_mod.style_for(situation, cfg) in timer.PROGRESSIVE and any(seconds for _, _, seconds in segments):
         return None
     return effect_id, pair[0], pair[1]
 
@@ -54,7 +54,8 @@ def make_program(segments, cfg: Dict[str, Any]) -> bytes:
     if segments[0][0] == "scroll":
         return scrolltext.build_program(segments[0][1]["text"], cfg["scroll_dir"], cfg["scroll_speed"])
     chosen = effect_for(segments, cfg)
-    return timer.build_program(segments, cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"],
+    style = config_mod.style_for(effects.SITUATION_OF.get(segments[0][0], ""), cfg)
+    return timer.build_program(segments, style, cfg["border_pattern"], cfg["border_speed"],
                                (chosen[1], chosen[2]) if chosen else None)
 
 
@@ -151,7 +152,7 @@ class Runner:
                 return          # un efecto de prueba está en el panel: no se pisa todavía
             self._demo_until = None
             self._last_image, self._last_send = None, None     # restaura lo que corresponde
-        sig = (cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"], repr(sorted(cfg["effects"].items())),
+        sig = (cfg["timer_style"], repr(sorted(cfg["situation_styles"].items())), cfg["border_pattern"], cfg["border_speed"], repr(sorted(cfg["effects"].items())),
                cfg["scroll_dir"], cfg["scroll_speed"], state_machine.signature(segments))
 
         if sig == self._last_image and not self._brightness_pending:

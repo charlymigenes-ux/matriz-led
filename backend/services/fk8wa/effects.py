@@ -64,6 +64,8 @@ CATALOG: Dict[str, Tuple[int, int, str, str, bool]] = {
 SITUATIONS: Dict[str, Tuple[str, bool]] = {
     "rest": ("Todo tranquilo", True),
     "heating": ("Calentando", False),
+    "ready": ("En temperatura", False),
+    "cooling": ("Enfriando", False),
     "printing": ("Trabajando", True),
     "pause": ("Pausa", False),
     "error": ("Error", False),
@@ -73,7 +75,7 @@ SITUATIONS: Dict[str, Tuple[str, bool]] = {
 }
 # Pantalla -> situación a la que pertenece.
 SITUATION_OF = {
-    "normal": "rest", "idle": "rest", "heating": "heating", "print1": "printing", "print2": "printing",
+    "normal": "rest", "idle": "rest", "heating": "heating", "ready": "ready", "cooling": "cooling", "print1": "printing", "print2": "printing",
     "many": "printing", "pause": "pause", "error": "error", "offline": "offline", "done": "done",
     "special": "special",
 }

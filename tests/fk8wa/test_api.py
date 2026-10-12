@@ -150,7 +150,7 @@ class TestFrames:
 class TestEffectsAndMachinesApi:
     def test_catalog_for_any_session(self, client, as_operator):
         data = client.get(BASE + "/effects").json()
-        assert len(data["effects"]) == 36 and len(data["situations"]) == 8
+        assert len(data["effects"]) == 36 and len(data["situations"]) == 10
         assert next(e for e in data["effects"] if e["id"] == "flash_1")["tested"] is True
         assert set(data["scroll_dirs"]) == {"l1", "r", "u", "d", "l"}
 

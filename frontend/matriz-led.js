@@ -159,7 +159,6 @@
             fkClockBarra: '; la barra marca cuánto falta',
             fkClockContorno: '; el contorno marca cuánto falta',
             fkClockMarco: '; el marco se mueve mientras tanto',
-            fkClockWarn: 'Con el reloj de contorno o de barra, las situaciones marcadas con ⏱ cambian sin efecto. Elige "Sin reloj" o "Marco del panel" para usarles efectos.',
             fkConnChecking: 'Comprobando…',
             fkConnDisabled: 'Apagado',
             fkConnOk: 'Conectado',
@@ -229,7 +228,7 @@
             fkFxTitle: 'Galería de efectos',
             fkGalleryHelp: 'Cada pantalla que puede mostrar el panel, con datos de ejemplo.',
             fkGalleryNote: 'Ejemplos con datos inventados, para saber qué puede aparecer y cuándo sale cada una.',
-            fkGalleryTitle: 'Ver las 13 pantallas posibles',
+            fkGalleryTitle: 'Ver las 15 pantallas posibles',
             fkHelp: 'Ayuda',
             fkIpHelp: 'La IP que le diste al panel con FKShow. Solo se cambia si mueves el panel a otra red.',
             fkIpLabel: 'Dirección del panel en la red',
@@ -253,6 +252,7 @@
             fkMachUp: 'Subir {name}',
             fkMarcoAnim: 'Animación del marco',
             fkMarcoPattern: 'Forma de la línea',
+            fkMarcoShared: 'Estos dos ajustes valen para todos los marcos animados.',
             fkMarcoSpeed: 'Velocidad del marco',
             fkMinHelp: 'El panel parpadea un instante cada vez que NOPAL le manda algo nuevo. Esto evita mandarle cosas demasiado seguido.',
             fkMinLabel: 'Pausa mínima entre cambios',
@@ -274,6 +274,8 @@
             fkNoEffect: 'Sin efecto',
             fkNowBootText: 'En unos segundos mostrará lo de tus máquinas.',
             fkNowBootTitle: 'El panel está arrancando.',
+            fkNowCoolingText: 'Muestra la temperatura bajando y se quita al llegar a 50 °C.',
+            fkNowCoolingTitle: 'Una máquina se está enfriando.',
             fkNowDoneText: 'El aviso se queda un rato y luego vuelve a lo normal{clock}.',
             fkNowDoneTitle: 'Una impresión terminó.',
             fkNowErrorText: 'Es lo más importante, así que tapa todo lo demás.',
@@ -295,6 +297,8 @@
             fkNowPauseTitle: 'Hay una máquina en pausa.',
             fkNowPrintingText: 'El panel alterna dos vistas solo{clock}.',
             fkNowPrintingTitle: 'Hay una impresión en marcha.',
+            fkNowReadyText: 'El panel se queda así hasta que mandes imprimir o apagues el calentador.',
+            fkNowReadyTitle: 'Una máquina ya está en temperatura.',
             fkNowScrollText: 'Corre por la pantalla y se quita solo al terminar el tiempo.',
             fkNowScrollTitle: 'Mostrando tu mensaje largo.',
             fkNowSpecialText: 'Se quita solo al terminar el tiempo{clock}.',
@@ -306,6 +310,8 @@
             fkPatternDot: 'Puntos',
             fkPatternDot1: 'Puntos finos',
             fkPatternSolid: 'Línea continua',
+            fkPrioCooling: 'Enfriando',
+            fkPrioCoolingTip: 'Una máquina con el calentador apagado que aún pasa de 50 °C.',
             fkPrioDone: 'Terminó',
             fkPrioDoneTip: 'Una impresión acaba de terminar.',
             fkPrioError: 'Error',
@@ -321,6 +327,8 @@
             fkPrioPauseTip: 'Una impresión quedó en pausa.',
             fkPrioPrinting: 'Trabajando',
             fkPrioPrintingTip: 'Una o varias máquinas trabajando.',
+            fkPrioReady: 'En temperatura',
+            fkPrioReadyTip: 'Una máquina ya llegó a su temperatura y espera.',
             fkPrioSpecial: 'Mensaje',
             fkPrioSpecialTip: 'Un mensaje que mandaste, mientras dure.',
             fkReadOnly: 'Solo un administrador puede cambiar los ajustes de abajo. Tú sí puedes mandar y quitar mensajes.',
@@ -330,6 +338,8 @@
             fkSaving: 'Guardando…',
             fkScreenBoot: 'Arranque',
             fkScreenBootDesc: 'Al encender NOPAL, unos segundos, mientras llega el estado de las máquinas.',
+            fkScreenCooling: 'Enfriando',
+            fkScreenCoolingDesc: 'Se apagó el calentador y la máquina aún pasa de 50 °C: muestra la temperatura bajando.',
             fkScreenDone: 'Terminó',
             fkScreenDoneDesc: 'Acaba de terminar una impresión. Dura 60 s y vuelve a lo normal.',
             fkScreenError: 'Error',
@@ -352,6 +362,8 @@
             fkScreenPrint1Desc: 'Una máquina trabajando: nombre, archivo y barra de avance. Alterna con la vista 2 cada 15 s.',
             fkScreenPrint2: 'Trabajando (vista 2)',
             fkScreenPrint2Desc: 'La misma: porcentaje y tiempo que lleva (un láser o CNC muestra su tipo en lugar del tiempo).',
+            fkScreenReady: 'En temperatura',
+            fkScreenReadyDesc: 'Una máquina ya llegó a su temperatura y espera. Se queda hasta que se mande imprimir o se apague el calentador.',
             fkScreenScroll: 'Mensaje largo',
             fkScreenSpecial: 'Mensaje',
             fkScreenSpecialDesc: 'Tu mensaje (o un aviso de una regla o de la IA) mientras dure su tiempo.',
@@ -367,18 +379,37 @@
             fkSending: 'Enviando…',
             fkShortAria: 'Nombre en el panel de {name}',
             fkSitAria: 'Efecto para {name}',
+            fkSitBlocked: 'Con este contorno la pantalla cambia sin efecto de entrada.',
+            fkSitCooling: 'Enfriando',
             fkSitDone: 'Terminó',
             fkSitError: 'Error',
+            fkSitFxLabel: 'Cómo aparece',
             fkSitHeating: 'Calentando',
-            fkSitHelp: 'Cómo aparece la pantalla cuando cambia: por ejemplo, el error puede parpadear y el mensaje entrar desde abajo. Elige aquí o toca un efecto de la galería de abajo.',
-            fkSitNotUsed: 'No se usa con este reloj',
+            fkSitHelp: 'Cada situación del panel tiene su propia ficha. Elige su contorno (la orilla del panel) y cómo aparece. El dibujo de cada ficha se mueve como lo hará el panel.',
+            fkSitIntro: 'Si calientas y no mandas imprimir, el panel se queda en "En temperatura" hasta que empiece la impresión o apagues el calentador; luego muestra "Enfriando" hasta que baje de 50 °C.',
+            fkSitMarcoAria: 'Animación del marco de {name}',
+            fkSitNew: 'NUEVA',
             fkSitOffline: 'Desconectada',
             fkSitPause: 'Pausa',
             fkSitPrinting: 'Trabajando',
+            fkSitReady: 'En temperatura',
             fkSitRest: 'Todo tranquilo',
             fkSitSpecial: 'Mensaje corto',
-            fkSitTimed: 'Tiene reloj de cada vista',
-            fkSitTitle: 'Efecto por situación',
+            fkSitStyleAria: 'Contorno de {name}',
+            fkSitStyleLabel: 'Contorno',
+            fkSitTempDrain: 'El contorno se vacía con la temperatura; el panel parpadea un instante al actualizar (cada 15 s).',
+            fkSitTempFill: 'El contorno se llena con la temperatura; el panel parpadea un instante al actualizar (cada 15 s).',
+            fkSitTitle: 'Cómo se ve cada situación',
+            fkSitWhenCooling: 'Se apagó el calentador y aún pasa de 50 °C.',
+            fkSitWhenDone: 'Terminó una impresión (dura 60 s).',
+            fkSitWhenError: 'Una máquina reporta un error.',
+            fkSitWhenHeating: 'Una máquina sube a su temperatura y aún no imprime.',
+            fkSitWhenOffline: 'Una máquina de tu lista no responde.',
+            fkSitWhenPause: 'Una impresión en pausa.',
+            fkSitWhenPrinting: 'Una o varias máquinas trabajando.',
+            fkSitWhenReady: 'Ya llegó a la temperatura y espera. Se queda hasta imprimir o apagar el calentador.',
+            fkSitWhenRest: 'Todo en línea y sin trabajo. Alterna dos pantallas.',
+            fkSitWhenSpecial: 'Tu mensaje, mientras dure.',
             fkSizeMismatch: 'El panel está mal configurado: se ve de {size} en vez de 96x16. Pasa cuando se deja presionado 15 segundos el botón de prueba de su tarjeta. Configúralo otra vez con FKShow y luego presiona "Probar" en "Conexión y tiempos".',
             fkStyleBarra: 'Barra abajo',
             fkStyleBarraDesc: 'Una barrita avanza por la fila de abajo.',
@@ -386,10 +417,14 @@
             fkStyleContornoDesc: 'Una línea enciende la orilla; al completarse, cambia.',
             fkStyleEncima: 'Contorno encima',
             fkStyleEncimaDesc: 'Igual, pero con las letras a tamaño completo.',
+            fkStyleGeneral: 'General ({name})',
+            fkGeneralStyleLabel: 'Contorno general',
+            fkGeneralStyleHelp: 'Lo usan las situaciones que dejes en "General".',
             fkStyleMarco: 'Marco del panel',
             fkStyleMarcoDesc: 'Animación decorativa del propio panel; no marca el tiempo.',
-            fkStyleNinguno: 'Sin reloj',
-            fkStyleNingunoDesc: 'Cambia de vista sin marcar el tiempo.',
+            fkStyleNinguno: 'Sin contorno',
+            fkStyleNingunoDesc: 'La pantalla cambia de vista sin marcar el tiempo.',
+            fkStyleTemp: 'Según la temperatura',
             fkSub: 'Pantalla FK-8Wa de 96×16 · muestra solo lo que pasa en tus máquinas',
             fkTagTested: '● Probado en tu panel',
             fkTagUntested: '○ Sin probar',
@@ -398,8 +433,12 @@
             fkTestOk: 'Encontrado: panel de 96×16, listo.',
             fkTestWrongSize: 'Encontré un panel de {width}×{height}, pero debe ser de 96×16. Revisa su configuración con FKShow.',
             fkTesting: 'Buscando el panel…',
-            fkTimerHelp: 'Cuando el panel tiene que mostrar varias cosas (las dos vistas de una impresión, un mensaje, el aviso de que terminó), este dibujo marca cuánto falta para que cambie.',
-            fkTimerTitle: 'Reloj de cada vista',
+            fkTabsAria: 'Secciones del panel LED',
+            fkTabPanel: 'Panel',
+            fkTabMach: 'Máquinas y conexión',
+            fkTabClock: 'Reloj y texto',
+            fkTabFx: 'Efectos',
+            fkTabScreens: 'Las 15 pantallas',
             fkTitle: 'Panel LED del taller',
             fkTryBtn: 'Probar en mi panel',
             fkTryFail: 'No se pudo probar: {detail}',
@@ -543,7 +582,6 @@
             fkClockBarra: '; the bar shows how much time is left',
             fkClockContorno: '; the outline shows how much time is left',
             fkClockMarco: '; the frame keeps moving meanwhile',
-            fkClockWarn: 'With the outline or bar clock, the situations marked with ⏱ change without an effect. Choose "No clock" or "Panel frame" to use effects on them.',
             fkConnChecking: 'Checking…',
             fkConnDisabled: 'Off',
             fkConnOk: 'Connected',
@@ -613,7 +651,7 @@
             fkFxTitle: 'Effects gallery',
             fkGalleryHelp: 'Every screen the panel can show, with sample data.',
             fkGalleryNote: 'Examples with made-up data, to know what can appear and when each one shows up.',
-            fkGalleryTitle: 'See the 13 possible screens',
+            fkGalleryTitle: 'See the 15 possible screens',
             fkHelp: 'Help',
             fkIpHelp: 'The IP you gave the panel with FKShow. Only change it if you move the panel to another network.',
             fkIpLabel: 'Panel address on the network',
@@ -637,6 +675,7 @@
             fkMachUp: 'Move {name} up',
             fkMarcoAnim: 'Frame animation',
             fkMarcoPattern: 'Line style',
+            fkMarcoShared: 'These two settings apply to every animated frame.',
             fkMarcoSpeed: 'Frame speed',
             fkMinHelp: 'The panel blinks for a moment each time NOPAL sends it something new. This avoids sending things too often.',
             fkMinLabel: 'Minimum pause between changes',
@@ -658,6 +697,8 @@
             fkNoEffect: 'No effect',
             fkNowBootText: 'In a few seconds it will show your machines.',
             fkNowBootTitle: 'The panel is starting up.',
+            fkNowCoolingText: 'It shows the temperature dropping and goes away at 50 °C.',
+            fkNowCoolingTitle: 'A machine is cooling down.',
             fkNowDoneText: 'The notice stays for a while and then goes back to normal{clock}.',
             fkNowDoneTitle: 'A print has finished.',
             fkNowErrorText: 'It is the most important thing, so it covers everything else.',
@@ -679,6 +720,8 @@
             fkNowPauseTitle: 'A machine is paused.',
             fkNowPrintingText: 'The panel switches between two views by itself{clock}.',
             fkNowPrintingTitle: 'A print is in progress.',
+            fkNowReadyText: 'The panel stays like this until you start a print or turn the heater off.',
+            fkNowReadyTitle: 'A machine has reached its temperature.',
             fkNowScrollText: 'It scrolls across the screen and goes away by itself when the time is up.',
             fkNowScrollTitle: 'Showing your long message.',
             fkNowSpecialText: 'It goes away by itself when the time is up{clock}.',
@@ -690,6 +733,8 @@
             fkPatternDot: 'Dots',
             fkPatternDot1: 'Fine dots',
             fkPatternSolid: 'Solid line',
+            fkPrioCooling: 'Cooling',
+            fkPrioCoolingTip: 'A machine with the heater off that is still above 50 °C.',
             fkPrioDone: 'Finished',
             fkPrioDoneTip: 'A print has just finished.',
             fkPrioError: 'Error',
@@ -705,6 +750,8 @@
             fkPrioPauseTip: 'A print was paused.',
             fkPrioPrinting: 'Working',
             fkPrioPrintingTip: 'One or more machines working.',
+            fkPrioReady: 'At temperature',
+            fkPrioReadyTip: 'A machine has reached its temperature and is waiting.',
             fkPrioSpecial: 'Message',
             fkPrioSpecialTip: 'A message you sent, for as long as it lasts.',
             fkReadOnly: 'Only an administrator can change the settings below. You can still send and remove messages.',
@@ -714,6 +761,8 @@
             fkSaving: 'Saving…',
             fkScreenBoot: 'Startup',
             fkScreenBootDesc: 'When NOPAL starts, for a few seconds, while the status of the machines arrives.',
+            fkScreenCooling: 'Cooling',
+            fkScreenCoolingDesc: 'The heater is off and the machine is still above 50 °C: it shows the temperature dropping.',
             fkScreenDone: 'Finished',
             fkScreenDoneDesc: 'A print has just finished. It lasts 60 s and goes back to normal.',
             fkScreenError: 'Error',
@@ -736,6 +785,8 @@
             fkScreenPrint1Desc: 'One machine working: name, file and progress bar. It alternates with view 2 every 15 s.',
             fkScreenPrint2: 'Working (view 2)',
             fkScreenPrint2Desc: 'The same one: percentage and elapsed time (a laser or CNC shows its type instead of the time).',
+            fkScreenReady: 'At temperature',
+            fkScreenReadyDesc: 'A machine has reached its temperature and is waiting. It stays until a print starts or the heater is turned off.',
             fkScreenScroll: 'Long message',
             fkScreenSpecial: 'Message',
             fkScreenSpecialDesc: 'Your message (or a notice from a rule or from the AI) for as long as its time lasts.',
@@ -751,18 +802,37 @@
             fkSending: 'Sending…',
             fkShortAria: 'Name on the panel for {name}',
             fkSitAria: 'Effect for {name}',
+            fkSitBlocked: 'With this outline the screen changes without an entrance effect.',
+            fkSitCooling: 'Cooling',
             fkSitDone: 'Finished',
             fkSitError: 'Error',
+            fkSitFxLabel: 'How it appears',
             fkSitHeating: 'Heating',
-            fkSitHelp: 'How the screen appears when it changes: for example, the error can blink and the message can come in from below. Choose here or tap an effect in the gallery below.',
-            fkSitNotUsed: 'Not used with this clock',
+            fkSitHelp: 'Each panel situation has its own card. Choose its outline (the edge of the panel) and how it appears. The drawing on each card moves the way the panel will.',
+            fkSitIntro: 'If you heat up and do not start a print, the panel stays on "At temperature" until the print starts or you turn the heater off; then it shows "Cooling" until it drops below 50 °C.',
+            fkSitMarcoAria: 'Frame animation for {name}',
+            fkSitNew: 'NEW',
             fkSitOffline: 'Disconnected',
             fkSitPause: 'Pause',
             fkSitPrinting: 'Working',
+            fkSitReady: 'At temperature',
             fkSitRest: 'All quiet',
             fkSitSpecial: 'Short message',
-            fkSitTimed: 'Has a clock for each view',
-            fkSitTitle: 'Effect per situation',
+            fkSitStyleAria: 'Outline for {name}',
+            fkSitStyleLabel: 'Outline',
+            fkSitTempDrain: 'The outline empties with the temperature; the panel flickers for a moment on each update (every 15 s).',
+            fkSitTempFill: 'The outline fills with the temperature; the panel flickers for a moment on each update (every 15 s).',
+            fkSitTitle: 'How each situation looks',
+            fkSitWhenCooling: 'The heater is off and it is still above 50 °C.',
+            fkSitWhenDone: 'A print has finished (lasts 60 s).',
+            fkSitWhenError: 'A machine reports an error.',
+            fkSitWhenHeating: 'A machine is heating up and is not printing yet.',
+            fkSitWhenOffline: 'A machine on your list does not respond.',
+            fkSitWhenPause: 'A print is paused.',
+            fkSitWhenPrinting: 'One or several machines working.',
+            fkSitWhenReady: 'It has reached its temperature and waits. It stays until a print starts or the heater is turned off.',
+            fkSitWhenRest: 'Everything online and idle. Alternates two screens.',
+            fkSitWhenSpecial: 'Your message, for as long as it lasts.',
             fkSizeMismatch: 'The panel is misconfigured: it reports {size} instead of 96x16. This happens when the test button on its board is held down for 15 seconds. Set it up again with FKShow, then press "Test" under "Connection and timing".',
             fkStyleBarra: 'Bar at the bottom',
             fkStyleBarraDesc: 'A small bar moves along the bottom row.',
@@ -770,10 +840,14 @@
             fkStyleContornoDesc: 'A line lights up the edge; when it is complete, the view changes.',
             fkStyleEncima: 'Outline on top',
             fkStyleEncimaDesc: 'Same, but with the letters at full size.',
+            fkStyleGeneral: 'General ({name})',
+            fkGeneralStyleLabel: 'General outline',
+            fkGeneralStyleHelp: 'Used by the situations you leave on "General".',
             fkStyleMarco: 'Panel frame',
             fkStyleMarcoDesc: 'Decorative animation done by the panel itself; it does not show the time.',
-            fkStyleNinguno: 'No clock',
-            fkStyleNingunoDesc: 'Changes view without showing the time.',
+            fkStyleNinguno: 'No outline',
+            fkStyleNingunoDesc: 'The screen changes view without showing the time.',
+            fkStyleTemp: 'Follows the temperature',
             fkSub: 'FK-8Wa 96×16 display · shows only what is happening on your machines',
             fkTagTested: '● Tested on your panel',
             fkTagUntested: '○ Not tested',
@@ -782,8 +856,12 @@
             fkTestOk: 'Found: 96×16 panel, ready.',
             fkTestWrongSize: 'I found a {width}×{height} panel, but it must be 96×16. Check its setup with FKShow.',
             fkTesting: 'Looking for the panel…',
-            fkTimerHelp: 'When the panel has to show several things (the two views of a print, a message, the finished notice), this drawing shows how long is left before it changes.',
-            fkTimerTitle: 'Clock for each view',
+            fkTabsAria: 'LED panel sections',
+            fkTabPanel: 'Panel',
+            fkTabMach: 'Machines and connection',
+            fkTabClock: 'Clock and text',
+            fkTabFx: 'Effects',
+            fkTabScreens: 'The 15 screens',
             fkTitle: 'Workshop LED panel',
             fkTryBtn: 'Try on my panel',
             fkTryFail: 'Could not test: {detail}',
@@ -927,7 +1005,6 @@
             fkClockBarra: '; der Balken zeigt, wie viel Zeit bleibt',
             fkClockContorno: '; der Umriss zeigt, wie viel Zeit bleibt',
             fkClockMarco: '; der Rahmen bewegt sich in der Zwischenzeit',
-            fkClockWarn: 'Mit der Umriss- oder Balken-Uhr wechseln die mit ⏱ markierten Situationen ohne Effekt. Wähle „Keine Uhr“ oder „Rahmen des Panels“, um Effekte zu verwenden.',
             fkConnChecking: 'Wird geprüft…',
             fkConnDisabled: 'Aus',
             fkConnOk: 'Verbunden',
@@ -997,7 +1074,7 @@
             fkFxTitle: 'Effektgalerie',
             fkGalleryHelp: 'Jeder Bildschirm, den das Panel zeigen kann, mit Beispieldaten.',
             fkGalleryNote: 'Beispiele mit erfundenen Daten, damit du weißt, was erscheinen kann und wann.',
-            fkGalleryTitle: 'Die 13 möglichen Bildschirme ansehen',
+            fkGalleryTitle: 'Die 15 möglichen Bildschirme ansehen',
             fkHelp: 'Hilfe',
             fkIpHelp: 'Die IP, die du dem Panel mit FKShow gegeben hast. Ändere sie nur, wenn du das Panel in ein anderes Netzwerk umsetzt.',
             fkIpLabel: 'Adresse des Panels im Netzwerk',
@@ -1021,6 +1098,7 @@
             fkMachUp: '{name} nach oben',
             fkMarcoAnim: 'Rahmenanimation',
             fkMarcoPattern: 'Linienform',
+            fkMarcoShared: 'Diese beiden Einstellungen gelten für alle animierten Rahmen.',
             fkMarcoSpeed: 'Geschwindigkeit des Rahmens',
             fkMinHelp: 'Das Panel flackert kurz, wenn NOPAL ihm etwas Neues sendet. So wird verhindert, dass zu oft etwas gesendet wird.',
             fkMinLabel: 'Mindestpause zwischen Wechseln',
@@ -1042,6 +1120,8 @@
             fkNoEffect: 'Kein Effekt',
             fkNowBootText: 'In ein paar Sekunden zeigt es deine Maschinen an.',
             fkNowBootTitle: 'Das Panel startet.',
+            fkNowCoolingText: 'Es zeigt die sinkende Temperatur und verschwindet bei 50 °C.',
+            fkNowCoolingTitle: 'Eine Maschine kühlt ab.',
             fkNowDoneText: 'Die Meldung bleibt eine Weile und kehrt dann zum Normalzustand zurück{clock}.',
             fkNowDoneTitle: 'Ein Druck ist fertig.',
             fkNowErrorText: 'Das ist am wichtigsten und überdeckt deshalb alles andere.',
@@ -1063,6 +1143,8 @@
             fkNowPauseTitle: 'Eine Maschine ist pausiert.',
             fkNowPrintingText: 'Das Panel wechselt von selbst zwischen zwei Ansichten{clock}.',
             fkNowPrintingTitle: 'Ein Druck läuft.',
+            fkNowReadyText: 'Das Panel bleibt so, bis du einen Druck startest oder die Heizung ausschaltest.',
+            fkNowReadyTitle: 'Eine Maschine hat ihre Temperatur erreicht.',
             fkNowScrollText: 'Sie läuft über das Display und verschwindet von selbst, wenn die Zeit um ist.',
             fkNowScrollTitle: 'Deine lange Nachricht wird angezeigt.',
             fkNowSpecialText: 'Sie verschwindet von selbst, wenn die Zeit um ist{clock}.',
@@ -1074,6 +1156,8 @@
             fkPatternDot: 'Punkte',
             fkPatternDot1: 'Feine Punkte',
             fkPatternSolid: 'Durchgehende Linie',
+            fkPrioCooling: 'Kühlt ab',
+            fkPrioCoolingTip: 'Eine Maschine mit ausgeschalteter Heizung, die noch über 50 °C hat.',
             fkPrioDone: 'Fertig',
             fkPrioDoneTip: 'Ein Druck ist gerade fertig geworden.',
             fkPrioError: 'Fehler',
@@ -1089,6 +1173,8 @@
             fkPrioPauseTip: 'Ein Druck wurde pausiert.',
             fkPrioPrinting: 'Arbeitet',
             fkPrioPrintingTip: 'Eine oder mehrere Maschinen arbeiten.',
+            fkPrioReady: 'Auf Temperatur',
+            fkPrioReadyTip: 'Eine Maschine hat ihre Temperatur erreicht und wartet.',
             fkPrioSpecial: 'Nachricht',
             fkPrioSpecialTip: 'Eine Nachricht von dir, solange sie läuft.',
             fkReadOnly: 'Nur ein Administrator kann die Einstellungen unten ändern. Nachrichten senden und entfernen kannst du trotzdem.',
@@ -1098,6 +1184,8 @@
             fkSaving: 'Wird gespeichert…',
             fkScreenBoot: 'Start',
             fkScreenBootDesc: 'Beim Start von NOPAL, einige Sekunden lang, bis der Status der Maschinen eintrifft.',
+            fkScreenCooling: 'Kühlt ab',
+            fkScreenCoolingDesc: 'Die Heizung ist aus und die Maschine hat noch über 50 °C: Es zeigt die sinkende Temperatur.',
             fkScreenDone: 'Fertig',
             fkScreenDoneDesc: 'Ein Druck ist gerade fertig geworden. Dauert 60 s und kehrt dann zum Normalzustand zurück.',
             fkScreenError: 'Fehler',
@@ -1120,6 +1208,8 @@
             fkScreenPrint1Desc: 'Eine Maschine arbeitet: Name, Datei und Fortschrittsbalken. Wechselt alle 15 s mit Ansicht 2.',
             fkScreenPrint2: 'Arbeitet (Ansicht 2)',
             fkScreenPrint2Desc: 'Dieselbe Maschine: Prozent und bisherige Zeit (Laser oder CNC zeigen statt der Zeit ihren Typ).',
+            fkScreenReady: 'Auf Temperatur',
+            fkScreenReadyDesc: 'Eine Maschine hat ihre Temperatur erreicht und wartet. Bleibt, bis ein Druck startet oder die Heizung ausgeschaltet wird.',
             fkScreenScroll: 'Lange Nachricht',
             fkScreenSpecial: 'Nachricht',
             fkScreenSpecialDesc: 'Deine Nachricht (oder ein Hinweis einer Regel oder der KI), solange ihre Zeit läuft.',
@@ -1135,18 +1225,37 @@
             fkSending: 'Wird gesendet…',
             fkShortAria: 'Name von {name} auf dem Panel',
             fkSitAria: 'Effekt für {name}',
+            fkSitBlocked: 'Mit diesem Umriss wechselt der Bildschirm ohne Eingangseffekt.',
+            fkSitCooling: 'Kühlt ab',
             fkSitDone: 'Fertig',
             fkSitError: 'Fehler',
+            fkSitFxLabel: 'Wie sie erscheint',
             fkSitHeating: 'Heizt auf',
-            fkSitHelp: 'Wie der Bildschirm erscheint, wenn er wechselt: Zum Beispiel kann der Fehler blinken und die Nachricht von unten hereinfahren. Wähle hier oder tippe unten in der Galerie auf einen Effekt.',
-            fkSitNotUsed: 'Wird mit dieser Uhr nicht verwendet',
+            fkSitHelp: 'Jede Situation des Panels hat ihre eigene Karte. Wähle ihren Umriss (den Rand des Panels) und wie sie erscheint. Die Zeichnung jeder Karte bewegt sich so, wie es das Panel tun wird.',
+            fkSitIntro: 'Wenn du aufheizt und keinen Druck startest, bleibt das Panel auf „Auf Temperatur“, bis der Druck beginnt oder du die Heizung ausschaltest; danach zeigt es „Kühlt ab“, bis es unter 50 °C fällt.',
+            fkSitMarcoAria: 'Rahmenanimation für {name}',
+            fkSitNew: 'NEU',
             fkSitOffline: 'Getrennt',
             fkSitPause: 'Pause',
             fkSitPrinting: 'Arbeitet',
+            fkSitReady: 'Auf Temperatur',
             fkSitRest: 'Alles ruhig',
             fkSitSpecial: 'Kurze Nachricht',
-            fkSitTimed: 'Hat eine Uhr für jede Ansicht',
-            fkSitTitle: 'Effekt je Situation',
+            fkSitStyleAria: 'Umriss für {name}',
+            fkSitStyleLabel: 'Umriss',
+            fkSitTempDrain: 'Der Umriss leert sich mit der Temperatur; das Panel flackert beim Aktualisieren kurz (alle 15 s).',
+            fkSitTempFill: 'Der Umriss füllt sich mit der Temperatur; das Panel flackert beim Aktualisieren kurz (alle 15 s).',
+            fkSitTitle: 'So sieht jede Situation aus',
+            fkSitWhenCooling: 'Die Heizung ist aus und es hat noch über 50 °C.',
+            fkSitWhenDone: 'Ein Druck ist fertig (dauert 60 s).',
+            fkSitWhenError: 'Eine Maschine meldet einen Fehler.',
+            fkSitWhenHeating: 'Eine Maschine heizt auf und druckt noch nicht.',
+            fkSitWhenOffline: 'Eine Maschine auf deiner Liste antwortet nicht.',
+            fkSitWhenPause: 'Ein Druck ist pausiert.',
+            fkSitWhenPrinting: 'Eine oder mehrere Maschinen arbeiten.',
+            fkSitWhenReady: 'Hat die Temperatur erreicht und wartet. Bleibt, bis ein Druck startet oder die Heizung ausgeht.',
+            fkSitWhenRest: 'Alles online und ohne Arbeit. Wechselt zwischen zwei Bildschirmen.',
+            fkSitWhenSpecial: 'Deine Nachricht, solange sie läuft.',
             fkSizeMismatch: 'Das Panel ist falsch eingestellt: Es meldet {size} statt 96x16. Das passiert, wenn die Testtaste auf der Platine 15 Sekunden lang gedrückt wurde. Stelle es mit FKShow neu ein und drücke dann unter „Verbindung und Zeiten“ auf „Testen“.',
             fkStyleBarra: 'Balken unten',
             fkStyleBarraDesc: 'Ein kleiner Balken wandert über die untere Zeile.',
@@ -1154,10 +1263,14 @@
             fkStyleContornoDesc: 'Eine Linie leuchtet am Rand entlang; ist sie fertig, wechselt die Ansicht.',
             fkStyleEncima: 'Umriss darüber',
             fkStyleEncimaDesc: 'Genauso, aber mit Buchstaben in voller Größe.',
+            fkStyleGeneral: 'Allgemein ({name})',
+            fkGeneralStyleLabel: 'Allgemeiner Umriss',
+            fkGeneralStyleHelp: 'Ihn nutzen die Situationen, die du auf „Allgemein“ lässt.',
             fkStyleMarco: 'Rahmen des Panels',
             fkStyleMarcoDesc: 'Dekorative Animation des Panels selbst; sie zeigt die Zeit nicht an.',
-            fkStyleNinguno: 'Keine Uhr',
-            fkStyleNingunoDesc: 'Wechselt die Ansicht, ohne die Zeit anzuzeigen.',
+            fkStyleNinguno: 'Kein Umriss',
+            fkStyleNingunoDesc: 'Der Bildschirm wechselt die Ansicht, ohne die Zeit anzuzeigen.',
+            fkStyleTemp: 'Nach Temperatur',
             fkSub: 'FK-8Wa-Anzeige mit 96×16 · zeigt nur, was an deinen Maschinen passiert',
             fkTagTested: '● Auf deinem Panel getestet',
             fkTagUntested: '○ Nicht getestet',
@@ -1166,8 +1279,12 @@
             fkTestOk: 'Gefunden: Panel mit 96×16, bereit.',
             fkTestWrongSize: 'Ich habe ein Panel mit {width}×{height} gefunden, es muss aber 96×16 sein. Prüfe die Einstellung mit FKShow.',
             fkTesting: 'Panel wird gesucht…',
-            fkTimerHelp: 'Wenn das Panel mehrere Dinge zeigen muss (die zwei Ansichten eines Drucks, eine Nachricht, die Fertig-Meldung), zeigt diese Zeichnung, wie lange es noch bis zum Wechsel dauert.',
-            fkTimerTitle: 'Uhr für jede Ansicht',
+            fkTabsAria: 'Bereiche des LED-Panels',
+            fkTabPanel: 'Panel',
+            fkTabMach: 'Maschinen und Verbindung',
+            fkTabClock: 'Uhr und Text',
+            fkTabFx: 'Effekte',
+            fkTabScreens: 'Die 15 Bildschirme',
             fkTitle: 'LED-Panel der Werkstatt',
             fkTryBtn: 'Auf meinem Panel testen',
             fkTryFail: 'Test fehlgeschlagen: {detail}',
@@ -1311,7 +1428,6 @@
             fkClockBarra: ' ; la barre montre le temps restant',
             fkClockContorno: ' ; le contour montre le temps restant',
             fkClockMarco: ' ; le cadre bouge pendant ce temps',
-            fkClockWarn: 'Avec l\'horloge à contour ou à barre, les situations marquées ⏱ changent sans effet. Choisissez « Sans horloge » ou « Cadre du panneau » pour leur appliquer des effets.',
             fkConnChecking: 'Vérification…',
             fkConnDisabled: 'Éteint',
             fkConnOk: 'Connecté',
@@ -1381,7 +1497,7 @@
             fkFxTitle: 'Galerie d\'effets',
             fkGalleryHelp: 'Chaque écran que le panneau peut afficher, avec des données d\'exemple.',
             fkGalleryNote: 'Exemples avec des données inventées, pour savoir ce qui peut apparaître et quand.',
-            fkGalleryTitle: 'Voir les 13 écrans possibles',
+            fkGalleryTitle: 'Voir les 15 écrans possibles',
             fkHelp: 'Aide',
             fkIpHelp: 'L\'IP que vous avez donnée au panneau avec FKShow. Ne la changez que si vous déplacez le panneau vers un autre réseau.',
             fkIpLabel: 'Adresse du panneau sur le réseau',
@@ -1405,6 +1521,7 @@
             fkMachUp: 'Monter {name}',
             fkMarcoAnim: 'Animation du cadre',
             fkMarcoPattern: 'Forme du trait',
+            fkMarcoShared: 'Ces deux réglages valent pour tous les cadres animés.',
             fkMarcoSpeed: 'Vitesse du cadre',
             fkMinHelp: 'Le panneau clignote un instant chaque fois que NOPAL lui envoie quelque chose de nouveau. Cela évite de lui envoyer des choses trop souvent.',
             fkMinLabel: 'Pause minimale entre les changements',
@@ -1426,6 +1543,8 @@
             fkNoEffect: 'Sans effet',
             fkNowBootText: 'Dans quelques secondes, il affichera vos machines.',
             fkNowBootTitle: 'Le panneau démarre.',
+            fkNowCoolingText: 'Il affiche la température qui baisse et disparaît à 50 °C.',
+            fkNowCoolingTitle: 'Une machine refroidit.',
             fkNowDoneText: 'L\'avis reste un moment puis revient à la normale{clock}.',
             fkNowDoneTitle: 'Une impression est terminée.',
             fkNowErrorText: 'C\'est le plus important, donc cela masque tout le reste.',
@@ -1447,6 +1566,8 @@
             fkNowPauseTitle: 'Une machine est en pause.',
             fkNowPrintingText: 'Le panneau alterne tout seul deux vues{clock}.',
             fkNowPrintingTitle: 'Une impression est en cours.',
+            fkNowReadyText: 'Le panneau reste ainsi jusqu\'à ce que vous lanciez une impression ou éteigniez le chauffage.',
+            fkNowReadyTitle: 'Une machine est à température.',
             fkNowScrollText: 'Il défile sur l\'écran et disparaît tout seul à la fin du temps.',
             fkNowScrollTitle: 'Votre long message est affiché.',
             fkNowSpecialText: 'Il disparaît tout seul à la fin du temps{clock}.',
@@ -1458,6 +1579,8 @@
             fkPatternDot: 'Points',
             fkPatternDot1: 'Points fins',
             fkPatternSolid: 'Trait continu',
+            fkPrioCooling: 'Refroidit',
+            fkPrioCoolingTip: 'Une machine au chauffage éteint qui dépasse encore 50 °C.',
             fkPrioDone: 'Terminée',
             fkPrioDoneTip: 'Une impression vient de se terminer.',
             fkPrioError: 'Erreur',
@@ -1473,6 +1596,8 @@
             fkPrioPauseTip: 'Une impression a été mise en pause.',
             fkPrioPrinting: 'Au travail',
             fkPrioPrintingTip: 'Une ou plusieurs machines en train de travailler.',
+            fkPrioReady: 'À température',
+            fkPrioReadyTip: 'Une machine a atteint sa température et attend.',
             fkPrioSpecial: 'Message',
             fkPrioSpecialTip: 'Un message que vous avez envoyé, tant qu\'il dure.',
             fkReadOnly: 'Seul un administrateur peut modifier les réglages ci-dessous. Vous pouvez quand même envoyer et retirer des messages.',
@@ -1482,6 +1607,8 @@
             fkSaving: 'Enregistrement…',
             fkScreenBoot: 'Démarrage',
             fkScreenBootDesc: 'Au démarrage de NOPAL, quelques secondes, le temps que l\'état des machines arrive.',
+            fkScreenCooling: 'Refroidit',
+            fkScreenCoolingDesc: 'Le chauffage est éteint et la machine dépasse encore 50 °C : le panneau affiche la température qui baisse.',
             fkScreenDone: 'Terminée',
             fkScreenDoneDesc: 'Une impression vient de se terminer. Dure 60 s puis revient à la normale.',
             fkScreenError: 'Erreur',
@@ -1504,6 +1631,8 @@
             fkScreenPrint1Desc: 'Une machine au travail : nom, fichier et barre de progression. Alterne avec la vue 2 toutes les 15 s.',
             fkScreenPrint2: 'Au travail (vue 2)',
             fkScreenPrint2Desc: 'La même : pourcentage et temps écoulé (un laser ou une CNC affiche son type au lieu du temps).',
+            fkScreenReady: 'À température',
+            fkScreenReadyDesc: 'Une machine a atteint sa température et attend. Reste jusqu\'au lancement d\'une impression ou à l\'arrêt du chauffage.',
             fkScreenScroll: 'Message long',
             fkScreenSpecial: 'Message',
             fkScreenSpecialDesc: 'Votre message (ou un avis d\'une règle ou de l\'IA) pendant la durée prévue.',
@@ -1519,18 +1648,37 @@
             fkSending: 'Envoi…',
             fkShortAria: 'Nom de {name} sur le panneau',
             fkSitAria: 'Effet pour {name}',
+            fkSitBlocked: 'Avec ce contour, l\'écran change sans effet d\'entrée.',
+            fkSitCooling: 'Refroidit',
             fkSitDone: 'Terminée',
             fkSitError: 'Erreur',
+            fkSitFxLabel: 'Comment elle apparaît',
             fkSitHeating: 'Chauffe',
-            fkSitHelp: 'Comment l\'écran apparaît quand il change : par exemple, l\'erreur peut clignoter et le message entrer par le bas. Choisissez ici ou touchez un effet de la galerie ci-dessous.',
-            fkSitNotUsed: 'Non utilisé avec cette horloge',
+            fkSitHelp: 'Chaque situation du panneau a sa propre fiche. Choisissez son contour (le bord du panneau) et la façon dont elle apparaît. Le dessin de chaque fiche bouge comme le fera le panneau.',
+            fkSitIntro: 'Si vous chauffez sans lancer d\'impression, le panneau reste sur « À température » jusqu\'au début de l\'impression ou à l\'arrêt du chauffage ; il affiche ensuite « Refroidit » jusqu\'à passer sous 50 °C.',
+            fkSitMarcoAria: 'Animation du cadre pour {name}',
+            fkSitNew: 'NOUVEAU',
             fkSitOffline: 'Déconnectée',
             fkSitPause: 'Pause',
             fkSitPrinting: 'Au travail',
+            fkSitReady: 'À température',
             fkSitRest: 'Tout est calme',
             fkSitSpecial: 'Message court',
-            fkSitTimed: 'A une horloge pour chaque vue',
-            fkSitTitle: 'Effet par situation',
+            fkSitStyleAria: 'Contour pour {name}',
+            fkSitStyleLabel: 'Contour',
+            fkSitTempDrain: 'Le contour se vide avec la température ; le panneau clignote un instant à chaque mise à jour (toutes les 15 s).',
+            fkSitTempFill: 'Le contour se remplit avec la température ; le panneau clignote un instant à chaque mise à jour (toutes les 15 s).',
+            fkSitTitle: 'Aspect de chaque situation',
+            fkSitWhenCooling: 'Le chauffage est éteint et elle dépasse encore 50 °C.',
+            fkSitWhenDone: 'Une impression est terminée (dure 60 s).',
+            fkSitWhenError: 'Une machine signale une erreur.',
+            fkSitWhenHeating: 'Une machine monte en température et n\'imprime pas encore.',
+            fkSitWhenOffline: 'Une machine de votre liste ne répond pas.',
+            fkSitWhenPause: 'Une impression en pause.',
+            fkSitWhenPrinting: 'Une ou plusieurs machines au travail.',
+            fkSitWhenReady: 'Elle a atteint sa température et attend. Reste jusqu\'à l\'impression ou l\'arrêt du chauffage.',
+            fkSitWhenRest: 'Tout est en ligne et au repos. Alterne deux écrans.',
+            fkSitWhenSpecial: 'Votre message, tant qu\'il dure.',
             fkSizeMismatch: 'Le panneau est mal configuré : il indique {size} au lieu de 96x16. Cela arrive quand le bouton de test de sa carte reste enfoncé 15 secondes. Reconfigurez-le avec FKShow, puis appuyez sur « Tester » dans « Connexion et durées ».',
             fkStyleBarra: 'Barre en bas',
             fkStyleBarraDesc: 'Une petite barre avance sur la rangée du bas.',
@@ -1538,10 +1686,14 @@
             fkStyleContornoDesc: 'Une ligne allume le bord ; une fois complète, la vue change.',
             fkStyleEncima: 'Contour par-dessus',
             fkStyleEncimaDesc: 'Pareil, mais avec les lettres en pleine taille.',
+            fkStyleGeneral: 'Général ({name})',
+            fkGeneralStyleLabel: 'Contour général',
+            fkGeneralStyleHelp: 'Utilisé par les situations que tu laisses sur « Général ».',
             fkStyleMarco: 'Cadre du panneau',
             fkStyleMarcoDesc: 'Animation décorative du panneau lui-même ; elle n\'indique pas le temps.',
-            fkStyleNinguno: 'Sans horloge',
-            fkStyleNingunoDesc: 'Change de vue sans indiquer le temps.',
+            fkStyleNinguno: 'Sans contour',
+            fkStyleNingunoDesc: 'L\'écran change de vue sans indiquer le temps.',
+            fkStyleTemp: 'Selon la température',
             fkSub: 'Écran FK-8Wa de 96×16 · affiche seulement ce qui se passe sur vos machines',
             fkTagTested: '● Testé sur votre panneau',
             fkTagUntested: '○ Non testé',
@@ -1550,8 +1702,12 @@
             fkTestOk: 'Trouvé : panneau de 96×16, prêt.',
             fkTestWrongSize: 'J\'ai trouvé un panneau de {width}×{height}, mais il doit être de 96×16. Vérifiez sa configuration avec FKShow.',
             fkTesting: 'Recherche du panneau…',
-            fkTimerHelp: 'Quand le panneau doit afficher plusieurs choses (les deux vues d\'une impression, un message, l\'avis de fin), ce dessin indique le temps restant avant le changement.',
-            fkTimerTitle: 'Horloge de chaque vue',
+            fkTabsAria: 'Sections du panneau LED',
+            fkTabPanel: 'Panneau',
+            fkTabMach: 'Machines et connexion',
+            fkTabClock: 'Horloge et texte',
+            fkTabFx: 'Effets',
+            fkTabScreens: 'Les 15 écrans',
             fkTitle: 'Panneau LED de l\'atelier',
             fkTryBtn: 'Essayer sur mon panneau',
             fkTryFail: 'Impossible d\'essayer : {detail}',
@@ -1695,7 +1851,6 @@
             fkClockBarra: '; a barra mostra quanto falta',
             fkClockContorno: '; o contorno mostra quanto falta',
             fkClockMarco: '; a moldura se mexe enquanto isso',
-            fkClockWarn: 'Com o relógio de contorno ou de barra, as situações marcadas com ⏱ mudam sem efeito. Escolha "Sem relógio" ou "Moldura do painel" para usar efeitos nelas.',
             fkConnChecking: 'Verificando…',
             fkConnDisabled: 'Desligado',
             fkConnOk: 'Conectado',
@@ -1765,7 +1920,7 @@
             fkFxTitle: 'Galeria de efeitos',
             fkGalleryHelp: 'Cada tela que o painel pode mostrar, com dados de exemplo.',
             fkGalleryNote: 'Exemplos com dados inventados, para saber o que pode aparecer e quando cada uma sai.',
-            fkGalleryTitle: 'Ver as 13 telas possíveis',
+            fkGalleryTitle: 'Ver as 15 telas possíveis',
             fkHelp: 'Ajuda',
             fkIpHelp: 'O IP que você deu ao painel com o FKShow. Só mude se levar o painel para outra rede.',
             fkIpLabel: 'Endereço do painel na rede',
@@ -1789,6 +1944,7 @@
             fkMachUp: 'Subir {name}',
             fkMarcoAnim: 'Animação da moldura',
             fkMarcoPattern: 'Forma da linha',
+            fkMarcoShared: 'Estes dois ajustes valem para todas as molduras animadas.',
             fkMarcoSpeed: 'Velocidade da moldura',
             fkMinHelp: 'O painel pisca por um instante cada vez que o NOPAL envia algo novo. Isso evita enviar coisas com muita frequência.',
             fkMinLabel: 'Pausa mínima entre mudanças',
@@ -1810,6 +1966,8 @@
             fkNoEffect: 'Sem efeito',
             fkNowBootText: 'Em alguns segundos ele mostrará suas máquinas.',
             fkNowBootTitle: 'O painel está iniciando.',
+            fkNowCoolingText: 'Mostra a temperatura baixando e some ao chegar a 50 °C.',
+            fkNowCoolingTitle: 'Uma máquina está esfriando.',
             fkNowDoneText: 'O aviso fica um tempo e depois volta ao normal{clock}.',
             fkNowDoneTitle: 'Uma impressão terminou.',
             fkNowErrorText: 'É o mais importante, por isso cobre todo o resto.',
@@ -1831,6 +1989,8 @@
             fkNowPauseTitle: 'Há uma máquina em pausa.',
             fkNowPrintingText: 'O painel alterna sozinho entre duas vistas{clock}.',
             fkNowPrintingTitle: 'Há uma impressão em andamento.',
+            fkNowReadyText: 'O painel fica assim até você mandar imprimir ou desligar o aquecedor.',
+            fkNowReadyTitle: 'Uma máquina já está na temperatura.',
             fkNowScrollText: 'Ela corre pela tela e some sozinha quando o tempo acaba.',
             fkNowScrollTitle: 'Mostrando a sua mensagem longa.',
             fkNowSpecialText: 'Ela some sozinha quando o tempo acaba{clock}.',
@@ -1842,6 +2002,8 @@
             fkPatternDot: 'Pontos',
             fkPatternDot1: 'Pontos finos',
             fkPatternSolid: 'Linha contínua',
+            fkPrioCooling: 'Esfriando',
+            fkPrioCoolingTip: 'Uma máquina com o aquecedor desligado que ainda passa de 50 °C.',
             fkPrioDone: 'Terminou',
             fkPrioDoneTip: 'Uma impressão acabou de terminar.',
             fkPrioError: 'Erro',
@@ -1857,6 +2019,8 @@
             fkPrioPauseTip: 'Uma impressão foi pausada.',
             fkPrioPrinting: 'Trabalhando',
             fkPrioPrintingTip: 'Uma ou várias máquinas trabalhando.',
+            fkPrioReady: 'Na temperatura',
+            fkPrioReadyTip: 'Uma máquina já chegou à temperatura e espera.',
             fkPrioSpecial: 'Mensagem',
             fkPrioSpecialTip: 'Uma mensagem que você enviou, enquanto durar.',
             fkReadOnly: 'Só um administrador pode alterar as configurações abaixo. Você pode enviar e remover mensagens normalmente.',
@@ -1866,6 +2030,8 @@
             fkSaving: 'Salvando…',
             fkScreenBoot: 'Inicialização',
             fkScreenBootDesc: 'Ao ligar o NOPAL, por alguns segundos, enquanto chega o estado das máquinas.',
+            fkScreenCooling: 'Esfriando',
+            fkScreenCoolingDesc: 'O aquecedor foi desligado e a máquina ainda passa de 50 °C: mostra a temperatura baixando.',
             fkScreenDone: 'Terminou',
             fkScreenDoneDesc: 'Uma impressão acabou de terminar. Dura 60 s e volta ao normal.',
             fkScreenError: 'Erro',
@@ -1888,6 +2054,8 @@
             fkScreenPrint1Desc: 'Uma máquina trabalhando: nome, arquivo e barra de progresso. Alterna com a vista 2 a cada 15 s.',
             fkScreenPrint2: 'Trabalhando (vista 2)',
             fkScreenPrint2Desc: 'A mesma: porcentagem e tempo decorrido (um laser ou CNC mostra seu tipo no lugar do tempo).',
+            fkScreenReady: 'Na temperatura',
+            fkScreenReadyDesc: 'Uma máquina já chegou à temperatura e espera. Fica até mandar imprimir ou desligar o aquecedor.',
             fkScreenScroll: 'Mensagem longa',
             fkScreenSpecial: 'Mensagem',
             fkScreenSpecialDesc: 'Sua mensagem (ou um aviso de uma regra ou da IA) enquanto durar o tempo dela.',
@@ -1903,18 +2071,37 @@
             fkSending: 'Enviando…',
             fkShortAria: 'Nome de {name} no painel',
             fkSitAria: 'Efeito para {name}',
+            fkSitBlocked: 'Com este contorno a tela muda sem efeito de entrada.',
+            fkSitCooling: 'Esfriando',
             fkSitDone: 'Terminou',
             fkSitError: 'Erro',
+            fkSitFxLabel: 'Como aparece',
             fkSitHeating: 'Aquecendo',
-            fkSitHelp: 'Como a tela aparece quando muda: por exemplo, o erro pode piscar e a mensagem entrar por baixo. Escolha aqui ou toque em um efeito da galeria abaixo.',
-            fkSitNotUsed: 'Não é usado com este relógio',
+            fkSitHelp: 'Cada situação do painel tem a sua própria ficha. Escolha o contorno (a borda do painel) e como ela aparece. O desenho de cada ficha se move como o painel vai fazer.',
+            fkSitIntro: 'Se você aquecer e não mandar imprimir, o painel fica em "Na temperatura" até a impressão começar ou você desligar o aquecedor; depois mostra "Esfriando" até baixar de 50 °C.',
+            fkSitMarcoAria: 'Animação da moldura de {name}',
+            fkSitNew: 'NOVA',
             fkSitOffline: 'Desconectada',
             fkSitPause: 'Pausa',
             fkSitPrinting: 'Trabalhando',
+            fkSitReady: 'Na temperatura',
             fkSitRest: 'Tudo tranquilo',
             fkSitSpecial: 'Mensagem curta',
-            fkSitTimed: 'Tem relógio de cada vista',
-            fkSitTitle: 'Efeito por situação',
+            fkSitStyleAria: 'Contorno de {name}',
+            fkSitStyleLabel: 'Contorno',
+            fkSitTempDrain: 'O contorno se esvazia com a temperatura; o painel pisca um instante ao atualizar (a cada 15 s).',
+            fkSitTempFill: 'O contorno se enche com a temperatura; o painel pisca um instante ao atualizar (a cada 15 s).',
+            fkSitTitle: 'Como fica cada situação',
+            fkSitWhenCooling: 'O aquecedor foi desligado e ainda passa de 50 °C.',
+            fkSitWhenDone: 'Terminou uma impressão (dura 60 s).',
+            fkSitWhenError: 'Uma máquina reporta um erro.',
+            fkSitWhenHeating: 'Uma máquina está subindo de temperatura e ainda não imprime.',
+            fkSitWhenOffline: 'Uma máquina da sua lista não responde.',
+            fkSitWhenPause: 'Uma impressão em pausa.',
+            fkSitWhenPrinting: 'Uma ou várias máquinas trabalhando.',
+            fkSitWhenReady: 'Já chegou à temperatura e espera. Fica até imprimir ou desligar o aquecedor.',
+            fkSitWhenRest: 'Tudo online e sem trabalho. Alterna duas telas.',
+            fkSitWhenSpecial: 'Sua mensagem, enquanto durar.',
             fkSizeMismatch: 'O painel está mal configurado: ele informa {size} em vez de 96x16. Isso acontece quando o botão de teste da placa fica pressionado por 15 segundos. Configure-o de novo com o FKShow e depois clique em "Testar" em "Conexão e tempos".',
             fkStyleBarra: 'Barra embaixo',
             fkStyleBarraDesc: 'Uma barrinha avança pela linha de baixo.',
@@ -1922,10 +2109,14 @@
             fkStyleContornoDesc: 'Uma linha acende a borda; ao completar, a vista muda.',
             fkStyleEncima: 'Contorno por cima',
             fkStyleEncimaDesc: 'Igual, mas com as letras em tamanho total.',
+            fkStyleGeneral: 'Geral ({name})',
+            fkGeneralStyleLabel: 'Contorno geral',
+            fkGeneralStyleHelp: 'Usado pelas situações que você deixar em "Geral".',
             fkStyleMarco: 'Moldura do painel',
             fkStyleMarcoDesc: 'Animação decorativa do próprio painel; não mostra o tempo.',
-            fkStyleNinguno: 'Sem relógio',
-            fkStyleNingunoDesc: 'Muda de vista sem mostrar o tempo.',
+            fkStyleNinguno: 'Sem contorno',
+            fkStyleNingunoDesc: 'A tela muda de vista sem marcar o tempo.',
+            fkStyleTemp: 'Conforme a temperatura',
             fkSub: 'Tela FK-8Wa de 96×16 · mostra só o que acontece nas suas máquinas',
             fkTagTested: '● Testado no seu painel',
             fkTagUntested: '○ Sem testar',
@@ -1934,8 +2125,12 @@
             fkTestOk: 'Encontrado: painel de 96×16, pronto.',
             fkTestWrongSize: 'Encontrei um painel de {width}×{height}, mas deve ser de 96×16. Confira a configuração dele com o FKShow.',
             fkTesting: 'Procurando o painel…',
-            fkTimerHelp: 'Quando o painel precisa mostrar várias coisas (as duas vistas de uma impressão, uma mensagem, o aviso de que terminou), este desenho mostra quanto falta para mudar.',
-            fkTimerTitle: 'Relógio de cada vista',
+            fkTabsAria: 'Seções do painel LED',
+            fkTabPanel: 'Painel',
+            fkTabMach: 'Máquinas e conexão',
+            fkTabClock: 'Relógio e texto',
+            fkTabFx: 'Efeitos',
+            fkTabScreens: 'As 15 telas',
             fkTitle: 'Painel LED da oficina',
             fkTryBtn: 'Testar no meu painel',
             fkTryFail: 'Não foi possível testar: {detail}',
@@ -3692,16 +3887,16 @@
     const FK_H = 16;
     const FK_POLL_MS = 5000;
     const FK_EFFECT_MS = 1100;
-    const FK_SCREENS = ['boot', 'normal', 'idle', 'print1', 'print2', 'many', 'heating', 'pause', 'error', 'offline', 'done', 'special', 'off'];
+    const FK_SCREENS = ['boot', 'normal', 'idle', 'print1', 'print2', 'many', 'heating', 'ready', 'cooling', 'pause', 'error', 'offline', 'done', 'special', 'off'];
     const FK_SCREEN_KEYS = {
         boot: 'fkScreenBoot', normal: 'fkScreenNormal', idle: 'fkScreenIdle', print1: 'fkScreenPrint1', print2: 'fkScreenPrint2',
-        many: 'fkScreenMany', heating: 'fkScreenHeating', pause: 'fkScreenPause', error: 'fkScreenError', offline: 'fkScreenOffline',
+        many: 'fkScreenMany', heating: 'fkScreenHeating', ready: 'fkScreenReady', cooling: 'fkScreenCooling', pause: 'fkScreenPause', error: 'fkScreenError', offline: 'fkScreenOffline',
         done: 'fkScreenDone', special: 'fkScreenSpecial', off: 'fkScreenOff', scroll: 'fkScreenScroll',
     };
-    // Cuándo sale cada una de las 13 pantallas (galería "Ver las 13 pantallas").
+    // Cuándo sale cada una de las 15 pantallas (galería "Ver las 15 pantallas").
     const FK_SCREEN_DESC_KEYS = {
         boot: 'fkScreenBootDesc', normal: 'fkScreenNormalDesc', idle: 'fkScreenIdleDesc', print1: 'fkScreenPrint1Desc',
-        print2: 'fkScreenPrint2Desc', many: 'fkScreenManyDesc', heating: 'fkScreenHeatingDesc', pause: 'fkScreenPauseDesc',
+        print2: 'fkScreenPrint2Desc', many: 'fkScreenManyDesc', heating: 'fkScreenHeatingDesc', ready: 'fkScreenReadyDesc', cooling: 'fkScreenCoolingDesc', pause: 'fkScreenPauseDesc',
         error: 'fkScreenErrorDesc', offline: 'fkScreenOfflineDesc', done: 'fkScreenDoneDesc', special: 'fkScreenSpecialDesc',
         off: 'fkScreenOffDesc',
     };
@@ -3715,6 +3910,8 @@
         print2: ['fkNowPrintingTitle', 'fkNowPrintingText'],
         many: ['fkNowManyTitle', 'fkNowManyText'],
         heating: ['fkNowHeatingTitle', 'fkNowHeatingText'],
+        ready: ['fkNowReadyTitle', 'fkNowReadyText'],
+        cooling: ['fkNowCoolingTitle', 'fkNowCoolingText'],
         pause: ['fkNowPauseTitle', 'fkNowPauseText'],
         error: ['fkNowErrorTitle', 'fkNowErrorText'],
         offline: ['fkNowOfflineTitle', 'fkNowOfflineText'],
@@ -3723,6 +3920,18 @@
         done: ['fkNowDoneTitle', 'fkNowDoneText'],
         off: ['fkNowOffTitle', 'fkNowOffText'],
     };
+    // Pestañas internas de la ficha del panel (no confundir con las fichas
+    // del plugin): [clave, texto]. La clave arma los ids mled-fk-tab-<clave>
+    // y mled-fk-pn-<clave>.
+    const FK_TABS = [
+        ['panel', 'fkTabPanel'],
+        ['mach', 'fkTabMach'],
+        ['clock', 'fkTabClock'],
+        ['fx', 'fkTabFx'],
+        ['screens', 'fkTabScreens'],
+    ];
+    const FK_TAB_KEY = 'nopal.matriz-led.fkTab';
+
     // Tira "¿Por qué muestra esto?", de más a menos importante (mismo orden
     // que PRIORITY_OF de service.py y la máquina de estados).
     const FK_PRIORITY = [
@@ -3733,10 +3942,12 @@
         ['done', '✓', 'fkPrioDone', 'fkPrioDoneTip'],
         ['printing', '▶', 'fkPrioPrinting', 'fkPrioPrintingTip'],
         ['heating', '♨', 'fkPrioHeating', 'fkPrioHeatingTip'],
+        ['ready', '◉', 'fkPrioReady', 'fkPrioReadyTip'],
+        ['cooling', '❄', 'fkPrioCooling', 'fkPrioCoolingTip'],
         ['normal', '●', 'fkPrioNormal', 'fkPrioNormalTip'],
     ];
-    // Tarjetas del "Reloj de cada vista" (config.timer_style). "marco"
-    // agrupa los 11 marco_* que anima el propio panel.
+    // Nombres de los contornos (config.timer_style y situation_styles).
+    // "marco" agrupa los 11 marco_* que anima el propio panel.
     const FK_STYLE_CARDS = [
         ['contorno', 'fkStyleContorno', 'fkStyleContornoDesc'],
         ['contorno_encima', 'fkStyleEncima', 'fkStyleEncimaDesc'],
@@ -3761,8 +3972,23 @@
     ];
     const FK_DIRS = [['l1', 'fkDirL1'], ['r', 'fkDirR'], ['u', 'fkDirU'], ['d', 'fkDirD'], ['l', 'fkDirL']];
     const FK_SIT_KEYS = {
-        rest: 'fkSitRest', heating: 'fkSitHeating', printing: 'fkSitPrinting', pause: 'fkSitPause',
-        error: 'fkSitError', offline: 'fkSitOffline', done: 'fkSitDone', special: 'fkSitSpecial',
+        rest: 'fkSitRest', heating: 'fkSitHeating', ready: 'fkSitReady', cooling: 'fkSitCooling', printing: 'fkSitPrinting',
+        pause: 'fkSitPause', error: 'fkSitError', offline: 'fkSitOffline', done: 'fkSitDone', special: 'fkSitSpecial',
+    };
+    // "Cuándo sale" de cada situación y la pantalla de ejemplo que dibuja su
+    // ficha (printing no lleva: usa el ejemplo de impresión de dos vistas).
+    const FK_SIT_WHEN = {
+        rest: 'fkSitWhenRest', heating: 'fkSitWhenHeating', ready: 'fkSitWhenReady', cooling: 'fkSitWhenCooling', printing: 'fkSitWhenPrinting',
+        pause: 'fkSitWhenPause', error: 'fkSitWhenError', offline: 'fkSitWhenOffline', done: 'fkSitWhenDone', special: 'fkSitWhenSpecial',
+    };
+    const FK_SIT_SCREEN = {
+        rest: 'normal', heating: 'heating', ready: 'ready', cooling: 'cooling', pause: 'pause', error: 'error', offline: 'offline', done: 'done', special: 'special',
+    };
+    const FK_SIT_NEW = ['ready', 'cooling'];
+    // Situación a la que pertenece cada pantalla de la galería (como SITUATION_OF).
+    const FK_SCREEN_SIT = {
+        normal: 'rest', idle: 'rest', heating: 'heating', ready: 'ready', cooling: 'cooling', print1: 'printing', print2: 'printing',
+        many: 'printing', pause: 'pause', error: 'error', offline: 'offline', done: 'done', special: 'special',
     };
     // Familias de efectos: nombre que manda el servidor -> clave i18n.
     const FK_FAMILIES = [
@@ -3812,6 +4038,7 @@
         fxFrames: null,         // cuadros A y B de la galería de efectos
         fxCards: [],
         minis: [],
+        sitFrames: {},          // dibujos de las fichas por situación, por URL
         gallery: [],
         galleryStale: true,
         minisStale: true,
@@ -4259,7 +4486,6 @@
         if (!root) return;
         root.querySelectorAll('[data-fk-admin-input]').forEach((el) => { el.disabled = !fk.isAdmin; });
         root.querySelectorAll('[data-fk-admin-only]').forEach((el) => { el.hidden = !fk.isAdmin; });
-        root.querySelectorAll('[data-fk-style]').forEach((el) => { el.setAttribute('aria-disabled', String(!fk.isAdmin)); });
         const note = root.querySelector('#mled-fk-readonly');
         if (note) note.hidden = fk.isAdmin || !fk.roleLoaded;
         fkRenderMachines();
@@ -4334,6 +4560,7 @@
             if (isOn) el.setAttribute('aria-current', 'step');
             else el.removeAttribute('aria-current');
         });
+        fkSyncSitNow();
         fkRenderNow();
     }
 
@@ -4513,7 +4740,6 @@
         fk.mp.pattern = fk.config.border_pattern || 'dash';
         fkFillConnForm();
         fkFillBrightness();
-        fkSyncStyleCards();
         fkSyncScrollControls();
         fkRenderMachines();
         fkRenderSit();
@@ -4710,30 +4936,48 @@
         });
     }
 
-    // ── Reloj de cada vista ──
-    function fkCurrentMarco() {
-        const style = fk.config?.timer_style || '';
-        return style.startsWith('marco_') ? style : 'marco_cw';
+    // ── Cómo se ve cada situación ──
+    // Una ficha por situación (GET /fk8wa/effects): dibujo animado con su
+    // contorno, cuándo sale, contorno propio (config.situation_styles; vacío =
+    // el general, timer_style), efecto de entrada y, si es marco, su animación.
+    function fkOwnStyle(sitId) { return fk.config?.situation_styles?.[sitId] || ''; }
+
+    // Contorno vigente de la situación: el suyo o el general.
+    function fkStyleOf(sitId) { return fkOwnStyle(sitId) || fk.config?.timer_style || 'contorno'; }
+
+    function fkStyleGroup(style) { return style.startsWith('marco_') ? 'marco' : style; }
+
+    function fkClockBlocks(sitId) { return FK_CLOCK_BLOCKS.includes(fkStyleOf(sitId)); }
+
+    function fkStyleName(group) {
+        const card = FK_STYLE_CARDS.find((item) => item[0] === group);
+        return tr(card ? card[1] : 'fkStyleTemp');
     }
 
-    function fkCardStyle(key) { return key === 'marco' ? fkCurrentMarco() : key; }
-
-    function fkClockBlocks() { return FK_CLOCK_BLOCKS.includes(fk.config?.timer_style); }
-
-    function fkSyncStyleCards() {
-        if (!root || !fk.config) return;
-        const style = fk.config.timer_style || 'contorno';
-        const isMarco = style.startsWith('marco_');
-        root.querySelectorAll('[data-fk-style]').forEach((card) => {
-            const key = card.dataset.fkStyle;
-            card.setAttribute('aria-pressed', String(key === 'marco' ? isMarco : key === style));
+    function fkStyleOptionsHtml(sit) {
+        const groups = [];
+        (sit.styles || []).forEach((style) => {
+            const group = fkStyleGroup(style);
+            if (!groups.includes(group)) groups.push(group);
         });
-        root.querySelector('#mled-fk-marco-opts').hidden = !isMarco;
-        root.querySelector('#mled-fk-marco-anim').value = fkCurrentMarco();
-        root.querySelector('#mled-fk-marco-pattern').value = fk.config.border_pattern || 'dash';
-        root.querySelector('#mled-fk-marco-speed').value = fk.config.border_speed ?? 10;
-        root.querySelector('#mled-fk-marco-speed-val').textContent = String(fk.config.border_speed ?? 10);
-        fkSyncSit();
+        const own = fkStyleGroup(fkOwnStyle(sit.id));
+        const general = fkStyleName(fkStyleGroup(fk.config?.timer_style || 'contorno'));
+        return `<option value=""${own === '' ? ' selected' : ''}>${esc(tr('fkStyleGeneral', { name: general }))}</option>`
+            + groups.map((group) => {
+                const card = FK_STYLE_CARDS.find((item) => item[0] === group);
+                return `<option value="${group}"${group === own ? ' selected' : ''}${card ? ` title="${esc(tr(card[2]))}"` : ''}>${esc(fkStyleName(group))}</option>`;
+            }).join('');
+    }
+
+    // Guarda situation_styles completo: las demás tal como están y la que
+    // cambió con su nuevo valor ('' = usar el general).
+    async function fkSetSitStyle(sitId, value) {
+        if (!fk.isAdmin || !fk.config) return;
+        const next = {};
+        (fk.effects?.situations || []).forEach((sit) => { next[sit.id] = fkOwnStyle(sit.id); });
+        next[sitId] = value;
+        if (await fkSavePartial({ situation_styles: next }, '#mled-fk-sit-msg')) fkAfterStyleSaved(sitId);
+        else fkSyncSit();
     }
 
     function fkMiniPaint(mini) {
@@ -4751,47 +4995,74 @@
         if (mini.pages.length) fkMiniPaint(mini);
     }
 
-    // Mini paneles del reloj: GET /fk8wa/frames?style=<estilo> (ejemplo de impresión).
+    // Dibujo de cada ficha: GET /fk8wa/frames?style=<contorno>&screen=<ejemplo>
+    // (la impresión usa el ejemplo de dos vistas). Con "temp" el servidor
+    // devuelve la secuencia de temperaturas. Se guarda por URL para no pedir
+    // lo mismo cada vez que se vuelve a dibujar la ficha.
     function fkLoadStyleCards(only) {
         fk.minisStale = false;
         fk.minis.forEach((mini) => {
             if (only && mini.key !== only) return;
-            api(`/fk8wa/frames?style=${encodeURIComponent(fkCardStyle(mini.key))}`)
-                .then((data) => fkMiniLoad(mini, data))
+            const screen = FK_SIT_SCREEN[mini.key];
+            const url = `/fk8wa/frames?style=${encodeURIComponent(fkStyleOf(mini.key))}${screen ? `&screen=${screen}` : ''}`;
+            const cached = fk.sitFrames[url];
+            mini.url = url;
+            if (cached) { fkMiniLoad(mini, cached); return; }
+            api(url)
+                .then((data) => {
+                    fk.sitFrames[url] = data;
+                    if (mini.url === url) fkMiniLoad(mini, data);
+                })
                 .catch(() => {});
         });
     }
 
-    // Cambió el estilo del reloj: se redibuja todo lo que depende de él.
-    function fkAfterStyleSaved({ reloadMarcoCard = false } = {}) {
-        fkSyncStyleCards();
+    // Cambió un contorno: se redibuja lo que depende de él.
+    function fkAfterStyleSaved(only) {
+        fkSyncSit();
+        fkLoadStyleCards(only);
         fkRefreshStatus({ forceFrames: true });
-        if (reloadMarcoCard) fkLoadStyleCards('marco');
         fkLoadGallery();
     }
 
+    // Contorno general (timer_style): lo usan las situaciones en "General".
+    async function fkSetGeneralStyle(group) {
+        if (!fk.isAdmin || !fk.config) return;
+        const current = fk.config.timer_style || 'contorno';
+        const value = group === 'marco' ? (fkStyleGroup(current) === 'marco' ? current : 'marco_cw') : group;
+        if (await fkSavePartial({ situation_styles: fk.config.situation_styles || {}, timer_style: value }, '#mled-fk-sit-msg')) fkAfterStyleSaved();
+        else fkSyncSit();
+    }
+
     function fkBindStyles() {
-        root.querySelector('#mled-fk-styles').addEventListener('click', async (event) => {
-            const card = event.target.closest('[data-fk-style]');
+        root.querySelector('#mled-fk-timer-style').addEventListener('change', (event) => fkSetGeneralStyle(event.target.value));
+        const box = root.querySelector('#mled-fk-sit');
+        box.addEventListener('change', (event) => {
+            const card = event.target.closest('[data-fk-sit]');
             if (!card || !fk.isAdmin) return;
-            const style = fkCardStyle(card.dataset.fkStyle);
-            if (style === fk.config?.timer_style) return;
-            if (await fkSavePartial({ timer_style: style }, '#mled-fk-timer-msg')) fkAfterStyleSaved();
-        });
-        root.querySelector('#mled-fk-marco-anim').addEventListener('change', async (event) => {
-            if (await fkSavePartial({ timer_style: event.target.value }, '#mled-fk-timer-msg')) fkAfterStyleSaved({ reloadMarcoCard: true });
+            const id = card.dataset.fkSit;
+            if (event.target.matches('[data-fk-sit-style]')) {
+                const value = event.target.value;
+                // Marco: conserva su animación si ya la tenía; si no, horario.
+                fkSetSitStyle(id, value === 'marco' ? (fkStyleGroup(fkOwnStyle(id)) === 'marco' ? fkOwnStyle(id) : 'marco_cw') : value);
+            } else if (event.target.matches('[data-fk-sit-anim]')) {
+                fkSetSitStyle(id, event.target.value);
+            } else if (event.target.matches('[data-fk-sit-fx]')) {
+                fkSetEffect(id, event.target.value || null, '#mled-fk-sit-msg');
+            }
         });
         root.querySelector('#mled-fk-marco-pattern').addEventListener('change', async (event) => {
-            if (await fkSavePartial({ border_pattern: event.target.value }, '#mled-fk-timer-msg')) {
+            if (await fkSavePartial({ border_pattern: event.target.value }, '#mled-fk-sit-msg')) {
                 fk.mp.pattern = fk.config.border_pattern;
-                fkAfterStyleSaved({ reloadMarcoCard: true });
+                fkAfterStyleSaved();
             }
         });
         const speed = root.querySelector('#mled-fk-marco-speed');
         speed.addEventListener('input', () => { root.querySelector('#mled-fk-marco-speed-val').textContent = speed.value; });
         speed.addEventListener('change', async () => {
-            if (await fkSavePartial({ border_speed: Number(speed.value) }, '#mled-fk-timer-msg')) fkAfterStyleSaved({ reloadMarcoCard: true });
+            if (await fkSavePartial({ border_speed: Number(speed.value) }, '#mled-fk-sit-msg')) fkAfterStyleSaved();
         });
+        root.querySelector('#mled-fk-fx-reset').addEventListener('click', () => fkSetEffect('all', null, '#mled-fk-sit-msg'));
     }
 
     // ── Efecto por situación ──
@@ -4829,31 +5100,77 @@
         if (!box) return;
         const sits = fk.effects?.situations || [];
         const assigned = fk.config?.effects || {};
-        box.innerHTML = sits.map((sit) => `
-                        <div class="mled-fk-sitrow" data-fk-sit="${esc(sit.id)}" data-timed="${sit.timed ? '1' : '0'}">
-                            <div>${esc(fkSitName(sit))}${sit.timed ? ` <span title="${esc(tr('fkSitTimed'))}" aria-label="${esc(tr('fkSitTimed'))}">⏱</span>` : ''}<small></small></div>
-                            <select aria-label="${esc(tr('fkSitAria', { name: fkSitName(sit) }))}">${fkEffectOptionsHtml(assigned[sit.id] || '')}</select>
-                        </div>`).join('');
+        const borders = FK_BORDERS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
+        box.innerHTML = sits.map((sit) => {
+            const name = fkSitName(sit);
+            return `
+                        <div class="mled-fk-sitcard" data-fk-sit="${esc(sit.id)}" data-timed="${sit.timed ? '1' : '0'}">
+                            <span class="mled-fk-mini"><canvas width="288" height="48" role="img" aria-label="${esc(name)}"></canvas></span>
+                            <h4>${esc(name)}${FK_SIT_NEW.includes(sit.id) ? ` <span class="mled-fk-new">${esc(tr('fkSitNew'))}</span>` : ''}</h4>
+                            <p class="mled-fk-muted">${esc(FK_SIT_WHEN[sit.id] ? tr(FK_SIT_WHEN[sit.id]) : '')}</p>
+                            <div class="mled-fk-sitsels">
+                                <div class="mled-fk-field"><label>${esc(tr('fkSitStyleLabel'))}</label><select data-fk-sit-style aria-label="${esc(tr('fkSitStyleAria', { name }))}">${fkStyleOptionsHtml(sit)}</select></div>
+                                <div class="mled-fk-field"><label>${esc(tr('fkSitFxLabel'))}</label><select data-fk-sit-fx aria-label="${esc(tr('fkSitAria', { name }))}">${fkEffectOptionsHtml(assigned[sit.id] || '')}</select></div>
+                            </div>
+                            <div class="mled-fk-field" data-fk-sit-marco hidden><label>${esc(tr('fkMarcoAnim'))}</label><select data-fk-sit-anim aria-label="${esc(tr('fkSitMarcoAria', { name }))}">${borders}</select></div>
+                            <small class="mled-fk-sitnote"></small>
+                        </div>`;
+        }).join('');
+        fk.minis = [...box.querySelectorAll('[data-fk-sit]')].map((card) => ({
+            key: card.dataset.fkSit, canvas: card.querySelector('canvas'), pages: [], stay: 0, idx: 0, last: 0, tick: 0, marco: null, url: '',
+        }));
         fkSyncSit();
+        if (fk.config && sits.length) fkLoadStyleCards();
     }
 
-    // Con el reloj de contorno o de barra, las situaciones "con reloj" no
-    // admiten efecto: select deshabilitado y un aviso.
+    // Ficha de la situación que se ve ahora en el panel.
+    function fkSyncSitNow() {
+        const current = FK_SCREEN_SIT[fk.status?.current];
+        root?.querySelectorAll('[data-fk-sit]').forEach((card) => card.classList.toggle('is-on', card.dataset.fkSit === current));
+    }
+
+    // Con el contorno de reloj progresivo (contorno, contorno encima, barra)
+    // las situaciones "con reloj" no admiten efecto: select deshabilitado y
+    // un aviso en su ficha.
     function fkSyncSit() {
         if (!root) return;
-        const blocked = fkClockBlocks();
-        root.querySelector('#mled-fk-clock-warn').hidden = !blocked;
         const assigned = fk.config?.effects || {};
+        let anyMarco = false;
+        const generalSelect = root.querySelector('#mled-fk-timer-style');
+        if (generalSelect) generalSelect.value = fkStyleGroup(fk.config?.timer_style || 'contorno');
+        const generalName = fkStyleName(fkStyleGroup(fk.config?.timer_style || 'contorno'));
         root.querySelectorAll('[data-fk-sit]').forEach((row) => {
-            const off = blocked && row.dataset.timed === '1';
-            const select = row.querySelector('select');
+            const generalOption = row.querySelector('[data-fk-sit-style] option[value=""]');
+            if (generalOption) generalOption.textContent = tr('fkStyleGeneral', { name: generalName });
+            const id = row.dataset.fkSit;
+            const style = fkStyleOf(id);
+            const off = fkClockBlocks(id) && row.dataset.timed === '1';
+            const select = row.querySelector('[data-fk-sit-fx]');
+            const styleSelect = row.querySelector('[data-fk-sit-style]');
+            const marco = style.startsWith('marco_');
+            anyMarco = anyMarco || marco;
             row.classList.toggle('is-off', off);
-            select.value = assigned[row.dataset.fkSit] || '';
+            select.value = assigned[id] || '';
             select.disabled = off || !fk.isAdmin;
-            row.querySelector('small').textContent = off ? tr('fkSitNotUsed') : '';
+            styleSelect.value = fkStyleGroup(fkOwnStyle(id));
+            styleSelect.disabled = !fk.isAdmin;
+            row.querySelector('[data-fk-sit-marco]').hidden = !marco;
+            const anim = row.querySelector('[data-fk-sit-anim]');
+            if (marco) anim.value = style;
+            anim.disabled = !fk.isAdmin;
+            let note = '';
+            if (off) note = tr('fkSitBlocked');
+            else if (style === 'temp' && (id === 'heating' || id === 'cooling')) note = tr(id === 'heating' ? 'fkSitTempFill' : 'fkSitTempDrain');
+            row.querySelector('small').textContent = note;
         });
+        const opts = root.querySelector('#mled-fk-marco-opts');
+        opts.hidden = !anyMarco;
+        root.querySelector('#mled-fk-marco-pattern').value = fk.config?.border_pattern || 'dash';
+        root.querySelector('#mled-fk-marco-speed').value = fk.config?.border_speed ?? 10;
+        root.querySelector('#mled-fk-marco-speed-val').textContent = String(fk.config?.border_speed ?? 10);
         const reset = root.querySelector('#mled-fk-fx-reset');
         if (reset) reset.disabled = !fk.isAdmin;
+        fkSyncSitNow();
     }
 
     async function fkSetEffect(target, id, msgSelector) {
@@ -5039,11 +5356,6 @@
             fk.fxTarget = event.target.value;
             fkSyncFx();
         });
-        root.querySelector('#mled-fk-sit').addEventListener('change', (event) => {
-            const row = event.target.closest('[data-fk-sit]');
-            if (row && fk.isAdmin) fkSetEffect(row.dataset.fkSit, event.target.value || null, '#mled-fk-sit-msg');
-        });
-        root.querySelector('#mled-fk-fx-reset').addEventListener('click', () => fkSetEffect('all', null, '#mled-fk-sit-msg'));
     }
 
     // ── Texto corrido en mensajes ──
@@ -5098,13 +5410,14 @@
         });
     }
 
-    // ── Las 13 pantallas posibles ──
-    // GET /fk8wa/frames?screen=<nombre>, con el reloj configurado (tamaño
-    // reducido o completo según el estilo).
+    // ── Las 15 pantallas posibles ──
+    // GET /fk8wa/frames?screen=<nombre>, con el contorno de su situación
+    // (tamaño reducido o completo según el estilo).
     function fkLoadGallery() {
         fk.galleryStale = false;
         fk.gallery.forEach((item) => {
-            api(`/fk8wa/frames?screen=${encodeURIComponent(item.name)}`)
+            const sit = FK_SCREEN_SIT[item.name];
+            api(`/fk8wa/frames?screen=${encodeURIComponent(item.name)}${sit ? `&style=${encodeURIComponent(fkStyleOf(sit))}` : ''}`)
                 .then((data) => {
                     item.page = fkDecode(data.pages?.[0]);
                     fkDraw(item.canvas, item.page, null, true);
@@ -5183,6 +5496,46 @@
         fkRenderAnnouncementOptions();
     }
 
+    // Pestañas internas (patrón ARIA): clic, flechas izquierda/derecha, Inicio
+    // y Fin. La última elegida se recuerda en este navegador.
+    function fkShowTab(key, focus = false) {
+        const view = root.querySelector('#mled-view-fk8wa');
+        view.querySelectorAll('[data-fk-tab]').forEach((tab) => {
+            const on = tab.dataset.fkTab === key;
+            tab.setAttribute('aria-selected', String(on));
+            tab.tabIndex = on ? 0 : -1;
+            view.querySelector(`#${tab.getAttribute('aria-controls')}`).hidden = !on;
+            if (on && focus) tab.focus();
+        });
+        try { localStorage.setItem(FK_TAB_KEY, key); } catch { /* sin localStorage: no es crítico */ }
+    }
+
+    function fkBindTabs() {
+        const list = root.querySelector('#mled-view-fk8wa .mled-fk-tabs');
+        const tabs = [...list.querySelectorAll('[data-fk-tab]')];
+        list.addEventListener('click', (event) => {
+            const tab = event.target.closest('[data-fk-tab]');
+            if (tab) fkShowTab(tab.dataset.fkTab);
+        });
+        list.addEventListener('keydown', (event) => {
+            const index = tabs.indexOf(document.activeElement);
+            if (index < 0) return;
+            let next = null;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            else if (event.key === 'Home') next = 0;
+            else if (event.key === 'End') next = tabs.length - 1;
+            if (next === null) return;
+            event.preventDefault();
+            event.stopPropagation();
+            fkShowTab(tabs[next].dataset.fkTab, true);
+        });
+        try {
+            const saved = localStorage.getItem(FK_TAB_KEY);
+            if (saved && tabs.some((tab) => tab.dataset.fkTab === saved)) fkShowTab(saved);
+        } catch { /* sin localStorage: se queda en Panel */ }
+    }
+
     function fkBindHelp() {
         const view = root.querySelector('#mled-view-fk8wa');
         const closeAll = (except) => {
@@ -5205,13 +5558,11 @@
 
     function fkBindEvents() {
         fk.mp.canvas = root.querySelector('#mled-fk-led-main');
-        fk.minis = [...root.querySelectorAll('[data-fk-style]')].map((card) => ({
-            key: card.dataset.fkStyle, canvas: card.querySelector('canvas'), pages: [], stay: 0, idx: 0, last: 0, tick: 0, marco: null,
-        }));
         fk.gallery = [...root.querySelectorAll('[data-fk-gallery]')].map((figure) => ({
             name: figure.dataset.fkGallery, canvas: figure.querySelector('canvas'), page: null,
         }));
         fkBindHelp();
+        fkBindTabs();
 
         root.querySelector('#mled-fk-mins').addEventListener('click', (event) => {
             const button = event.target.closest('[data-fk-minutes]');
@@ -5262,10 +5613,12 @@
                         </span>`;
     }
 
-    // Tarjeta del mosaico: span = s7 / s5 / s6 / s12 (12 columnas).
+    // Tarjeta de la cuadrícula de 12 columnas: span = clases como
+    // `mled-fk-s7` (columnas que ocupa) y, si hace falta, `mled-fk-fill` o
+    // `mled-fk-side`. Sin helpKey no lleva globo "?".
     function fkCardHtml(span, id, tag, titleKey, helpKey, body, headExtra = '') {
         const head = tag === 'h2' ? 'mled-fk-head' : 'mled-fk-title';
-        const help = fkHelp(helpKey, tag === 'h2');
+        const help = helpKey ? fkHelp(helpKey, tag === 'h2') : '';
         const end = headExtra ? `<span class="mled-fk-head-end">${headExtra}${help}</span>` : help;
         return `
                     <section class="mled-fk-card ${span}" aria-labelledby="${id}">
@@ -5289,13 +5642,6 @@
                                 <span class="mled-fk-sr">${esc(tr(tipKey))}</span>
                             </li>`).join('');
         const minutes = FK_MINUTES.map((n) => `<button type="button" data-fk-minutes="${n}" aria-pressed="false">${esc(tr('fkMinutesShort', { n }))}</button>`).join('');
-        const styles = FK_STYLE_CARDS.map(([key, titleKey, descKey]) => `
-                            <button type="button" class="mled-fk-style" data-fk-style="${key}" aria-pressed="false">
-                                <span class="mled-fk-mini"><canvas width="288" height="48" aria-hidden="true"></canvas></span>
-                                <strong>${esc(tr(titleKey))}</strong>
-                                <span>${esc(tr(descKey))}</span>
-                            </button>`).join('');
-        const borders = FK_BORDERS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
         const patterns = FK_PATTERNS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
         const dirs = FK_DIRS.map(([value, key]) => `<button type="button" data-fk-dir="${value}" aria-pressed="false" data-fk-admin-input disabled>${esc(tr(key))}</button>`).join('');
         const gallery = FK_SCREENS.map((name) => `
@@ -5339,20 +5685,20 @@
                             <span class="mled-fk-mono" id="mled-fk-bright-val">8</span>
                         </div>
                         <span class="mled-inline-msg" id="mled-fk-bright-msg" role="status" aria-live="polite">${esc(tr('fkBrightNote'))}</span>`;
-        const timer = `
-                        <div class="mled-fk-styles" id="mled-fk-styles">${styles}
+        const situations = `
+                        <p class="mled-fk-muted">${esc(tr('fkSitIntro'))}</p>
+                        <div class="mled-fk-generalstyle">
+                            <div class="mled-fk-field-label"><label for="mled-fk-timer-style">${esc(tr('fkGeneralStyleLabel'))}</label>${fkHelp('fkGeneralStyleHelp')}</div>
+                            <select id="mled-fk-timer-style" data-fk-admin-input disabled>${FK_STYLE_CARDS.map((card) => `<option value="${card[0]}">${esc(tr(card[1]))}</option>`).join('')}</select>
                         </div>
+                        <div class="mled-fk-sitcards" id="mled-fk-sit"></div>
                         <div class="mled-fk-marco-opts" id="mled-fk-marco-opts" hidden>
-                            <div class="mled-fk-field"><label for="mled-fk-marco-anim">${esc(tr('fkMarcoAnim'))}</label><select id="mled-fk-marco-anim" data-fk-admin-input disabled>${borders}</select></div>
                             <div class="mled-fk-field"><label for="mled-fk-marco-pattern">${esc(tr('fkMarcoPattern'))}</label><select id="mled-fk-marco-pattern" data-fk-admin-input disabled>${patterns}</select></div>
                             <div class="mled-fk-field"><label for="mled-fk-marco-speed">${esc(tr('fkMarcoSpeed'))}</label>
                                 <div class="mled-fk-bright"><span class="mled-fk-muted">${esc(tr('fkFaster'))}</span><input type="range" id="mled-fk-marco-speed" min="1" max="60" step="1" value="10" data-fk-admin-input disabled><span class="mled-fk-mono" id="mled-fk-marco-speed-val">10</span></div>
                             </div>
+                            <div class="mled-fk-hint">${esc(tr('fkMarcoShared'))}</div>
                         </div>
-                        <span class="mled-inline-msg" id="mled-fk-timer-msg" role="status" aria-live="polite"></span>`;
-        const situations = `
-                        <div class="mled-fk-warnbox" id="mled-fk-clock-warn" hidden>${esc(tr('fkClockWarn'))}</div>
-                        <div class="mled-fk-sit" id="mled-fk-sit"></div>
                         <div><button type="button" class="mled-btn mled-btn-small" id="mled-fk-fx-reset" disabled>${esc(tr('fkFxReset'))}</button></div>
                         <span class="mled-inline-msg" id="mled-fk-sit-msg" role="status" aria-live="polite"></span>`;
         const effects = `
@@ -5376,23 +5722,7 @@
                         <div class="mled-fk-gallery" id="mled-fk-gallery">${gallery}
                         </div>`;
 
-        return `
-                <div id="mled-view-fk8wa" class="mled-fk-view" role="tabpanel" aria-labelledby="mled-tab-fk8wa" hidden>
-                    <p class="mled-fk-alert" id="mled-fk-alert" role="alert" hidden></p>
-                    <p class="mled-fk-alert" id="mled-fk-missing" hidden></p>
-                    <p class="mled-fk-readonly" id="mled-fk-readonly" hidden>${esc(tr('fkReadOnly'))}</p>
-
-                    <div class="mled-fk-mosaic">
-                        <div class="mled-fk-col mled-fk-col-l">${fkCardHtml('mled-fk-o1', 'mled-fk-t-now', 'h2', 'fkNowTitle', 'fkNowHelp', now, fkConnPillHtml())}${fkCardHtml('mled-fk-o3', 'mled-fk-t-msg', 'h2', 'fkMsgTitle', 'fkMsgHelp', message)}${fkCardHtml('mled-fk-o6', 'mled-fk-t-sit', 'h3', 'fkSitTitle', 'fkSitHelp', situations)}
-                        </div>
-                        <div class="mled-fk-col mled-fk-col-r">${fkCardHtml('mled-fk-o2', 'mled-fk-t-why', 'h2', 'fkWhyTitle', 'fkWhyHelp', why)}
-                            <div class="mled-fk-stack mled-fk-o4">${fkCardHtml('', 'mled-fk-t-mach', 'h3', 'fkMachTitle', 'fkMachHelp', machines)}${fkCardHtml('', 'mled-fk-t-bright', 'h3', 'fkBrightTitle', 'fkBrightHelp', brightness)}
-                            </div>${fkCardHtml('mled-fk-o5', 'mled-fk-t-timer', 'h3', 'fkTimerTitle', 'fkTimerHelp', timer)}
-                        </div>${fkCardHtml('mled-fk-s12 mled-fk-o7', 'mled-fk-t-fx', 'h2', 'fkFxTitle', 'fkFxHelp', effects)}${fkCardHtml('mled-fk-s6 mled-fk-o8', 'mled-fk-t-scroll', 'h3', 'fkScrollTitle', 'fkScrollHelp', scroll)}${fkCardHtml('mled-fk-s6 mled-fk-o9', 'mled-fk-t-screens', 'h3', 'fkGalleryTitle', 'fkGalleryHelp', screens)}
-                    </div>
-
-                    <details class="mled-fk-details" id="mled-fk-conn-details">
-                        <summary>${esc(tr('fkConnTitle'))}</summary>
+        const connection = `
                         <div class="mled-fk-inner">
                             <div class="mled-fk-fields">
                                 ${fkField('mled-fk-ip', 'fkIpLabel', 'fkIpHelp', `<div class="mled-fk-row"><input type="text" id="mled-fk-ip" inputmode="decimal" autocomplete="off" data-fk-admin-input disabled><button type="button" class="mled-btn" id="mled-fk-test-btn" data-fk-admin-only hidden>${esc(tr('fkTest'))}</button></div><span class="mled-inline-msg" id="mled-fk-test-msg" role="status" aria-live="polite"></span>`)}
@@ -5405,8 +5735,32 @@
                                 <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-save-btn">${esc(tr('fkSave'))}</button>
                                 <span class="mled-inline-msg" id="mled-fk-conn-msg" role="status" aria-live="polite"></span>
                             </div>
-                        </div>
-                    </details>
+                        </div>`;
+
+        return `
+                <div id="mled-view-fk8wa" class="mled-fk-view" role="tabpanel" aria-labelledby="mled-tab-fk8wa" hidden>
+                    <p class="mled-fk-alert" id="mled-fk-alert" role="alert" hidden></p>
+                    <p class="mled-fk-alert" id="mled-fk-missing" hidden></p>
+                    <p class="mled-fk-readonly" id="mled-fk-readonly" hidden>${esc(tr('fkReadOnly'))}</p>
+
+                    <div class="mled-fk-tabs" role="tablist" aria-label="${esc(tr('fkTabsAria'))}">${FK_TABS.map(([key, labelKey], index) => `
+                        <button type="button" class="mled-fk-tab" role="tab" id="mled-fk-tab-${key}" data-fk-tab="${key}" aria-selected="${index === 0}" aria-controls="mled-fk-pn-${key}" tabindex="${index === 0 ? 0 : -1}">${esc(tr(labelKey))}</button>`).join('')}
+                    </div>
+
+                    <div class="mled-fk-grid" role="tabpanel" id="mled-fk-pn-panel" aria-labelledby="mled-fk-tab-panel">${fkCardHtml('mled-fk-s7', 'mled-fk-t-now', 'h2', 'fkNowTitle', 'fkNowHelp', now, fkConnPillHtml())}${fkCardHtml('mled-fk-s5 mled-fk-fill', 'mled-fk-t-why', 'h2', 'fkWhyTitle', 'fkWhyHelp', why)}${fkCardHtml('mled-fk-s7', 'mled-fk-t-msg', 'h2', 'fkMsgTitle', 'fkMsgHelp', message)}${fkCardHtml('mled-fk-s5', 'mled-fk-t-bright', 'h3', 'fkBrightTitle', 'fkBrightHelp', brightness)}
+                    </div>
+
+                    <div class="mled-fk-grid" role="tabpanel" id="mled-fk-pn-mach" aria-labelledby="mled-fk-tab-mach" hidden>${fkCardHtml('mled-fk-s6', 'mled-fk-t-mach', 'h3', 'fkMachTitle', 'fkMachHelp', machines)}${fkCardHtml('mled-fk-s6', 'mled-fk-t-conn', 'h3', 'fkConnTitle', '', connection)}
+                    </div>
+
+                    <div class="mled-fk-grid" role="tabpanel" id="mled-fk-pn-clock" aria-labelledby="mled-fk-tab-clock" hidden>${fkCardHtml('mled-fk-s12', 'mled-fk-t-sit', 'h3', 'fkSitTitle', 'fkSitHelp', situations)}${fkCardHtml('mled-fk-s12', 'mled-fk-t-scroll', 'h3', 'fkScrollTitle', 'fkScrollHelp', scroll)}
+                    </div>
+
+                    <div class="mled-fk-grid" role="tabpanel" id="mled-fk-pn-fx" aria-labelledby="mled-fk-tab-fx" hidden>${fkCardHtml('mled-fk-s12', 'mled-fk-t-fx', 'h2', 'fkFxTitle', 'fkFxHelp', effects)}
+                    </div>
+
+                    <div class="mled-fk-grid" role="tabpanel" id="mled-fk-pn-screens" aria-labelledby="mled-fk-tab-screens" hidden>${fkCardHtml('mled-fk-s12', 'mled-fk-t-screens', 'h3', 'fkGalleryTitle', 'fkGalleryHelp', screens)}
+                    </div>
                 </div>`;
     }
 
