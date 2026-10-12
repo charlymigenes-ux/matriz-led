@@ -149,7 +149,7 @@ cada una tiene su configuración y su estado.
 
 **Cómo decide qué mostrar** (prioridad): error y pausa (una vista por cada
 máquina afectada, tapan todo) > mensaje especial > terminado (60 s) > trabajando
-(vista 1 y 2 alternan cada 15 s; con dos o más activas, "varias", de 3 en 3),
+(una sola vista por máquina, con archivo, barra y porcentaje; con dos o más activas, "varias", de 3 en 3),
 junto con una vista por cada máquina que calienta / está en temperatura /
 enfría o está **desconectada** (no tapan nada, entran al ciclo) > todo
 normal / todas en reposo (alternan).
@@ -160,7 +160,7 @@ dice "ERROR": el estado de las máquinas no trae el texto del error.
 hasta 4 caracteres** que sale solo del nombre real (Klipper ET4 → ET4,
 TTS 55 PRO → TTS, CNC 3018 → CNC); se puede cambiar en la pestaña. Las
 impresoras 3D, los láser y los CNC entran igual. Un láser o CNC no informa
-el tiempo transcurrido: en su vista 2 aparece LASER o CNC en lugar de la hora.
+el tiempo transcurrido (la pantalla "vista 2", con porcentaje grande y hora o LASER/CNC, ya no se muestra sola: el ciclo usa una sola vista de trabajo).
 
 **Calentando, en temperatura y enfriando** (solo impresoras 3D que no imprimen;
 láser y CNC nunca calientan; va debajo de "trabajando" en la prioridad):

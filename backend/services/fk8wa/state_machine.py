@@ -237,7 +237,7 @@ def playlist(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequenc
     """Serie de vistas que el panel recorre solo, cada una con su duración
     (None = pantalla fija, sin contador). Misma prioridad que select():
     - error y pausa: una vista por cada máquina afectada (tapan todo lo demás);
-    - trabajando: vista 1 y vista 2 (una máquina) o grupos de 3 (varias), y
+    - trabajando: una sola vista (una máquina) o grupos de 3 (varias), y
       además una vista por cada máquina que calienta / está en temperatura /
       enfría o está desconectada, para que no se oculten;
     - en reposo: "todo normal" y "todas en reposo" se alternan;
@@ -252,8 +252,8 @@ def playlist(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequenc
         extra = _cycle_extras(_entries(machines, selected_ids, short_names), memory, view_seconds)
         if name == "many":
             return [("many", {"machines": group}, view_seconds) for group in memory.many_groups] + extra
-        return [("print1", memory.print_views[0], view_seconds),
-                ("print2", memory.print_views[1], view_seconds)] + extra
+        # una sola vista de trabajo: máquina, archivo, barra y porcentaje (print1)
+        return [("print1", memory.print_views[0], view_seconds)] + extra
     if name in ("heating", "ready", "cooling", "offline"):
         cycle = _cycle_extras(_entries(machines or [], selected_ids, short_names), memory, view_seconds)
         if len(cycle) > 1:

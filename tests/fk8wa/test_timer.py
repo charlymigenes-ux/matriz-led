@@ -87,13 +87,13 @@ class TestPlaylist:
     def machine(self, mid, state, **job):
         return {"id": mid, "online": True, "status": {"state": state, "job": job or None}}
 
-    def test_print_gives_both_views(self):
+    def test_print_gives_a_single_view(self):
         from datetime import datetime
 
         mem = sm.Memory(started_at=0.0)
         segs = sm.playlist([self.machine("a", "printing", filename="CUBO.gcode", percent=50, elapsed_s=60)],
                            ["a"], 10.0, mem, datetime(2026, 1, 1, 9, 0))
-        assert [(n, s) for n, _, s in segs] == [("print1", 15.0), ("print2", 15.0)]
+        assert [(n, s) for n, _, s in segs] == [("print1", 15.0)]
 
     def test_many_more_than_three_rotates_in_groups(self):
         from datetime import datetime

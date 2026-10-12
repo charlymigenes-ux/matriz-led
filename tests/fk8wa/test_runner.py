@@ -388,8 +388,8 @@ class TestSituationContours:
             shown.append(r.status["screen"])
             assert header(FakeClient.last_program)["pages"] == 1     # el panel no avanza páginas solo
             clock.t += 10
-        assert [n for n, _, _ in r.current] == ["print1", "print2", "heating"]
-        assert set(shown) == {"print1", "print2", "heating"} and len(uploads()) == 4
+        assert [n for n, _, _ in r.current] == ["print1", "heating"]
+        assert set(shown) == {"print1", "heating"} and len(uploads()) == 4
 
 
 
@@ -400,11 +400,11 @@ class TestMaintenance:
                      "status": {"state": "printing", "job": {"filename": "x.nc", "percent": 30}}}]
         r, clock, state = make(machines=machines, cfg={"machines": ["a", "b"]})
         await r.tick()
-        assert [n for n, _, _ in r.current] == ["print1", "print2", "offline"]
+        assert [n for n, _, _ in r.current] == ["print1", "offline"]
         state["cfg"] = {**state["cfg"], "maintenance": ["a"]}
         clock.t += 30
         await r.tick()
-        assert [n for n, _, _ in r.current] == ["print1", "print2"]
+        assert [n for n, _, _ in r.current] == ["print1"]
 
     async def test_everything_in_maintenance_shows_the_idle_screen(self):
         r, clock, state = make(cfg={"maintenance": ["a"]})

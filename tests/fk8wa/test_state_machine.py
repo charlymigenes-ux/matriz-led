@@ -224,14 +224,14 @@ class TestWorkingMixedWithHeat:
         ms = [mach("a", "TTS 55 PRO", "printing", kind="laser", filename="x.nc", percent=30),
               mach("b", "Klipper ET4", hotend=(120, 200))]
         segs = self.play(ms, ["a", "b"])
-        assert [n for n, _, _ in segs] == ["print1", "print2", "heating"]
-        assert segs[2] == ("heating", {"printer": "ET4", "temp": 120, "target": 200}, 15.0)
+        assert [n for n, _, _ in segs] == ["print1", "heating"]
+        assert segs[1] == ("heating", {"printer": "ET4", "temp": 120, "target": 200}, 15.0)
 
     def test_ready_and_cooling_also_join_in_that_order(self):
         ms = [mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4", hotend=(90, 0)),
               mach("c", "ET5", hotend=(200, 200)), mach("d", "ET6", hotend=(50, 200))]
         segs = self.play(ms, list("abcd"))
-        assert [n for n, _, _ in segs] == ["print1", "print2", "heating", "ready", "cooling"]
+        assert [n for n, _, _ in segs] == ["print1", "heating", "ready", "cooling"]
 
     def test_many_working_keeps_its_groups_and_adds_the_heat(self):
         ms = [mach(c, c.upper(), "printing", filename="x.gc") for c in "abc"] + [mach("d", "ET4", hotend=(100, 200))]
@@ -248,7 +248,7 @@ class TestWorkingMixedWithHeat:
 
     def test_nothing_extra_when_nobody_is_hot(self):
         segs = self.play([mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4")], ["a", "b"])
-        assert [n for n, _, _ in segs] == ["print1", "print2"]
+        assert [n for n, _, _ in segs] == ["print1"]
 
 
 class TestAlertsAndOffline:
@@ -262,7 +262,7 @@ class TestAlertsAndOffline:
         ms[2]["online"] = False
         segs = self.play(ms, ["a", "b", "c"])
         assert [(n, d.get("printer")) for n, d, _ in segs] == [
-            ("print1", "TTS"), ("print2", "TTS"), ("offline", "ET4"), ("offline", "CNC")]
+            ("print1", "TTS"), ("offline", "ET4"), ("offline", "CNC")]
 
     def test_offline_alone_alternates_between_machines_or_stays_fixed(self):
         ms = [mach("a", "ET4"), mach("b", "CNC 3018", kind="cnc")]
