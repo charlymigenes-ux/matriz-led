@@ -177,3 +177,15 @@ class TestPageTransition:
     def test_single_page_stays_static_and_contour_clock_keeps_its_pages_static(self):
         assert header(timer.build_program(self.VIEWS[:1], "ninguno", effect=None))["effect"] == (1, 0)
         assert header(timer.build_program(self.VIEWS, "contorno"))["effect"] == (1, 0)
+
+
+class TestMaintenanceConfig:
+    def test_only_chosen_machines_and_no_duplicates(self):
+        saved = config.validate({"machines": ["a", "b"], "maintenance": ["b", "b", "zz"]})
+        assert saved["maintenance"] == ["b"]
+
+    def test_invalid_list_is_rejected(self):
+        for bad in ("a", [1], [""], {"a": 1}):
+            with pytest.raises(config.ConfigError):
+                config.validate({"maintenance": bad})
+        assert config.validate({})["maintenance"] == []

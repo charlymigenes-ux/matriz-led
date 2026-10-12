@@ -23,6 +23,7 @@ DEFAULTS: Dict[str, Any] = {
     "ip": "",
     "brightness": 8,
     "machines": [],          # ids de máquina en orden: P1, P2, P3...
+    "maintenance": [],       # ids de máquinas en mantenimiento: el panel las ignora por completo
     "min_interval_s": 15,
     "view_seconds": 15,
     "done_seconds": 60,
@@ -92,6 +93,10 @@ def validate(payload: Any) -> Dict[str, Any]:
         raise ConfigError("Una máquina aparece repetida en la lista")
     if len(machines) > MAX_MACHINES:
         raise ConfigError(f"Se pueden elegir hasta {MAX_MACHINES} máquinas")
+    maintenance = merged["maintenance"]
+    if not isinstance(maintenance, list) or not all(isinstance(m, str) and m.strip() for m in maintenance):
+        raise ConfigError("La lista de máquinas en mantenimiento no es válida")
+    maintenance = list(dict.fromkeys(m.strip() for m in maintenance))
     short_names = merged["short_names"]
     if not isinstance(short_names, dict):
         raise ConfigError("Los nombres cortos no son válidos")
@@ -137,6 +142,7 @@ def validate(payload: Any) -> Dict[str, Any]:
         "ip": ip,
         "brightness": _int_in(merged["brightness"], "brightness"),
         "machines": machines,
+        "maintenance": [m for m in maintenance if m in machines],   # solo de las elegidas para el panel
         "min_interval_s": _int_in(merged["min_interval_s"], "min_interval_s"),
         "view_seconds": _int_in(merged["view_seconds"], "view_seconds"),
         "done_seconds": _int_in(merged["done_seconds"], "done_seconds"),

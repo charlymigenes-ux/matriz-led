@@ -242,6 +242,11 @@
             fkMachAddAria: 'Agregar máquina',
             fkMachDown: 'Bajar {name}',
             fkMachEmpty: 'Todavía no hay máquinas elegidas.',
+            fkMaintLabel: 'En mantenimiento',
+            fkMaintBadge: 'Mantenimiento',
+            fkMaintNote: '{n} en mantenimiento: el panel las ignora',
+            fkMaintAria: 'Poner {name} en mantenimiento',
+            fkMaintHelp: 'Una máquina en mantenimiento desaparece del panel: no avisa si está desconectada, con error ni trabajando. Úsalo cuando esté desarmada o en reparación.',
             fkMachHelp: 'Las máquinas que aparecen en el panel: impresoras 3D, láser o CNC. Como la pantalla es chica, cada una usa un nombre corto de hasta 4 letras; cámbialo si no te gusta. Arrástralas para ordenarlas.',
             fkMachHint: 'El nombre corto de cada máquina es el que se ve en el LED (hasta 4 letras o números).',
             fkMachMissing: '{id} (ya no existe)',
@@ -666,6 +671,11 @@
             fkMachAddAria: 'Add machine',
             fkMachDown: 'Move {name} down',
             fkMachEmpty: 'No machines chosen yet.',
+            fkMaintLabel: 'Under maintenance',
+            fkMaintBadge: 'Maintenance',
+            fkMaintNote: '{n} under maintenance: the panel ignores them',
+            fkMaintAria: 'Put {name} under maintenance',
+            fkMaintHelp: 'A machine under maintenance disappears from the panel: it does not warn if it is offline, in error or working. Use it when it is taken apart or being repaired.',
             fkMachHelp: 'The machines that appear on the panel: 3D printers, laser or CNC. Because the screen is small, each one uses a short name of up to 4 letters; change it if you do not like it. Drag them to reorder.',
             fkMachHint: 'Each machine\'s short name is what shows on the LED (up to 4 letters or numbers).',
             fkMachMissing: '{id} (no longer exists)',
@@ -1090,6 +1100,11 @@
             fkMachAddAria: 'Maschine hinzufügen',
             fkMachDown: '{name} nach unten',
             fkMachEmpty: 'Noch keine Maschinen ausgewählt.',
+            fkMaintLabel: 'In Wartung',
+            fkMaintBadge: 'Wartung',
+            fkMaintNote: '{n} in Wartung: das Panel ignoriert sie',
+            fkMaintAria: '{name} in Wartung setzen',
+            fkMaintHelp: 'Eine Maschine in Wartung verschwindet vom Panel: Es meldet weder Offline, Fehler noch laufende Arbeit. Nutze das, wenn sie zerlegt ist oder repariert wird.',
             fkMachHelp: 'Die Maschinen, die auf dem Panel erscheinen: 3D-Drucker, Laser oder CNC. Weil das Display klein ist, hat jede einen Kurznamen mit bis zu 4 Zeichen; ändere ihn, wenn er dir nicht gefällt. Ziehe sie, um die Reihenfolge zu ändern.',
             fkMachHint: 'Der Kurzname jeder Maschine erscheint auf der LED (bis zu 4 Buchstaben oder Ziffern).',
             fkMachMissing: '{id} (existiert nicht mehr)',
@@ -1514,6 +1529,11 @@
             fkMachAddAria: 'Ajouter une machine',
             fkMachDown: 'Descendre {name}',
             fkMachEmpty: 'Aucune machine choisie pour le moment.',
+            fkMaintLabel: 'En maintenance',
+            fkMaintBadge: 'Maintenance',
+            fkMaintNote: '{n} en maintenance : le panneau les ignore',
+            fkMaintAria: 'Mettre {name} en maintenance',
+            fkMaintHelp: 'Une machine en maintenance disparaît du panneau : il n\'avertit ni si elle est déconnectée, ni en cas d\'erreur, ni pendant qu\'elle travaille. Utilisez-le quand elle est démontée ou en réparation.',
             fkMachHelp: 'Les machines qui apparaissent sur le panneau : imprimantes 3D, laser ou CNC. L\'écran étant petit, chacune utilise un nom court de 4 lettres maximum ; changez-le s\'il ne vous plaît pas. Faites-les glisser pour les ordonner.',
             fkMachHint: 'Le nom court de chaque machine est celui qui s\'affiche sur la LED (4 lettres ou chiffres au maximum).',
             fkMachMissing: '{id} (n\'existe plus)',
@@ -1938,6 +1958,11 @@
             fkMachAddAria: 'Adicionar máquina',
             fkMachDown: 'Descer {name}',
             fkMachEmpty: 'Nenhuma máquina escolhida ainda.',
+            fkMaintLabel: 'Em manutenção',
+            fkMaintBadge: 'Manutenção',
+            fkMaintNote: '{n} em manutenção: o painel as ignora',
+            fkMaintAria: 'Pôr {name} em manutenção',
+            fkMaintHelp: 'Uma máquina em manutenção some do painel: não avisa se estiver desconectada, com erro nem trabalhando. Use quando ela estiver desmontada ou em reparo.',
             fkMachHelp: 'As máquinas que aparecem no painel: impressoras 3D, laser ou CNC. Como a tela é pequena, cada uma usa um nome curto de até 4 letras; mude-o se não gostar. Arraste-as para ordenar.',
             fkMachHint: 'O nome curto de cada máquina é o que aparece no LED (até 4 letras ou números).',
             fkMachMissing: '{id} (não existe mais)',
@@ -4843,6 +4868,22 @@
         }
     }
 
+    // En mantenimiento: lo que devolvió la config; si no trae la lista, lo
+    // que reporta GET /fk8wa/machines.
+    function fkInMaint(id) {
+        if (Array.isArray(fk.config?.maintenance)) return fk.config.maintenance.includes(id);
+        return !!fk.known.find((item) => item.id === id)?.maintenance;
+    }
+
+    async function fkSaveMaint(id, on) {
+        const current = fk.machinesDraft.filter(fkInMaint);
+        const next = on ? [...new Set([...current, id])] : current.filter((item) => item !== id);
+        const saved = await fkSavePartial({ maintenance: next }, '#mled-fk-mach-msg');
+        await fkReloadMachines();
+        fkRenderMachines();
+        if (saved) fkRefreshStatus({ forceFrames: true });
+    }
+
     function fkRenderMachines() {
         const list = root?.querySelector('#mled-fk-machines');
         if (!list) return;
@@ -4855,20 +4896,28 @@
                 const label = machine ? machine.name : tr('fkMachMissing', { id });
                 const kind = FK_KIND[machine?.kind] || null;
                 const short = machine ? machine.short : (fk.config?.short_names?.[id] || '');
+                const maint = fkInMaint(id);
+                const maintSwitch = `<label class="mled-fk-maint"><input type="checkbox" role="switch" data-fk-maint="${esc(id)}" aria-label="${esc(tr('fkMaintAria', { name: label }))}" ${maint ? 'checked' : ''} ${fk.isAdmin ? '' : 'disabled'}><span>${esc(tr('fkMaintLabel'))}</span></label>`;
                 const controls = fk.isAdmin ? `
                     <span class="mled-fk-machine-actions">
                         <button type="button" data-fk-move="-1" data-fk-index="${index}" ${index === 0 ? 'disabled' : ''} aria-label="${esc(tr('fkMachUp', { name: label }))}">↑</button>
                         <button type="button" data-fk-move="1" data-fk-index="${index}" ${index === last ? 'disabled' : ''} aria-label="${esc(tr('fkMachDown', { name: label }))}">↓</button>
                         <button type="button" data-fk-remove="${index}" aria-label="${esc(tr('fkMachRemove', { name: label }))}">×</button>
                     </span>` : '';
-                return `<li class="mled-fk-machine${machine ? '' : ' is-missing'}" data-fk-index="${index}" ${fk.isAdmin ? 'draggable="true"' : ''}>`
+                return `<li class="mled-fk-machine${machine ? '' : ' is-missing'}${maint ? ' is-maint' : ''}" data-fk-index="${index}" ${fk.isAdmin ? 'draggable="true"' : ''}>`
                     + `<span class="mled-fk-grip" aria-hidden="true">${fk.isAdmin ? '⋮⋮' : ''}</span>`
                     + (kind ? `<span class="mled-fk-badge ${kind[1]}">${esc(tr(kind[0]))}</span>` : '')
                     + `<span class="mled-fk-machine-name">${esc(label)}</span>`
+                    + (maint ? `<span class="mled-fk-badge mled-fk-badge-maint">${esc(tr('fkMaintBadge'))}</span>` : '')
                     + `<input type="text" class="mled-fk-short" maxlength="4" value="${esc(short)}" data-fk-short="${esc(id)}" aria-label="${esc(tr('fkShortAria', { name: label }))}" autocomplete="off" ${fk.isAdmin && machine ? '' : 'disabled'}>`
+                    + maintSwitch
                     + `${controls}</li>`;
             }).join('');
         }
+        const note = root.querySelector('#mled-fk-maint-note');
+        const maintCount = fk.machinesDraft.filter(fkInMaint).length;
+        note.hidden = !maintCount;
+        note.textContent = maintCount ? tr('fkMaintNote', { n: maintCount }) : '';
         const select = root.querySelector('#mled-fk-add-machine');
         const available = fk.known.filter((machine) => !fk.machinesDraft.includes(machine.id));
         select.innerHTML = available.length
@@ -4927,6 +4976,8 @@
             if (input) input.value = input.value.toUpperCase().replace(/[^A-Z0-9.-]/g, '');
         });
         list.addEventListener('change', (event) => {
+            const sw = event.target.closest('[data-fk-maint]');
+            if (sw && fk.isAdmin) { fkSaveMaint(sw.dataset.fkMaint, sw.checked); return; }
             const input = event.target.closest('[data-fk-short]');
             if (input && fk.isAdmin) fkSaveShort(input.dataset.fkShort, input.value);
         });
@@ -5695,12 +5746,13 @@
                         <div class="mled-fk-current" id="mled-fk-current" aria-live="polite" hidden></div>
                         <span class="mled-inline-msg" id="mled-fk-msg-status" role="status" aria-live="polite"></span>`;
         const machines = `
+                        <div class="mled-fk-maint-note" id="mled-fk-maint-note" role="status" hidden></div>
                         <ol class="mled-fk-machines" id="mled-fk-machines" aria-labelledby="mled-fk-t-mach"></ol>
                         <div class="mled-fk-add" data-fk-admin-only hidden>
                             <select id="mled-fk-add-machine" aria-label="${esc(tr('fkMachAddAria'))}" disabled></select>
                             <button type="button" class="mled-btn" id="mled-fk-add-machine-btn" disabled>${esc(tr('fkMachAdd'))}</button>
                         </div>
-                        <div class="mled-fk-hint">${esc(tr('fkMachHint'))}</div>
+                        <div class="mled-fk-hint">${esc(tr('fkMachHint'))} ${fkHelp('fkMaintHelp')}</div>
                         <span class="mled-inline-msg" id="mled-fk-mach-msg" role="status" aria-live="polite"></span>`;
         const brightness = `
                         <div class="mled-fk-bright">

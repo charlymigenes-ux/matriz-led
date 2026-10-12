@@ -161,11 +161,12 @@ def effects_catalog() -> Dict[str, Any]:
 async def machine_list() -> List[Dict[str, Any]]:
     """Máquinas que NOPAL conoce, con el nombre corto que se usaría en el panel."""
     machines = await screen_service.list_machines()
-    saved = config.load()["short_names"]
+    cfg = config.load()
+    saved, in_maintenance = cfg["short_names"], set(cfg["maintenance"])
     auto = names.defaults(machines)
     return [{"id": str(m["id"]), "name": m.get("name") or str(m["id"]), "kind": m.get("type") or "printer",
              "online": bool(m.get("online")), "short": saved.get(str(m["id"])) or auto[str(m["id"])],
-             "short_auto": auto[str(m["id"])]} for m in machines]
+             "short_auto": auto[str(m["id"])], "maintenance": str(m["id"]) in in_maintenance} for m in machines]
 
 
 async def test_effect(effect_id: str) -> None:

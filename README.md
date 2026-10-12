@@ -185,6 +185,11 @@ enfriar; NOPAL vuelve a subir la pantalla cuando cambia la temperatura, cada
 o ninguno. Lo que no se elige usa `timer_style`. Por omisión: calentando y
 enfriando `temp`, en temperatura marco horario.
 
+**Modo mantenimiento** (`maintenance`): en "Máquinas y conexión", cada máquina del panel
+tiene un interruptor "En mantenimiento" (lo cambia el admin). Una máquina en
+mantenimiento desaparece del panel por completo: no avisa desconectada, error,
+calentando ni trabajando. Sirve para equipos desarmados o en reparación.
+
 **Cambio entre pantallas**: cuando una situación tiene varias pantallas (p. ej. las
 vistas de trabajo y la de una máquina que calienta) y no elegiste efecto, NOPAL usa
 "Entrar desde la izquierda" (probado en el panel) para pasar de una a otra, porque

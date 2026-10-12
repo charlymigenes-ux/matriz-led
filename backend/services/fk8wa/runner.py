@@ -141,8 +141,9 @@ class Runner:
         remaining = None
         if message:
             remaining = max(1.0, float(message.get("expires_at", 0)) - self._wall())
+        shown = [m for m in cfg["machines"] if m not in cfg.get("maintenance", [])]   # mantenimiento: ni se enteran
         segments = state_machine.playlist(
-            self._machines, cfg["machines"], now, self.memory, self._now_local(),
+            self._machines, shown, now, self.memory, self._now_local(),
             message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"], remaining,
             cfg["short_names"])
         self.current = segments

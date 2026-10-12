@@ -385,3 +385,22 @@ class TestSituationContours:
         await r.tick()
         assert [n for n, _, _ in r.current] == ["print1", "print2", "heating"]
         assert header(FakeClient.last_program)["pages"] == 15      # 3 vistas x 5 páginas de contorno
+
+
+class TestMaintenance:
+    async def test_machine_in_maintenance_is_ignored_by_the_panel(self):
+        machines = [{"id": "a", "name": "ET4", "type": "printer", "online": False, "status": {"state": "offline", "job": None}},
+                    {"id": "b", "name": "TTS", "type": "laser", "online": True,
+                     "status": {"state": "printing", "job": {"filename": "x.nc", "percent": 30}}}]
+        r, clock, state = make(machines=machines, cfg={"machines": ["a", "b"]})
+        await r.tick()
+        assert [n for n, _, _ in r.current] == ["print1", "print2", "offline"]
+        state["cfg"] = {**state["cfg"], "maintenance": ["a"]}
+        clock.t += 30
+        await r.tick()
+        assert [n for n, _, _ in r.current] == ["print1", "print2"]
+
+    async def test_everything_in_maintenance_shows_the_idle_screen(self):
+        r, clock, state = make(cfg={"maintenance": ["a"]})
+        await r.tick()
+        assert r.current[0][0] == "normal"
