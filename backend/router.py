@@ -297,6 +297,17 @@ async def fk8wa_preview_endpoint(screen: str = "", scale: int = 6, user: dict = 
     return Response(content=content, media_type=media, headers={"Cache-Control": "no-store"})
 
 
+@router.get("/api/plugins/matriz-led/fk8wa/frames")
+async def fk8wa_frames_endpoint(style: str = "", screen: str = "", user: dict = Depends(require_auth)):
+    """Páginas del panel como datos (1 bit por LED) para dibujarlas en la pestaña."""
+    if screen and screen not in fk8wa_screens.SCREENS:
+        raise HTTPException(status_code=400, detail="Pantalla desconocida")
+    try:
+        return await asyncio.to_thread(fk8wa.frames, style or None, screen or None)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.get("/api/plugins/matriz-led/fk8wa/config")
 async def fk8wa_get_config_endpoint(user: dict = Depends(require_auth)):
     return fk8wa_config.load()

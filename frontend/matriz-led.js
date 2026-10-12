@@ -136,89 +136,120 @@
             confirmClearAll: 'Vas a borrar todo el dibujo actual. Esta acción no se puede deshacer.', clearAllConfirmTitle: 'Borrar todo',
             testing: 'Probando…', matrixLedNavLabel: 'Matriz LED',
             dayInitials: 'L,M,M,J,V,S,D',
-            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
-            fkTab: 'Panel FK-8Wa',
-            fkTitle: 'Panel FK-8Wa · 96×16',
-            fkSub: 'Panel LED rojo de 96×16 que muestra el estado de las máquinas del taller.',
-            fkStatusTitle: 'Estado del panel',
-            fkStateDisabled: 'Desactivado',
-            fkStateOk: 'Conectado',
-            fkStateUnreachable: 'Sin respuesta',
-            fkStateSizeMismatch: 'Tamaño incorrecto',
-            fkStateUnknown: 'Desconocido',
-            fkStatusLoadError: 'No se pudo leer el estado del panel',
-            fkCurrentScreen: 'Pantalla actual',
-            fkNextRetry: 'Próximo reintento',
-            fkInSeconds: 'en {n} s',
-            fkPanelInfo: 'Panel detectado',
-            fkSendsLabel: 'Envíos desde el arranque',
-            fkSizeMismatch: 'El panel reporta {size} en vez de 96x16. Probablemente se mantuvo presionado 15 s el botón de prueba de la placa; reconfigúralo con FKShow y luego presiona Probar conexión.',
-            fkMissingMachines: 'Estas máquinas ya no existen en NOPAL; quítalas de la lista y guarda: {ids}',
-            fkPreviewTitle: 'Vista previa en vivo',
-            fkPreviewScreenLabel: 'Pantalla a mostrar',
-            fkPreviewLive: 'En vivo (pantalla actual)',
-            fkPreviewAlt: 'Vista previa del panel FK-8Wa',
-            fkPreviewError: 'No se pudo cargar la vista previa.',
-            fkScreenBoot: 'Arranque',
-            fkScreenNormal: 'Todo normal',
-            fkScreenPrint1: 'Impresión activa (vista 1)',
-            fkScreenPrint2: 'Impresión activa (vista 2)',
-            fkScreenMany: 'Varias máquinas',
-            fkScreenPause: 'Pausada',
-            fkScreenError: 'Error',
-            fkScreenOffline: 'Desconectada',
-            fkScreenIdle: 'Todas detenidas',
-            fkScreenDone: 'Trabajo terminado',
-            fkScreenSpecial: 'Mensaje especial',
-            fkScreenOff: 'Apagado',
-            fkConfigTitle: 'Configuración del panel',
-            fkReadOnlyNote: 'Solo un administrador puede cambiar esta configuración.',
-            fkEnabledLabel: 'Activar el panel',
-            fkIpLabel: 'IP del panel',
-            fkBrightnessLabel: 'Brillo (1 a 16)',
-            fkBrightnessApplied: 'Brillo aplicado: {level}',
-            fkMachinesLabel: 'Máquinas en el panel (P1, P2…)',
-            fkMachinesEmpty: 'Todavía no hay máquinas elegidas.',
-            fkAddMachineLabel: 'Agregar máquina',
-            fkAddBtn: 'Agregar',
-            fkNoMoreMachines: 'No hay más máquinas para agregar',
-            fkMoveUp: 'Subir',
-            fkMoveDown: 'Bajar',
-            fkRemove: 'Quitar',
-            fkUnknownMachine: '{id} (ya no existe)',
-            fkMinIntervalLabel: 'Intervalo mínimo entre envíos (s, 10 a 600)',
-            fkViewSecondsLabel: 'Duración de cada vista (s, 5 a 300)',
-            fkDoneSecondsLabel: 'Duración de "terminado" (s, 5 a 3600)',
-            fkTestResult: 'El panel responde: IP {ip}, puerto {port}, tamaño {width}x{height}',
-            fkMessageTitle: 'Mensaje especial',
-            fkMessageTextLabel: 'Texto (máx. 200 caracteres)',
-            fkMessagePlaceholder: 'Junta a las 5',
-            fkMinutesLabel: 'Minutos en pantalla (1 a 1440)',
-            fkSendBtn: 'Enviar al panel',
-            fkOrAnnouncement: 'O muestra un anuncio guardado',
-            fkAnnouncementLabel: 'Anuncio',
-            fkChooseAnnouncement: 'Elige un anuncio…',
-            fkSendAnnouncementBtn: 'Mostrar anuncio',
-            fkNoMessage: 'Sin mensaje especial vigente.',
-            fkCurrentMessage: 'Mensaje vigente',
-            fkExpiresAt: 'Vence a las {time}',
-            fkClearMessageBtn: 'Quitar mensaje',
+            // Panel LED del taller (FK-8Wa) -- ver la sección fk más abajo.
+            fkTab: 'Panel LED',
+            fkTitle: 'Panel LED del taller',
+            fkSub: 'Pantalla FK-8Wa de 96×16 · muestra solo lo que pasa en tus máquinas',
+            fkHelp: 'Ayuda',
+            fkConnOk: 'Conectado',
+            fkConnUnreachable: 'Sin conexión',
+            fkConnSizeMismatch: 'Panel desconfigurado',
+            fkConnDisabled: 'Apagado',
+            fkConnChecking: 'Comprobando…',
+            fkLoadError: 'No se pudo consultar el panel. Se vuelve a intentar solo.',
+            fkSizeMismatch: 'El panel está mal configurado: se ve de {size} en vez de 96x16. Pasa cuando se deja presionado 15 segundos el botón de prueba de su tarjeta. Configúralo otra vez con FKShow y luego presiona "Probar" en "Conexión y tiempos".',
+            fkMissingMachines: 'Estas máquinas ya no existen en NOPAL; quítalas de la lista: {ids}',
+            fkNowTitle: 'Así se ve tu panel ahora',
+            fkNowHelp: 'Es una copia en vivo de lo que tiene encendido el panel. Cambia sola cuando algo pasa en tus máquinas; no tienes que hacer nada.',
+            fkPanelAria: 'Copia del panel LED',
+            fkNowWaitingTitle: 'Esperando información del panel…',
+            fkNowBootTitle: 'El panel está arrancando.',
+            fkNowBootText: 'En unos segundos mostrará lo de tus máquinas.',
+            fkNowNormalTitle: 'Todo normal.',
+            fkNowNormalText: 'Tus máquinas están en línea; el panel muestra cuántas y la hora.',
+            fkNowIdleTitle: 'Todas en reposo.',
+            fkNowIdleText: 'Ninguna máquina está trabajando.',
+            fkNowPrintingTitle: 'Hay una impresión en marcha.',
+            fkNowPrintingText: 'El panel alterna dos vistas solo{clock}.',
+            fkNowManyTitle: 'Hay varias máquinas trabajando.',
+            fkNowManyText: 'El panel las muestra de 3 en 3{clock}.',
+            fkNowPauseTitle: 'Hay una máquina en pausa.',
+            fkNowPauseText: 'Se queda así hasta que la reanudes.',
+            fkNowErrorTitle: 'Una máquina tiene un error.',
+            fkNowErrorText: 'Es lo más importante, así que tapa todo lo demás.',
+            fkNowOfflineTitle: 'Una máquina no responde.',
+            fkNowOfflineText: 'Revisa que esté prendida y conectada.',
+            fkNowSpecialTitle: 'Mostrando tu mensaje.',
+            fkNowSpecialText: 'Se quita solo al terminar el tiempo{clock}.',
+            fkNowDoneTitle: 'Una impresión terminó.',
+            fkNowDoneText: 'El aviso se queda un rato y luego vuelve a lo normal{clock}.',
+            fkNowOffTitle: 'El panel está apagado.',
+            fkNowOffText: 'NOPAL no le está mandando nada.',
+            fkClockContorno: '; el contorno marca cuánto falta',
+            fkClockBarra: '; la barra marca cuánto falta',
+            fkClockMarco: '; el marco se mueve mientras tanto',
+            fkWhyTitle: '¿Por qué muestra esto?',
+            fkWhyHelp: 'Si pasan varias cosas a la vez, el panel muestra la de más a la izquierda: un error siempre gana a una impresión.',
+            fkPrioNow: 'ahora',
+            fkPrioError: 'Error',
+            fkPrioErrorTip: 'Una máquina reporta un error.',
+            fkPrioPause: 'Pausa',
+            fkPrioPauseTip: 'Una impresión quedó en pausa.',
+            fkPrioOffline: 'Desconectada',
+            fkPrioOfflineTip: 'Una máquina elegida no responde.',
+            fkPrioSpecial: 'Mensaje',
+            fkPrioSpecialTip: 'Un mensaje que mandaste, mientras dure.',
+            fkPrioDone: 'Terminó',
+            fkPrioDoneTip: 'Una impresión acaba de terminar.',
+            fkPrioPrinting: 'Imprimiendo',
+            fkPrioPrintingTip: 'Una o varias máquinas trabajando.',
+            fkPrioNormal: 'Normal',
+            fkPrioNormalTip: 'Todo en línea y sin pendientes.',
+            fkMsgTitle: 'Mandar un mensaje al panel',
+            fkMsgHelp: 'Escribe algo corto y elige cuánto tiempo se muestra. Después se quita solo. No tapa errores ni pausas.',
+            fkMsgPlaceholder: 'Ejemplo: JUNTA A LAS 5',
+            fkMsgAria: 'Mensaje',
+            fkMinutesAria: 'Minutos que se muestra',
+            fkMsgSend: 'Mostrar en el panel',
+            fkAnnLabel: 'O muestra un anuncio guardado',
+            fkAnnChoose: 'Elige un anuncio…',
+            fkAnnShow: 'Mostrar',
+            fkAnnMissing: 'Elige un anuncio primero',
+            fkMsgMissing: 'Escribe un mensaje primero',
+            fkMsgOnPanel: 'En el panel:',
+            fkMsgRemovesIn: 'se quita en {time}',
+            fkMsgClear: 'Quitar',
             fkSending: 'Enviando…',
-            fkMessageSent: 'Mensaje enviado',
-            fkMessageCleared: 'Mensaje quitado',
-            fkMissingText: 'Escribe un texto primero',
-            fkMissingAnnouncement: 'Elige un anuncio primero',
-            fkNote: 'Una sola sesión a la vez con el panel; NOPAL solo envía cuando la pantalla cambia (como mucho cada intervalo mínimo).',
-            fkRuleCheckbox: 'También mostrar en el panel FK-8Wa',
-            fkRuleBadgeTitle: 'Esta regla también se muestra en el panel FK-8Wa',
-            fkTimerStyleLabel: 'Contador de tiempo',
-            fkTimerGroupExact: 'Contador exacto',
-            fkTimerGroupNone: 'Sin contador',
-            fkTimerGroupBorder: 'Marcos del panel (decorativos)',
-            fkTimerContorno: 'Contorno (pantallas achicadas)',
-            fkTimerContornoEncima: 'Contorno encima (pantallas completas)',
-            fkTimerBarra: 'Barra en la fila de abajo',
-            fkTimerNinguno: 'Ninguno',
+            fkMsgSent: 'Listo, ya está en el panel',
+            fkMsgCleared: 'Mensaje quitado',
+            fkMsgFail: 'No se pudo: {detail}',
+            fkMinutesShort: '{n} min',
+            fkSecondsShort: '{n} s',
+            fkSecondsUnit: 'segundos',
+            fkViewFixed: 'Fija',
+            fkReadOnly: 'Solo un administrador puede cambiar los ajustes de abajo. Tú sí puedes mandar y quitar mensajes.',
+            fkMachTitle: 'Impresoras en el panel',
+            fkMachHelp: 'Las máquinas que aparecen en el panel. P1 es la primera de la lista: arrástralas para cambiar el orden.',
+            fkMachEmpty: 'Todavía no hay máquinas elegidas.',
+            fkMachMissing: '{id} (ya no existe)',
+            fkMachUp: 'Subir {name}',
+            fkMachDown: 'Bajar {name}',
+            fkMachRemove: 'Quitar {name}',
+            fkMachAdd: 'Agregar',
+            fkMachAddAria: 'Agregar impresora',
+            fkMachNoMore: 'No hay más para agregar',
+            fkSaving: 'Guardando…',
+            fkSaved: 'Guardado',
+            fkSaveFail: 'No se pudo guardar: {detail}',
+            fkBrightTitle: 'Brillo',
+            fkBrightHelp: 'Qué tan fuerte encienden los LEDs. De día súbelo; de noche bájalo para que no deslumbre.',
+            fkBrightNote: 'Se aplica en el panel en unos segundos.',
+            fkTimerTitle: 'Reloj de cada vista',
+            fkTimerHelp: 'Cuando el panel tiene que mostrar varias cosas (las dos vistas de una impresión, un mensaje, el aviso de que terminó), este dibujo marca cuánto falta para que cambie.',
+            fkStyleContorno: 'Contorno',
+            fkStyleContornoDesc: 'Una línea enciende la orilla; al completarse, cambia.',
+            fkStyleEncima: 'Contorno encima',
+            fkStyleEncimaDesc: 'Igual, pero con las letras a tamaño completo.',
+            fkStyleBarra: 'Barra abajo',
+            fkStyleBarraDesc: 'Una barrita avanza por la fila de abajo.',
+            fkStyleNinguno: 'Sin reloj',
+            fkStyleNingunoDesc: 'Cambia de vista sin marcar el tiempo.',
+            fkStyleMarco: 'Marco del panel',
+            fkStyleMarcoDesc: 'Animación decorativa del propio panel; no marca el tiempo.',
+            fkMarcoAnim: 'Animación del marco',
+            fkMarcoPattern: 'Forma de la línea',
+            fkMarcoSpeed: 'Velocidad del marco',
+            fkFaster: 'Más rápido',
             fkBorderFixed: 'Fijo',
             fkBorderRandom: 'Aleatorio',
             fkBorderCw: 'Horario',
@@ -230,19 +261,42 @@
             fkBorderLineCcw: 'Una línea antihorario',
             fkBorderDlineCw: 'Dos líneas horario',
             fkBorderDlineCcw: 'Dos líneas antihorario',
-            fkBorderPatternLabel: 'Patrón del marco',
-            fkPatternDash: 'Guiones 4/4',
-            fkPatternSolid: 'Continuo',
-            fkPatternDot: 'Puntos 2/2',
-            fkPatternDot1: 'Puntos 1/1',
-            fkBorderSpeedLabel: 'Velocidad del marco (1 a 60; menor = más rápido)',
-            fkTimerHelpExact: 'La línea completa el contorno justo cuando termina cada vista.',
-            fkTimerHelpBar: 'La barra llega al final justo cuando termina cada vista.',
-            fkTimerHelpBorder: 'El panel anima el marco a su ritmo; no marca el tiempo exacto.',
-            fkTimerHelpNone: 'Sin contador: las vistas cambian sin indicador de tiempo.',
-            fkViewsLabel: 'Vistas',
-            fkViewFixed: 'Fija',
-            fkSecondsShort: '{n} s',
+            fkPatternDash: 'Guiones',
+            fkPatternSolid: 'Línea continua',
+            fkPatternDot: 'Puntos',
+            fkPatternDot1: 'Puntos finos',
+            fkConnTitle: 'Conexión y tiempos',
+            fkIpLabel: 'Dirección del panel en la red',
+            fkIpHelp: 'La IP que le diste al panel con FKShow. Solo se cambia si mueves el panel a otra red.',
+            fkTest: 'Probar',
+            fkTesting: 'Buscando el panel…',
+            fkTestOk: 'Encontrado: panel de 96×16, listo.',
+            fkTestWrongSize: 'Encontré un panel de {width}×{height}, pero debe ser de 96×16. Revisa su configuración con FKShow.',
+            fkTestFail: 'No encuentro el panel. Revisa que esté prendido y que la dirección sea correcta.',
+            fkViewLabel: 'Cada vista dura',
+            fkViewHelp: 'Al imprimir, el panel alterna dos vistas (archivo y porcentaje). Esto es lo que dura cada una.',
+            fkDoneLabel: 'Aviso de "terminó"',
+            fkDoneHelp: 'Cuánto se queda el aviso cuando acaba una impresión, antes de volver a lo normal.',
+            fkMinLabel: 'Pausa mínima entre cambios',
+            fkMinHelp: 'El panel parpadea un instante cada vez que NOPAL le manda algo nuevo. Esto evita mandarle cosas demasiado seguido.',
+            fkEnabledLabel: 'Panel encendido desde NOPAL',
+            fkSave: 'Guardar',
+            fkGalleryTitle: 'Ver las 12 pantallas posibles',
+            fkGalleryNote: 'Ejemplos para saber qué puede aparecer en el panel.',
+            fkScreenBoot: 'Arranque',
+            fkScreenNormal: 'Todo normal',
+            fkScreenPrint1: 'Imprimiendo (vista 1)',
+            fkScreenPrint2: 'Imprimiendo (vista 2)',
+            fkScreenMany: 'Varias imprimiendo',
+            fkScreenPause: 'Pausa',
+            fkScreenError: 'Error',
+            fkScreenOffline: 'Desconectada',
+            fkScreenIdle: 'Todas en reposo',
+            fkScreenDone: 'Terminó',
+            fkScreenSpecial: 'Mensaje',
+            fkScreenOff: 'NOPAL apagado',
+            fkRuleCheckbox: 'También mostrar en el panel FK-8Wa',
+            fkRuleBadgeTitle: 'Esta regla también se muestra en el panel FK-8Wa',
         },
         en: {
             effectStatic: 'Static', effectBlink: 'Blink',
@@ -341,89 +395,120 @@
             confirmClearAll: 'You are about to clear the entire current drawing. This action cannot be undone.', clearAllConfirmTitle: 'Clear all',
             testing: 'Testing…', matrixLedNavLabel: 'LED Matrix',
             dayInitials: 'M,T,W,T,F,S,S',
-            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
-            fkTab: 'FK-8Wa panel',
-            fkTitle: 'FK-8Wa panel · 96×16',
-            fkSub: 'Red 96×16 LED panel that shows the status of the workshop machines.',
-            fkStatusTitle: 'Panel status',
-            fkStateDisabled: 'Disabled',
-            fkStateOk: 'Connected',
-            fkStateUnreachable: 'Not responding',
-            fkStateSizeMismatch: 'Wrong size',
-            fkStateUnknown: 'Unknown',
-            fkStatusLoadError: 'Could not read the panel status',
-            fkCurrentScreen: 'Current screen',
-            fkNextRetry: 'Next retry',
-            fkInSeconds: 'in {n} s',
-            fkPanelInfo: 'Detected panel',
-            fkSendsLabel: 'Sends since startup',
-            fkSizeMismatch: 'The panel reports {size} instead of 96x16. The board\'s test button was probably held down for 15 s; reconfigure it with FKShow and then press Test connection.',
-            fkMissingMachines: 'These machines no longer exist in NOPAL; remove them from the list and save: {ids}',
-            fkPreviewTitle: 'Live preview',
-            fkPreviewScreenLabel: 'Screen to show',
-            fkPreviewLive: 'Live (current screen)',
-            fkPreviewAlt: 'FK-8Wa panel preview',
-            fkPreviewError: 'Could not load the preview.',
-            fkScreenBoot: 'Startup',
-            fkScreenNormal: 'All normal',
-            fkScreenPrint1: 'Active print (view 1)',
-            fkScreenPrint2: 'Active print (view 2)',
-            fkScreenMany: 'Several machines',
-            fkScreenPause: 'Paused',
-            fkScreenError: 'Error',
-            fkScreenOffline: 'Disconnected',
-            fkScreenIdle: 'All stopped',
-            fkScreenDone: 'Job finished',
-            fkScreenSpecial: 'Special message',
-            fkScreenOff: 'Off',
-            fkConfigTitle: 'Panel settings',
-            fkReadOnlyNote: 'Only an administrator can change these settings.',
-            fkEnabledLabel: 'Enable the panel',
-            fkIpLabel: 'Panel IP',
-            fkBrightnessLabel: 'Brightness (1 to 16)',
-            fkBrightnessApplied: 'Brightness applied: {level}',
-            fkMachinesLabel: 'Machines on the panel (P1, P2…)',
-            fkMachinesEmpty: 'No machines chosen yet.',
-            fkAddMachineLabel: 'Add machine',
-            fkAddBtn: 'Add',
-            fkNoMoreMachines: 'No more machines to add',
-            fkMoveUp: 'Move up',
-            fkMoveDown: 'Move down',
-            fkRemove: 'Remove',
-            fkUnknownMachine: '{id} (no longer exists)',
-            fkMinIntervalLabel: 'Minimum interval between sends (s, 10 to 600)',
-            fkViewSecondsLabel: 'Duration of each view (s, 5 to 300)',
-            fkDoneSecondsLabel: 'Duration of "finished" (s, 5 to 3600)',
-            fkTestResult: 'The panel responds: IP {ip}, port {port}, size {width}x{height}',
-            fkMessageTitle: 'Special message',
-            fkMessageTextLabel: 'Text (max. 200 characters)',
-            fkMessagePlaceholder: 'Meeting at 5',
-            fkMinutesLabel: 'Minutes on screen (1 to 1440)',
-            fkSendBtn: 'Send to panel',
-            fkOrAnnouncement: 'Or show a saved announcement',
-            fkAnnouncementLabel: 'Announcement',
-            fkChooseAnnouncement: 'Choose an announcement…',
-            fkSendAnnouncementBtn: 'Show announcement',
-            fkNoMessage: 'No active special message.',
-            fkCurrentMessage: 'Active message',
-            fkExpiresAt: 'Expires at {time}',
-            fkClearMessageBtn: 'Remove message',
+            // Panel LED del taller (FK-8Wa) -- ver la sección fk más abajo.
+            fkTab: 'LED panel',
+            fkTitle: 'Workshop LED panel',
+            fkSub: 'FK-8Wa 96×16 display · shows only what is happening on your machines',
+            fkHelp: 'Help',
+            fkConnOk: 'Connected',
+            fkConnUnreachable: 'No connection',
+            fkConnSizeMismatch: 'Panel misconfigured',
+            fkConnDisabled: 'Off',
+            fkConnChecking: 'Checking…',
+            fkLoadError: 'Could not check the panel. It will try again on its own.',
+            fkSizeMismatch: 'The panel is misconfigured: it reports {size} instead of 96x16. This happens when the test button on its board is held down for 15 seconds. Set it up again with FKShow, then press "Test" under "Connection and timing".',
+            fkMissingMachines: 'These machines no longer exist in NOPAL; remove them from the list: {ids}',
+            fkNowTitle: 'This is your panel right now',
+            fkNowHelp: 'A live copy of what the panel is showing. It changes by itself when something happens on your machines; you do not have to do anything.',
+            fkPanelAria: 'Copy of the LED panel',
+            fkNowWaitingTitle: 'Waiting for information from the panel…',
+            fkNowBootTitle: 'The panel is starting up.',
+            fkNowBootText: 'In a few seconds it will show your machines.',
+            fkNowNormalTitle: 'All normal.',
+            fkNowNormalText: 'Your machines are online; the panel shows how many and the time.',
+            fkNowIdleTitle: 'All idle.',
+            fkNowIdleText: 'No machine is working.',
+            fkNowPrintingTitle: 'A print is in progress.',
+            fkNowPrintingText: 'The panel switches between two views by itself{clock}.',
+            fkNowManyTitle: 'Several machines are working.',
+            fkNowManyText: 'The panel shows them 3 at a time{clock}.',
+            fkNowPauseTitle: 'A machine is paused.',
+            fkNowPauseText: 'It stays like this until you resume it.',
+            fkNowErrorTitle: 'A machine has an error.',
+            fkNowErrorText: 'It is the most important thing, so it covers everything else.',
+            fkNowOfflineTitle: 'A machine is not responding.',
+            fkNowOfflineText: 'Check that it is on and connected.',
+            fkNowSpecialTitle: 'Showing your message.',
+            fkNowSpecialText: 'It goes away by itself when the time is up{clock}.',
+            fkNowDoneTitle: 'A print has finished.',
+            fkNowDoneText: 'The notice stays for a while and then goes back to normal{clock}.',
+            fkNowOffTitle: 'The panel is off.',
+            fkNowOffText: 'NOPAL is not sending anything to it.',
+            fkClockContorno: '; the outline shows how much time is left',
+            fkClockBarra: '; the bar shows how much time is left',
+            fkClockMarco: '; the frame keeps moving meanwhile',
+            fkWhyTitle: 'Why is it showing this?',
+            fkWhyHelp: 'If several things happen at once, the panel shows the one furthest to the left: an error always wins over a print.',
+            fkPrioNow: 'now',
+            fkPrioError: 'Error',
+            fkPrioErrorTip: 'A machine reports an error.',
+            fkPrioPause: 'Pause',
+            fkPrioPauseTip: 'A print was paused.',
+            fkPrioOffline: 'Disconnected',
+            fkPrioOfflineTip: 'A chosen machine is not responding.',
+            fkPrioSpecial: 'Message',
+            fkPrioSpecialTip: 'A message you sent, for as long as it lasts.',
+            fkPrioDone: 'Finished',
+            fkPrioDoneTip: 'A print has just finished.',
+            fkPrioPrinting: 'Printing',
+            fkPrioPrintingTip: 'One or more machines working.',
+            fkPrioNormal: 'Normal',
+            fkPrioNormalTip: 'Everything online and nothing pending.',
+            fkMsgTitle: 'Send a message to the panel',
+            fkMsgHelp: 'Write something short and choose how long it is shown. Afterwards it goes away by itself. It does not cover errors or pauses.',
+            fkMsgPlaceholder: 'Example: MEETING AT 5',
+            fkMsgAria: 'Message',
+            fkMinutesAria: 'Minutes it is shown',
+            fkMsgSend: 'Show on the panel',
+            fkAnnLabel: 'Or show a saved announcement',
+            fkAnnChoose: 'Choose an announcement…',
+            fkAnnShow: 'Show',
+            fkAnnMissing: 'Choose an announcement first',
+            fkMsgMissing: 'Type a message first',
+            fkMsgOnPanel: 'On the panel:',
+            fkMsgRemovesIn: 'goes away in {time}',
+            fkMsgClear: 'Remove',
             fkSending: 'Sending…',
-            fkMessageSent: 'Message sent',
-            fkMessageCleared: 'Message removed',
-            fkMissingText: 'Type some text first',
-            fkMissingAnnouncement: 'Choose an announcement first',
-            fkNote: 'Only one session at a time with the panel; NOPAL only sends when the screen changes (at most once per minimum interval).',
-            fkRuleCheckbox: 'Also show on the FK-8Wa panel',
-            fkRuleBadgeTitle: 'This rule is also shown on the FK-8Wa panel',
-            fkTimerStyleLabel: 'Time counter',
-            fkTimerGroupExact: 'Exact counter',
-            fkTimerGroupNone: 'No counter',
-            fkTimerGroupBorder: 'Panel frames (decorative)',
-            fkTimerContorno: 'Outline (shrunk screens)',
-            fkTimerContornoEncima: 'Outline on top (full-size screens)',
-            fkTimerBarra: 'Bar on the bottom row',
-            fkTimerNinguno: 'None',
+            fkMsgSent: 'Done, it is on the panel',
+            fkMsgCleared: 'Message removed',
+            fkMsgFail: 'It did not work: {detail}',
+            fkMinutesShort: '{n} min',
+            fkSecondsShort: '{n} s',
+            fkSecondsUnit: 'seconds',
+            fkViewFixed: 'Fixed',
+            fkReadOnly: 'Only an administrator can change the settings below. You can still send and remove messages.',
+            fkMachTitle: 'Printers on the panel',
+            fkMachHelp: 'The machines that appear on the panel. P1 is the first in the list: drag them to change the order.',
+            fkMachEmpty: 'No machines chosen yet.',
+            fkMachMissing: '{id} (no longer exists)',
+            fkMachUp: 'Move {name} up',
+            fkMachDown: 'Move {name} down',
+            fkMachRemove: 'Remove {name}',
+            fkMachAdd: 'Add',
+            fkMachAddAria: 'Add printer',
+            fkMachNoMore: 'No more to add',
+            fkSaving: 'Saving…',
+            fkSaved: 'Saved',
+            fkSaveFail: 'Could not save: {detail}',
+            fkBrightTitle: 'Brightness',
+            fkBrightHelp: 'How brightly the LEDs light up. Turn it up by day; turn it down at night so it does not dazzle.',
+            fkBrightNote: 'It is applied on the panel in a few seconds.',
+            fkTimerTitle: 'Clock for each view',
+            fkTimerHelp: 'When the panel has to show several things (the two views of a print, a message, the finished notice), this drawing shows how long is left before it changes.',
+            fkStyleContorno: 'Outline',
+            fkStyleContornoDesc: 'A line lights up the edge; when it is complete, the view changes.',
+            fkStyleEncima: 'Outline on top',
+            fkStyleEncimaDesc: 'Same, but with the letters at full size.',
+            fkStyleBarra: 'Bar at the bottom',
+            fkStyleBarraDesc: 'A small bar moves along the bottom row.',
+            fkStyleNinguno: 'No clock',
+            fkStyleNingunoDesc: 'Changes view without showing the time.',
+            fkStyleMarco: 'Panel frame',
+            fkStyleMarcoDesc: 'Decorative animation done by the panel itself; it does not show the time.',
+            fkMarcoAnim: 'Frame animation',
+            fkMarcoPattern: 'Line style',
+            fkMarcoSpeed: 'Frame speed',
+            fkFaster: 'Faster',
             fkBorderFixed: 'Fixed',
             fkBorderRandom: 'Random',
             fkBorderCw: 'Clockwise',
@@ -435,19 +520,42 @@
             fkBorderLineCcw: 'One line counterclockwise',
             fkBorderDlineCw: 'Two lines clockwise',
             fkBorderDlineCcw: 'Two lines counterclockwise',
-            fkBorderPatternLabel: 'Frame pattern',
-            fkPatternDash: 'Dashes 4/4',
-            fkPatternSolid: 'Solid',
-            fkPatternDot: 'Dots 2/2',
-            fkPatternDot1: 'Dots 1/1',
-            fkBorderSpeedLabel: 'Frame speed (1 to 60; lower = faster)',
-            fkTimerHelpExact: 'The line completes the outline right when each view ends.',
-            fkTimerHelpBar: 'The bar reaches the end right when each view ends.',
-            fkTimerHelpBorder: 'The panel animates the frame at its own pace; it does not mark the exact time.',
-            fkTimerHelpNone: 'No counter: views change without a time indicator.',
-            fkViewsLabel: 'Views',
-            fkViewFixed: 'Fixed',
-            fkSecondsShort: '{n} s',
+            fkPatternDash: 'Dashes',
+            fkPatternSolid: 'Solid line',
+            fkPatternDot: 'Dots',
+            fkPatternDot1: 'Fine dots',
+            fkConnTitle: 'Connection and timing',
+            fkIpLabel: 'Panel address on the network',
+            fkIpHelp: 'The IP you gave the panel with FKShow. Only change it if you move the panel to another network.',
+            fkTest: 'Test',
+            fkTesting: 'Looking for the panel…',
+            fkTestOk: 'Found: 96×16 panel, ready.',
+            fkTestWrongSize: 'I found a {width}×{height} panel, but it must be 96×16. Check its setup with FKShow.',
+            fkTestFail: 'I cannot find the panel. Check that it is on and that the address is correct.',
+            fkViewLabel: 'Each view lasts',
+            fkViewHelp: 'While printing, the panel switches between two views (file and percentage). This is how long each one lasts.',
+            fkDoneLabel: '"Finished" notice',
+            fkDoneHelp: 'How long the notice stays when a print ends, before going back to normal.',
+            fkMinLabel: 'Minimum pause between changes',
+            fkMinHelp: 'The panel blinks for a moment each time NOPAL sends it something new. This avoids sending things too often.',
+            fkEnabledLabel: 'Panel turned on from NOPAL',
+            fkSave: 'Save',
+            fkGalleryTitle: 'See the 12 possible screens',
+            fkGalleryNote: 'Examples of what can appear on the panel.',
+            fkScreenBoot: 'Startup',
+            fkScreenNormal: 'All normal',
+            fkScreenPrint1: 'Printing (view 1)',
+            fkScreenPrint2: 'Printing (view 2)',
+            fkScreenMany: 'Several printing',
+            fkScreenPause: 'Pause',
+            fkScreenError: 'Error',
+            fkScreenOffline: 'Disconnected',
+            fkScreenIdle: 'All idle',
+            fkScreenDone: 'Finished',
+            fkScreenSpecial: 'Message',
+            fkScreenOff: 'NOPAL off',
+            fkRuleCheckbox: 'Also show on the FK-8Wa panel',
+            fkRuleBadgeTitle: 'This rule is also shown on the FK-8Wa panel',
         },
         de: {
             effectStatic: 'Statisch', effectBlink: 'Blinken',
@@ -546,89 +654,120 @@
             confirmClearAll: 'Du wirst die gesamte aktuelle Zeichnung löschen. Diese Aktion kann nicht rückgängig gemacht werden.', clearAllConfirmTitle: 'Alles löschen',
             testing: 'Wird getestet…', matrixLedNavLabel: 'LED-Matrix',
             dayInitials: 'M,D,M,D,F,S,S',
-            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
-            fkTab: 'FK-8Wa-Panel',
-            fkTitle: 'FK-8Wa-Panel · 96×16',
-            fkSub: 'Rotes 96×16-LED-Panel, das den Status der Werkstattmaschinen anzeigt.',
-            fkStatusTitle: 'Panel-Status',
-            fkStateDisabled: 'Deaktiviert',
-            fkStateOk: 'Verbunden',
-            fkStateUnreachable: 'Keine Antwort',
-            fkStateSizeMismatch: 'Falsche Größe',
-            fkStateUnknown: 'Unbekannt',
-            fkStatusLoadError: 'Panel-Status konnte nicht gelesen werden',
-            fkCurrentScreen: 'Aktueller Bildschirm',
-            fkNextRetry: 'Nächster Versuch',
-            fkInSeconds: 'in {n} s',
-            fkPanelInfo: 'Erkanntes Panel',
-            fkSendsLabel: 'Sendungen seit dem Start',
-            fkSizeMismatch: 'Das Panel meldet {size} statt 96x16. Vermutlich wurde die Testtaste der Platine 15 s lang gedrückt gehalten; konfiguriere es mit FKShow neu und drücke dann auf Verbindung testen.',
-            fkMissingMachines: 'Diese Maschinen gibt es in NOPAL nicht mehr; entferne sie aus der Liste und speichere: {ids}',
-            fkPreviewTitle: 'Live-Vorschau',
-            fkPreviewScreenLabel: 'Anzuzeigender Bildschirm',
-            fkPreviewLive: 'Live (aktueller Bildschirm)',
-            fkPreviewAlt: 'Vorschau des FK-8Wa-Panels',
-            fkPreviewError: 'Vorschau konnte nicht geladen werden.',
-            fkScreenBoot: 'Start',
-            fkScreenNormal: 'Alles normal',
-            fkScreenPrint1: 'Aktiver Druck (Ansicht 1)',
-            fkScreenPrint2: 'Aktiver Druck (Ansicht 2)',
-            fkScreenMany: 'Mehrere Maschinen',
-            fkScreenPause: 'Pausiert',
-            fkScreenError: 'Fehler',
-            fkScreenOffline: 'Getrennt',
-            fkScreenIdle: 'Alle gestoppt',
-            fkScreenDone: 'Auftrag beendet',
-            fkScreenSpecial: 'Sondermeldung',
-            fkScreenOff: 'Aus',
-            fkConfigTitle: 'Panel-Konfiguration',
-            fkReadOnlyNote: 'Nur ein Administrator kann diese Konfiguration ändern.',
-            fkEnabledLabel: 'Panel aktivieren',
-            fkIpLabel: 'Panel-IP',
-            fkBrightnessLabel: 'Helligkeit (1 bis 16)',
-            fkBrightnessApplied: 'Helligkeit übernommen: {level}',
-            fkMachinesLabel: 'Maschinen auf dem Panel (P1, P2…)',
-            fkMachinesEmpty: 'Noch keine Maschinen ausgewählt.',
-            fkAddMachineLabel: 'Maschine hinzufügen',
-            fkAddBtn: 'Hinzufügen',
-            fkNoMoreMachines: 'Keine weiteren Maschinen verfügbar',
-            fkMoveUp: 'Nach oben',
-            fkMoveDown: 'Nach unten',
-            fkRemove: 'Entfernen',
-            fkUnknownMachine: '{id} (existiert nicht mehr)',
-            fkMinIntervalLabel: 'Mindestabstand zwischen Sendungen (s, 10 bis 600)',
-            fkViewSecondsLabel: 'Dauer jeder Ansicht (s, 5 bis 300)',
-            fkDoneSecondsLabel: 'Dauer von "beendet" (s, 5 bis 3600)',
-            fkTestResult: 'Das Panel antwortet: IP {ip}, Port {port}, Größe {width}x{height}',
-            fkMessageTitle: 'Sondermeldung',
-            fkMessageTextLabel: 'Text (max. 200 Zeichen)',
-            fkMessagePlaceholder: 'Besprechung um 5',
-            fkMinutesLabel: 'Minuten auf dem Bildschirm (1 bis 1440)',
-            fkSendBtn: 'An das Panel senden',
-            fkOrAnnouncement: 'Oder eine gespeicherte Anzeige zeigen',
-            fkAnnouncementLabel: 'Anzeige',
-            fkChooseAnnouncement: 'Anzeige auswählen…',
-            fkSendAnnouncementBtn: 'Anzeige zeigen',
-            fkNoMessage: 'Keine aktive Sondermeldung.',
-            fkCurrentMessage: 'Aktive Meldung',
-            fkExpiresAt: 'Läuft um {time} ab',
-            fkClearMessageBtn: 'Meldung entfernen',
+            // Panel LED del taller (FK-8Wa) -- ver la sección fk más abajo.
+            fkTab: 'LED-Panel',
+            fkTitle: 'LED-Panel der Werkstatt',
+            fkSub: 'FK-8Wa-Anzeige mit 96×16 · zeigt nur, was an deinen Maschinen passiert',
+            fkHelp: 'Hilfe',
+            fkConnOk: 'Verbunden',
+            fkConnUnreachable: 'Keine Verbindung',
+            fkConnSizeMismatch: 'Panel falsch eingestellt',
+            fkConnDisabled: 'Aus',
+            fkConnChecking: 'Wird geprüft…',
+            fkLoadError: 'Das Panel konnte nicht abgefragt werden. Es wird automatisch erneut versucht.',
+            fkSizeMismatch: 'Das Panel ist falsch eingestellt: Es meldet {size} statt 96x16. Das passiert, wenn die Testtaste auf der Platine 15 Sekunden lang gedrückt wurde. Stelle es mit FKShow neu ein und drücke dann unter „Verbindung und Zeiten“ auf „Testen“.',
+            fkMissingMachines: 'Diese Maschinen gibt es in NOPAL nicht mehr; entferne sie aus der Liste: {ids}',
+            fkNowTitle: 'So sieht dein Panel gerade aus',
+            fkNowHelp: 'Eine Live-Kopie dessen, was das Panel gerade anzeigt. Sie ändert sich von selbst, wenn an deinen Maschinen etwas passiert; du musst nichts tun.',
+            fkPanelAria: 'Kopie des LED-Panels',
+            fkNowWaitingTitle: 'Warte auf Informationen vom Panel…',
+            fkNowBootTitle: 'Das Panel startet.',
+            fkNowBootText: 'In ein paar Sekunden zeigt es deine Maschinen an.',
+            fkNowNormalTitle: 'Alles normal.',
+            fkNowNormalText: 'Deine Maschinen sind online; das Panel zeigt, wie viele es sind, und die Uhrzeit.',
+            fkNowIdleTitle: 'Alle im Leerlauf.',
+            fkNowIdleText: 'Keine Maschine arbeitet.',
+            fkNowPrintingTitle: 'Ein Druck läuft.',
+            fkNowPrintingText: 'Das Panel wechselt von selbst zwischen zwei Ansichten{clock}.',
+            fkNowManyTitle: 'Mehrere Maschinen arbeiten.',
+            fkNowManyText: 'Das Panel zeigt sie je 3 auf einmal{clock}.',
+            fkNowPauseTitle: 'Eine Maschine ist pausiert.',
+            fkNowPauseText: 'Das bleibt so, bis du sie fortsetzt.',
+            fkNowErrorTitle: 'Eine Maschine hat einen Fehler.',
+            fkNowErrorText: 'Das ist am wichtigsten und überdeckt deshalb alles andere.',
+            fkNowOfflineTitle: 'Eine Maschine antwortet nicht.',
+            fkNowOfflineText: 'Prüfe, ob sie eingeschaltet und verbunden ist.',
+            fkNowSpecialTitle: 'Deine Nachricht wird angezeigt.',
+            fkNowSpecialText: 'Sie verschwindet von selbst, wenn die Zeit um ist{clock}.',
+            fkNowDoneTitle: 'Ein Druck ist fertig.',
+            fkNowDoneText: 'Die Meldung bleibt eine Weile und kehrt dann zum Normalzustand zurück{clock}.',
+            fkNowOffTitle: 'Das Panel ist aus.',
+            fkNowOffText: 'NOPAL sendet ihm nichts.',
+            fkClockContorno: '; der Umriss zeigt, wie viel Zeit bleibt',
+            fkClockBarra: '; der Balken zeigt, wie viel Zeit bleibt',
+            fkClockMarco: '; der Rahmen bewegt sich in der Zwischenzeit',
+            fkWhyTitle: 'Warum zeigt es das?',
+            fkWhyHelp: 'Wenn mehrere Dinge gleichzeitig passieren, zeigt das Panel das ganz links: Ein Fehler hat immer Vorrang vor einem Druck.',
+            fkPrioNow: 'jetzt',
+            fkPrioError: 'Fehler',
+            fkPrioErrorTip: 'Eine Maschine meldet einen Fehler.',
+            fkPrioPause: 'Pause',
+            fkPrioPauseTip: 'Ein Druck wurde pausiert.',
+            fkPrioOffline: 'Getrennt',
+            fkPrioOfflineTip: 'Eine ausgewählte Maschine antwortet nicht.',
+            fkPrioSpecial: 'Nachricht',
+            fkPrioSpecialTip: 'Eine Nachricht von dir, solange sie läuft.',
+            fkPrioDone: 'Fertig',
+            fkPrioDoneTip: 'Ein Druck ist gerade fertig geworden.',
+            fkPrioPrinting: 'Druckt',
+            fkPrioPrintingTip: 'Eine oder mehrere Maschinen arbeiten.',
+            fkPrioNormal: 'Normal',
+            fkPrioNormalTip: 'Alles online und nichts offen.',
+            fkMsgTitle: 'Nachricht an das Panel senden',
+            fkMsgHelp: 'Schreibe etwas Kurzes und wähle, wie lange es angezeigt wird. Danach verschwindet es von selbst. Fehler und Pausen werden nicht überdeckt.',
+            fkMsgPlaceholder: 'Beispiel: BESPRECHUNG UM 5',
+            fkMsgAria: 'Nachricht',
+            fkMinutesAria: 'Minuten Anzeigedauer',
+            fkMsgSend: 'Auf dem Panel anzeigen',
+            fkAnnLabel: 'Oder eine gespeicherte Anzeige zeigen',
+            fkAnnChoose: 'Anzeige auswählen…',
+            fkAnnShow: 'Anzeigen',
+            fkAnnMissing: 'Wähle zuerst eine Anzeige aus',
+            fkMsgMissing: 'Gib zuerst eine Nachricht ein',
+            fkMsgOnPanel: 'Auf dem Panel:',
+            fkMsgRemovesIn: 'verschwindet in {time}',
+            fkMsgClear: 'Entfernen',
             fkSending: 'Wird gesendet…',
-            fkMessageSent: 'Meldung gesendet',
-            fkMessageCleared: 'Meldung entfernt',
-            fkMissingText: 'Gib zuerst einen Text ein',
-            fkMissingAnnouncement: 'Wähle zuerst eine Anzeige aus',
-            fkNote: 'Nur eine Sitzung gleichzeitig mit dem Panel; NOPAL sendet nur, wenn sich der Bildschirm ändert (höchstens einmal pro Mindestabstand).',
-            fkRuleCheckbox: 'Auch auf dem FK-8Wa-Panel anzeigen',
-            fkRuleBadgeTitle: 'Diese Regel wird auch auf dem FK-8Wa-Panel angezeigt',
-            fkTimerStyleLabel: 'Zeitanzeige',
-            fkTimerGroupExact: 'Exakter Zähler',
-            fkTimerGroupNone: 'Kein Zähler',
-            fkTimerGroupBorder: 'Panel-Rahmen (dekorativ)',
-            fkTimerContorno: 'Umriss (verkleinerte Bildschirme)',
-            fkTimerContornoEncima: 'Umriss darüber (volle Bildschirme)',
-            fkTimerBarra: 'Balken in der unteren Zeile',
-            fkTimerNinguno: 'Keiner',
+            fkMsgSent: 'Fertig, es ist auf dem Panel',
+            fkMsgCleared: 'Nachricht entfernt',
+            fkMsgFail: 'Das hat nicht geklappt: {detail}',
+            fkMinutesShort: '{n} Min.',
+            fkSecondsShort: '{n} s',
+            fkSecondsUnit: 'Sekunden',
+            fkViewFixed: 'Fest',
+            fkReadOnly: 'Nur ein Administrator kann die Einstellungen unten ändern. Nachrichten senden und entfernen kannst du trotzdem.',
+            fkMachTitle: 'Drucker auf dem Panel',
+            fkMachHelp: 'Die Maschinen, die auf dem Panel erscheinen. P1 ist die erste in der Liste: Ziehe sie, um die Reihenfolge zu ändern.',
+            fkMachEmpty: 'Noch keine Maschinen ausgewählt.',
+            fkMachMissing: '{id} (existiert nicht mehr)',
+            fkMachUp: '{name} nach oben',
+            fkMachDown: '{name} nach unten',
+            fkMachRemove: '{name} entfernen',
+            fkMachAdd: 'Hinzufügen',
+            fkMachAddAria: 'Drucker hinzufügen',
+            fkMachNoMore: 'Keine weiteren verfügbar',
+            fkSaving: 'Wird gespeichert…',
+            fkSaved: 'Gespeichert',
+            fkSaveFail: 'Speichern fehlgeschlagen: {detail}',
+            fkBrightTitle: 'Helligkeit',
+            fkBrightHelp: 'Wie hell die LEDs leuchten. Tagsüber hoch, nachts herunter, damit es nicht blendet.',
+            fkBrightNote: 'Wird in ein paar Sekunden am Panel übernommen.',
+            fkTimerTitle: 'Uhr für jede Ansicht',
+            fkTimerHelp: 'Wenn das Panel mehrere Dinge zeigen muss (die zwei Ansichten eines Drucks, eine Nachricht, die Fertig-Meldung), zeigt diese Zeichnung, wie lange es noch bis zum Wechsel dauert.',
+            fkStyleContorno: 'Umriss',
+            fkStyleContornoDesc: 'Eine Linie leuchtet am Rand entlang; ist sie fertig, wechselt die Ansicht.',
+            fkStyleEncima: 'Umriss darüber',
+            fkStyleEncimaDesc: 'Genauso, aber mit Buchstaben in voller Größe.',
+            fkStyleBarra: 'Balken unten',
+            fkStyleBarraDesc: 'Ein kleiner Balken wandert über die untere Zeile.',
+            fkStyleNinguno: 'Keine Uhr',
+            fkStyleNingunoDesc: 'Wechselt die Ansicht, ohne die Zeit anzuzeigen.',
+            fkStyleMarco: 'Rahmen des Panels',
+            fkStyleMarcoDesc: 'Dekorative Animation des Panels selbst; sie zeigt die Zeit nicht an.',
+            fkMarcoAnim: 'Rahmenanimation',
+            fkMarcoPattern: 'Linienform',
+            fkMarcoSpeed: 'Geschwindigkeit des Rahmens',
+            fkFaster: 'Schneller',
             fkBorderFixed: 'Fest',
             fkBorderRandom: 'Zufällig',
             fkBorderCw: 'Im Uhrzeigersinn',
@@ -640,19 +779,42 @@
             fkBorderLineCcw: 'Eine Linie gegen den Uhrzeigersinn',
             fkBorderDlineCw: 'Zwei Linien im Uhrzeigersinn',
             fkBorderDlineCcw: 'Zwei Linien gegen den Uhrzeigersinn',
-            fkBorderPatternLabel: 'Rahmenmuster',
-            fkPatternDash: 'Striche 4/4',
-            fkPatternSolid: 'Durchgehend',
-            fkPatternDot: 'Punkte 2/2',
-            fkPatternDot1: 'Punkte 1/1',
-            fkBorderSpeedLabel: 'Rahmengeschwindigkeit (1 bis 60; kleiner = schneller)',
-            fkTimerHelpExact: 'Die Linie schließt den Umriss genau dann, wenn jede Ansicht endet.',
-            fkTimerHelpBar: 'Der Balken erreicht das Ende genau dann, wenn jede Ansicht endet.',
-            fkTimerHelpBorder: 'Das Panel animiert den Rahmen in seinem eigenen Tempo; die genaue Zeit wird nicht angezeigt.',
-            fkTimerHelpNone: 'Kein Zähler: Die Ansichten wechseln ohne Zeitanzeige.',
-            fkViewsLabel: 'Ansichten',
-            fkViewFixed: 'Fest',
-            fkSecondsShort: '{n} s',
+            fkPatternDash: 'Striche',
+            fkPatternSolid: 'Durchgehende Linie',
+            fkPatternDot: 'Punkte',
+            fkPatternDot1: 'Feine Punkte',
+            fkConnTitle: 'Verbindung und Zeiten',
+            fkIpLabel: 'Adresse des Panels im Netzwerk',
+            fkIpHelp: 'Die IP, die du dem Panel mit FKShow gegeben hast. Ändere sie nur, wenn du das Panel in ein anderes Netzwerk umsetzt.',
+            fkTest: 'Testen',
+            fkTesting: 'Panel wird gesucht…',
+            fkTestOk: 'Gefunden: Panel mit 96×16, bereit.',
+            fkTestWrongSize: 'Ich habe ein Panel mit {width}×{height} gefunden, es muss aber 96×16 sein. Prüfe die Einstellung mit FKShow.',
+            fkTestFail: 'Ich finde das Panel nicht. Prüfe, ob es eingeschaltet ist und die Adresse stimmt.',
+            fkViewLabel: 'Jede Ansicht dauert',
+            fkViewHelp: 'Beim Drucken wechselt das Panel zwischen zwei Ansichten (Datei und Prozent). So lange dauert jede.',
+            fkDoneLabel: '„Fertig“-Meldung',
+            fkDoneHelp: 'Wie lange die Meldung bleibt, wenn ein Druck endet, bevor wieder der Normalzustand kommt.',
+            fkMinLabel: 'Mindestpause zwischen Wechseln',
+            fkMinHelp: 'Das Panel flackert kurz, wenn NOPAL ihm etwas Neues sendet. So wird verhindert, dass zu oft etwas gesendet wird.',
+            fkEnabledLabel: 'Panel von NOPAL aus eingeschaltet',
+            fkSave: 'Speichern',
+            fkGalleryTitle: 'Die 12 möglichen Bildschirme ansehen',
+            fkGalleryNote: 'Beispiele dafür, was auf dem Panel erscheinen kann.',
+            fkScreenBoot: 'Start',
+            fkScreenNormal: 'Alles normal',
+            fkScreenPrint1: 'Druckt (Ansicht 1)',
+            fkScreenPrint2: 'Druckt (Ansicht 2)',
+            fkScreenMany: 'Mehrere drucken',
+            fkScreenPause: 'Pause',
+            fkScreenError: 'Fehler',
+            fkScreenOffline: 'Getrennt',
+            fkScreenIdle: 'Alle im Leerlauf',
+            fkScreenDone: 'Fertig',
+            fkScreenSpecial: 'Nachricht',
+            fkScreenOff: 'NOPAL aus',
+            fkRuleCheckbox: 'Auch auf dem FK-8Wa-Panel anzeigen',
+            fkRuleBadgeTitle: 'Diese Regel wird auch auf dem FK-8Wa-Panel angezeigt',
         },
         fr: {
             effectStatic: 'Statique', effectBlink: 'Clignotement',
@@ -751,89 +913,120 @@
             confirmClearAll: 'Vous allez effacer tout le dessin actuel. Cette action est irréversible.', clearAllConfirmTitle: 'Tout effacer',
             testing: 'Test en cours…', matrixLedNavLabel: 'Matrice LED',
             dayInitials: 'L,M,M,J,V,S,D',
-            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
-            fkTab: 'Panneau FK-8Wa',
-            fkTitle: 'Panneau FK-8Wa · 96×16',
-            fkSub: 'Panneau LED rouge de 96×16 qui affiche l\'état des machines de l\'atelier.',
-            fkStatusTitle: 'État du panneau',
-            fkStateDisabled: 'Désactivé',
-            fkStateOk: 'Connecté',
-            fkStateUnreachable: 'Aucune réponse',
-            fkStateSizeMismatch: 'Taille incorrecte',
-            fkStateUnknown: 'Inconnu',
-            fkStatusLoadError: 'Impossible de lire l\'état du panneau',
-            fkCurrentScreen: 'Écran actuel',
-            fkNextRetry: 'Prochaine tentative',
-            fkInSeconds: 'dans {n} s',
-            fkPanelInfo: 'Panneau détecté',
-            fkSendsLabel: 'Envois depuis le démarrage',
-            fkSizeMismatch: 'Le panneau indique {size} au lieu de 96x16. Le bouton de test de la carte a probablement été maintenu enfoncé 15 s ; reconfigurez-le avec FKShow puis appuyez sur Tester la connexion.',
-            fkMissingMachines: 'Ces machines n\'existent plus dans NOPAL ; retirez-les de la liste et enregistrez : {ids}',
-            fkPreviewTitle: 'Aperçu en direct',
-            fkPreviewScreenLabel: 'Écran à afficher',
-            fkPreviewLive: 'En direct (écran actuel)',
-            fkPreviewAlt: 'Aperçu du panneau FK-8Wa',
-            fkPreviewError: 'Impossible de charger l\'aperçu.',
-            fkScreenBoot: 'Démarrage',
-            fkScreenNormal: 'Tout est normal',
-            fkScreenPrint1: 'Impression en cours (vue 1)',
-            fkScreenPrint2: 'Impression en cours (vue 2)',
-            fkScreenMany: 'Plusieurs machines',
-            fkScreenPause: 'En pause',
-            fkScreenError: 'Erreur',
-            fkScreenOffline: 'Déconnectée',
-            fkScreenIdle: 'Toutes à l\'arrêt',
-            fkScreenDone: 'Travail terminé',
-            fkScreenSpecial: 'Message spécial',
-            fkScreenOff: 'Éteint',
-            fkConfigTitle: 'Configuration du panneau',
-            fkReadOnlyNote: 'Seul un administrateur peut modifier cette configuration.',
-            fkEnabledLabel: 'Activer le panneau',
-            fkIpLabel: 'IP du panneau',
-            fkBrightnessLabel: 'Luminosité (1 à 16)',
-            fkBrightnessApplied: 'Luminosité appliquée : {level}',
-            fkMachinesLabel: 'Machines sur le panneau (P1, P2…)',
-            fkMachinesEmpty: 'Aucune machine choisie pour le moment.',
-            fkAddMachineLabel: 'Ajouter une machine',
-            fkAddBtn: 'Ajouter',
-            fkNoMoreMachines: 'Plus aucune machine à ajouter',
-            fkMoveUp: 'Monter',
-            fkMoveDown: 'Descendre',
-            fkRemove: 'Retirer',
-            fkUnknownMachine: '{id} (n\'existe plus)',
-            fkMinIntervalLabel: 'Intervalle minimal entre les envois (s, 10 à 600)',
-            fkViewSecondsLabel: 'Durée de chaque vue (s, 5 à 300)',
-            fkDoneSecondsLabel: 'Durée de « terminé » (s, 5 à 3600)',
-            fkTestResult: 'Le panneau répond : IP {ip}, port {port}, taille {width}x{height}',
-            fkMessageTitle: 'Message spécial',
-            fkMessageTextLabel: 'Texte (200 caractères max.)',
-            fkMessagePlaceholder: 'Réunion à 17 h',
-            fkMinutesLabel: 'Minutes à l\'écran (1 à 1440)',
-            fkSendBtn: 'Envoyer au panneau',
-            fkOrAnnouncement: 'Ou afficher une annonce enregistrée',
-            fkAnnouncementLabel: 'Annonce',
-            fkChooseAnnouncement: 'Choisissez une annonce…',
-            fkSendAnnouncementBtn: 'Afficher l\'annonce',
-            fkNoMessage: 'Aucun message spécial en cours.',
-            fkCurrentMessage: 'Message en cours',
-            fkExpiresAt: 'Expire à {time}',
-            fkClearMessageBtn: 'Retirer le message',
+            // Panel LED del taller (FK-8Wa) -- ver la sección fk más abajo.
+            fkTab: 'Panneau LED',
+            fkTitle: 'Panneau LED de l\'atelier',
+            fkSub: 'Écran FK-8Wa de 96×16 · affiche seulement ce qui se passe sur vos machines',
+            fkHelp: 'Aide',
+            fkConnOk: 'Connecté',
+            fkConnUnreachable: 'Sans connexion',
+            fkConnSizeMismatch: 'Panneau mal configuré',
+            fkConnDisabled: 'Éteint',
+            fkConnChecking: 'Vérification…',
+            fkLoadError: 'Impossible de consulter le panneau. Une nouvelle tentative aura lieu automatiquement.',
+            fkSizeMismatch: 'Le panneau est mal configuré : il indique {size} au lieu de 96x16. Cela arrive quand le bouton de test de sa carte reste enfoncé 15 secondes. Reconfigurez-le avec FKShow, puis appuyez sur « Tester » dans « Connexion et durées ».',
+            fkMissingMachines: 'Ces machines n\'existent plus dans NOPAL ; retirez-les de la liste : {ids}',
+            fkNowTitle: 'Voici votre panneau en ce moment',
+            fkNowHelp: 'Une copie en direct de ce qu\'affiche le panneau. Elle change toute seule quand il se passe quelque chose sur vos machines ; vous n\'avez rien à faire.',
+            fkPanelAria: 'Copie du panneau LED',
+            fkNowWaitingTitle: 'En attente des informations du panneau…',
+            fkNowBootTitle: 'Le panneau démarre.',
+            fkNowBootText: 'Dans quelques secondes, il affichera vos machines.',
+            fkNowNormalTitle: 'Tout est normal.',
+            fkNowNormalText: 'Vos machines sont en ligne ; le panneau affiche leur nombre et l\'heure.',
+            fkNowIdleTitle: 'Toutes au repos.',
+            fkNowIdleText: 'Aucune machine n\'est en train de travailler.',
+            fkNowPrintingTitle: 'Une impression est en cours.',
+            fkNowPrintingText: 'Le panneau alterne tout seul deux vues{clock}.',
+            fkNowManyTitle: 'Plusieurs machines travaillent.',
+            fkNowManyText: 'Le panneau les affiche 3 par 3{clock}.',
+            fkNowPauseTitle: 'Une machine est en pause.',
+            fkNowPauseText: 'Cela reste ainsi jusqu\'à ce que vous la repreniez.',
+            fkNowErrorTitle: 'Une machine a une erreur.',
+            fkNowErrorText: 'C\'est le plus important, donc cela masque tout le reste.',
+            fkNowOfflineTitle: 'Une machine ne répond pas.',
+            fkNowOfflineText: 'Vérifiez qu\'elle est allumée et connectée.',
+            fkNowSpecialTitle: 'Votre message est affiché.',
+            fkNowSpecialText: 'Il disparaît tout seul à la fin du temps{clock}.',
+            fkNowDoneTitle: 'Une impression est terminée.',
+            fkNowDoneText: 'L\'avis reste un moment puis revient à la normale{clock}.',
+            fkNowOffTitle: 'Le panneau est éteint.',
+            fkNowOffText: 'NOPAL ne lui envoie rien.',
+            fkClockContorno: ' ; le contour montre le temps restant',
+            fkClockBarra: ' ; la barre montre le temps restant',
+            fkClockMarco: ' ; le cadre bouge pendant ce temps',
+            fkWhyTitle: 'Pourquoi affiche-t-il cela ?',
+            fkWhyHelp: 'Si plusieurs choses se produisent en même temps, le panneau affiche celle qui est le plus à gauche : une erreur l\'emporte toujours sur une impression.',
+            fkPrioNow: 'maintenant',
+            fkPrioError: 'Erreur',
+            fkPrioErrorTip: 'Une machine signale une erreur.',
+            fkPrioPause: 'Pause',
+            fkPrioPauseTip: 'Une impression a été mise en pause.',
+            fkPrioOffline: 'Déconnectée',
+            fkPrioOfflineTip: 'Une machine choisie ne répond pas.',
+            fkPrioSpecial: 'Message',
+            fkPrioSpecialTip: 'Un message que vous avez envoyé, tant qu\'il dure.',
+            fkPrioDone: 'Terminée',
+            fkPrioDoneTip: 'Une impression vient de se terminer.',
+            fkPrioPrinting: 'Impression',
+            fkPrioPrintingTip: 'Une ou plusieurs machines en train de travailler.',
+            fkPrioNormal: 'Normal',
+            fkPrioNormalTip: 'Tout est en ligne et rien en attente.',
+            fkMsgTitle: 'Envoyer un message au panneau',
+            fkMsgHelp: 'Écrivez quelque chose de court et choisissez combien de temps il s\'affiche. Ensuite il disparaît tout seul. Il ne masque ni les erreurs ni les pauses.',
+            fkMsgPlaceholder: 'Exemple : RÉUNION À 17 H',
+            fkMsgAria: 'Message',
+            fkMinutesAria: 'Minutes d\'affichage',
+            fkMsgSend: 'Afficher sur le panneau',
+            fkAnnLabel: 'Ou afficher une annonce enregistrée',
+            fkAnnChoose: 'Choisissez une annonce…',
+            fkAnnShow: 'Afficher',
+            fkAnnMissing: 'Choisissez d\'abord une annonce',
+            fkMsgMissing: 'Saisissez d\'abord un message',
+            fkMsgOnPanel: 'Sur le panneau :',
+            fkMsgRemovesIn: 'disparaît dans {time}',
+            fkMsgClear: 'Retirer',
             fkSending: 'Envoi…',
-            fkMessageSent: 'Message envoyé',
-            fkMessageCleared: 'Message retiré',
-            fkMissingText: 'Saisissez d\'abord un texte',
-            fkMissingAnnouncement: 'Choisissez d\'abord une annonce',
-            fkNote: 'Une seule session à la fois avec le panneau ; NOPAL n\'envoie que lorsque l\'écran change (au plus une fois par intervalle minimal).',
-            fkRuleCheckbox: 'Afficher aussi sur le panneau FK-8Wa',
-            fkRuleBadgeTitle: 'Cette règle s\'affiche aussi sur le panneau FK-8Wa',
-            fkTimerStyleLabel: 'Compteur de temps',
-            fkTimerGroupExact: 'Compteur exact',
-            fkTimerGroupNone: 'Sans compteur',
-            fkTimerGroupBorder: 'Cadres du panneau (décoratifs)',
-            fkTimerContorno: 'Contour (écrans réduits)',
-            fkTimerContornoEncima: 'Contour par-dessus (écrans pleine taille)',
-            fkTimerBarra: 'Barre sur la rangée du bas',
-            fkTimerNinguno: 'Aucun',
+            fkMsgSent: 'C\'est fait, c\'est sur le panneau',
+            fkMsgCleared: 'Message retiré',
+            fkMsgFail: 'Cela n\'a pas fonctionné : {detail}',
+            fkMinutesShort: '{n} min',
+            fkSecondsShort: '{n} s',
+            fkSecondsUnit: 'secondes',
+            fkViewFixed: 'Fixe',
+            fkReadOnly: 'Seul un administrateur peut modifier les réglages ci-dessous. Vous pouvez quand même envoyer et retirer des messages.',
+            fkMachTitle: 'Imprimantes sur le panneau',
+            fkMachHelp: 'Les machines qui apparaissent sur le panneau. P1 est la première de la liste : faites-les glisser pour changer l\'ordre.',
+            fkMachEmpty: 'Aucune machine choisie pour le moment.',
+            fkMachMissing: '{id} (n\'existe plus)',
+            fkMachUp: 'Monter {name}',
+            fkMachDown: 'Descendre {name}',
+            fkMachRemove: 'Retirer {name}',
+            fkMachAdd: 'Ajouter',
+            fkMachAddAria: 'Ajouter une imprimante',
+            fkMachNoMore: 'Plus rien à ajouter',
+            fkSaving: 'Enregistrement…',
+            fkSaved: 'Enregistré',
+            fkSaveFail: 'Impossible d\'enregistrer : {detail}',
+            fkBrightTitle: 'Luminosité',
+            fkBrightHelp: 'L\'intensité des LED. Montez-la le jour ; baissez-la la nuit pour ne pas éblouir.',
+            fkBrightNote: 'Appliqué sur le panneau en quelques secondes.',
+            fkTimerTitle: 'Horloge de chaque vue',
+            fkTimerHelp: 'Quand le panneau doit afficher plusieurs choses (les deux vues d\'une impression, un message, l\'avis de fin), ce dessin indique le temps restant avant le changement.',
+            fkStyleContorno: 'Contour',
+            fkStyleContornoDesc: 'Une ligne allume le bord ; une fois complète, la vue change.',
+            fkStyleEncima: 'Contour par-dessus',
+            fkStyleEncimaDesc: 'Pareil, mais avec les lettres en pleine taille.',
+            fkStyleBarra: 'Barre en bas',
+            fkStyleBarraDesc: 'Une petite barre avance sur la rangée du bas.',
+            fkStyleNinguno: 'Sans horloge',
+            fkStyleNingunoDesc: 'Change de vue sans indiquer le temps.',
+            fkStyleMarco: 'Cadre du panneau',
+            fkStyleMarcoDesc: 'Animation décorative du panneau lui-même ; elle n\'indique pas le temps.',
+            fkMarcoAnim: 'Animation du cadre',
+            fkMarcoPattern: 'Forme du trait',
+            fkMarcoSpeed: 'Vitesse du cadre',
+            fkFaster: 'Plus vite',
             fkBorderFixed: 'Fixe',
             fkBorderRandom: 'Aléatoire',
             fkBorderCw: 'Sens horaire',
@@ -845,19 +1038,42 @@
             fkBorderLineCcw: 'Une ligne antihoraire',
             fkBorderDlineCw: 'Deux lignes horaires',
             fkBorderDlineCcw: 'Deux lignes antihoraires',
-            fkBorderPatternLabel: 'Motif du cadre',
-            fkPatternDash: 'Tirets 4/4',
-            fkPatternSolid: 'Continu',
-            fkPatternDot: 'Points 2/2',
-            fkPatternDot1: 'Points 1/1',
-            fkBorderSpeedLabel: 'Vitesse du cadre (1 à 60 ; plus petit = plus rapide)',
-            fkTimerHelpExact: 'La ligne complète le contour exactement à la fin de chaque vue.',
-            fkTimerHelpBar: 'La barre atteint la fin exactement à la fin de chaque vue.',
-            fkTimerHelpBorder: 'Le panneau anime le cadre à son rythme ; il n\'indique pas le temps exact.',
-            fkTimerHelpNone: 'Sans compteur : les vues changent sans indicateur de temps.',
-            fkViewsLabel: 'Vues',
-            fkViewFixed: 'Fixe',
-            fkSecondsShort: '{n} s',
+            fkPatternDash: 'Tirets',
+            fkPatternSolid: 'Trait continu',
+            fkPatternDot: 'Points',
+            fkPatternDot1: 'Points fins',
+            fkConnTitle: 'Connexion et durées',
+            fkIpLabel: 'Adresse du panneau sur le réseau',
+            fkIpHelp: 'L\'IP que vous avez donnée au panneau avec FKShow. Ne la changez que si vous déplacez le panneau vers un autre réseau.',
+            fkTest: 'Tester',
+            fkTesting: 'Recherche du panneau…',
+            fkTestOk: 'Trouvé : panneau de 96×16, prêt.',
+            fkTestWrongSize: 'J\'ai trouvé un panneau de {width}×{height}, mais il doit être de 96×16. Vérifiez sa configuration avec FKShow.',
+            fkTestFail: 'Je ne trouve pas le panneau. Vérifiez qu\'il est allumé et que l\'adresse est correcte.',
+            fkViewLabel: 'Chaque vue dure',
+            fkViewHelp: 'Pendant l\'impression, le panneau alterne deux vues (fichier et pourcentage). Voici la durée de chacune.',
+            fkDoneLabel: 'Avis « terminé »',
+            fkDoneHelp: 'Combien de temps l\'avis reste quand une impression se termine, avant de revenir à la normale.',
+            fkMinLabel: 'Pause minimale entre les changements',
+            fkMinHelp: 'Le panneau clignote un instant chaque fois que NOPAL lui envoie quelque chose de nouveau. Cela évite de lui envoyer des choses trop souvent.',
+            fkEnabledLabel: 'Panneau allumé depuis NOPAL',
+            fkSave: 'Enregistrer',
+            fkGalleryTitle: 'Voir les 12 écrans possibles',
+            fkGalleryNote: 'Exemples de ce qui peut apparaître sur le panneau.',
+            fkScreenBoot: 'Démarrage',
+            fkScreenNormal: 'Tout est normal',
+            fkScreenPrint1: 'Impression (vue 1)',
+            fkScreenPrint2: 'Impression (vue 2)',
+            fkScreenMany: 'Plusieurs impriment',
+            fkScreenPause: 'Pause',
+            fkScreenError: 'Erreur',
+            fkScreenOffline: 'Déconnectée',
+            fkScreenIdle: 'Toutes au repos',
+            fkScreenDone: 'Terminée',
+            fkScreenSpecial: 'Message',
+            fkScreenOff: 'NOPAL éteint',
+            fkRuleCheckbox: 'Afficher aussi sur le panneau FK-8Wa',
+            fkRuleBadgeTitle: 'Cette règle s\'affiche aussi sur le panneau FK-8Wa',
         },
         'pt-BR': {
             effectStatic: 'Estático', effectBlink: 'Piscar',
@@ -956,89 +1172,120 @@
             confirmClearAll: 'Você vai apagar todo o desenho atual. Esta ação não pode ser desfeita.', clearAllConfirmTitle: 'Limpar tudo',
             testing: 'Testando…', matrixLedNavLabel: 'Matriz LED',
             dayInitials: 'S,T,Q,Q,S,S,D',
-            // Panel FK-8Wa (96x16 monocromo) -- ver la sección fk8wa más abajo.
-            fkTab: 'Painel FK-8Wa',
-            fkTitle: 'Painel FK-8Wa · 96×16',
-            fkSub: 'Painel LED vermelho de 96×16 que mostra o status das máquinas da oficina.',
-            fkStatusTitle: 'Status do painel',
-            fkStateDisabled: 'Desativado',
-            fkStateOk: 'Conectado',
-            fkStateUnreachable: 'Sem resposta',
-            fkStateSizeMismatch: 'Tamanho incorreto',
-            fkStateUnknown: 'Desconhecido',
-            fkStatusLoadError: 'Não foi possível ler o status do painel',
-            fkCurrentScreen: 'Tela atual',
-            fkNextRetry: 'Próxima tentativa',
-            fkInSeconds: 'em {n} s',
-            fkPanelInfo: 'Painel detectado',
-            fkSendsLabel: 'Envios desde a inicialização',
-            fkSizeMismatch: 'O painel informa {size} em vez de 96x16. Provavelmente o botão de teste da placa foi mantido pressionado por 15 s; reconfigure-o com o FKShow e depois clique em Testar conexão.',
-            fkMissingMachines: 'Estas máquinas não existem mais no NOPAL; remova-as da lista e salve: {ids}',
-            fkPreviewTitle: 'Pré-visualização ao vivo',
-            fkPreviewScreenLabel: 'Tela a mostrar',
-            fkPreviewLive: 'Ao vivo (tela atual)',
-            fkPreviewAlt: 'Pré-visualização do painel FK-8Wa',
-            fkPreviewError: 'Não foi possível carregar a pré-visualização.',
-            fkScreenBoot: 'Inicialização',
-            fkScreenNormal: 'Tudo normal',
-            fkScreenPrint1: 'Impressão ativa (vista 1)',
-            fkScreenPrint2: 'Impressão ativa (vista 2)',
-            fkScreenMany: 'Várias máquinas',
-            fkScreenPause: 'Pausada',
-            fkScreenError: 'Erro',
-            fkScreenOffline: 'Desconectada',
-            fkScreenIdle: 'Todas paradas',
-            fkScreenDone: 'Trabalho concluído',
-            fkScreenSpecial: 'Mensagem especial',
-            fkScreenOff: 'Desligado',
-            fkConfigTitle: 'Configuração do painel',
-            fkReadOnlyNote: 'Somente um administrador pode alterar esta configuração.',
-            fkEnabledLabel: 'Ativar o painel',
-            fkIpLabel: 'IP do painel',
-            fkBrightnessLabel: 'Brilho (1 a 16)',
-            fkBrightnessApplied: 'Brilho aplicado: {level}',
-            fkMachinesLabel: 'Máquinas no painel (P1, P2…)',
-            fkMachinesEmpty: 'Nenhuma máquina escolhida ainda.',
-            fkAddMachineLabel: 'Adicionar máquina',
-            fkAddBtn: 'Adicionar',
-            fkNoMoreMachines: 'Não há mais máquinas para adicionar',
-            fkMoveUp: 'Subir',
-            fkMoveDown: 'Descer',
-            fkRemove: 'Remover',
-            fkUnknownMachine: '{id} (não existe mais)',
-            fkMinIntervalLabel: 'Intervalo mínimo entre envios (s, 10 a 600)',
-            fkViewSecondsLabel: 'Duração de cada vista (s, 5 a 300)',
-            fkDoneSecondsLabel: 'Duração de "concluído" (s, 5 a 3600)',
-            fkTestResult: 'O painel responde: IP {ip}, porta {port}, tamanho {width}x{height}',
-            fkMessageTitle: 'Mensagem especial',
-            fkMessageTextLabel: 'Texto (máx. 200 caracteres)',
-            fkMessagePlaceholder: 'Reunião às 5',
-            fkMinutesLabel: 'Minutos na tela (1 a 1440)',
-            fkSendBtn: 'Enviar ao painel',
-            fkOrAnnouncement: 'Ou mostre um anúncio salvo',
-            fkAnnouncementLabel: 'Anúncio',
-            fkChooseAnnouncement: 'Escolha um anúncio…',
-            fkSendAnnouncementBtn: 'Mostrar anúncio',
-            fkNoMessage: 'Nenhuma mensagem especial ativa.',
-            fkCurrentMessage: 'Mensagem ativa',
-            fkExpiresAt: 'Expira às {time}',
-            fkClearMessageBtn: 'Remover mensagem',
+            // Panel LED del taller (FK-8Wa) -- ver la sección fk más abajo.
+            fkTab: 'Painel LED',
+            fkTitle: 'Painel LED da oficina',
+            fkSub: 'Tela FK-8Wa de 96×16 · mostra só o que acontece nas suas máquinas',
+            fkHelp: 'Ajuda',
+            fkConnOk: 'Conectado',
+            fkConnUnreachable: 'Sem conexão',
+            fkConnSizeMismatch: 'Painel desconfigurado',
+            fkConnDisabled: 'Desligado',
+            fkConnChecking: 'Verificando…',
+            fkLoadError: 'Não foi possível consultar o painel. Ele tenta de novo sozinho.',
+            fkSizeMismatch: 'O painel está mal configurado: ele informa {size} em vez de 96x16. Isso acontece quando o botão de teste da placa fica pressionado por 15 segundos. Configure-o de novo com o FKShow e depois clique em "Testar" em "Conexão e tempos".',
+            fkMissingMachines: 'Estas máquinas não existem mais no NOPAL; remova-as da lista: {ids}',
+            fkNowTitle: 'Assim está o seu painel agora',
+            fkNowHelp: 'Uma cópia ao vivo do que o painel está mostrando. Muda sozinha quando algo acontece nas suas máquinas; você não precisa fazer nada.',
+            fkPanelAria: 'Cópia do painel LED',
+            fkNowWaitingTitle: 'Aguardando informações do painel…',
+            fkNowBootTitle: 'O painel está iniciando.',
+            fkNowBootText: 'Em alguns segundos ele mostrará suas máquinas.',
+            fkNowNormalTitle: 'Tudo normal.',
+            fkNowNormalText: 'Suas máquinas estão online; o painel mostra quantas são e a hora.',
+            fkNowIdleTitle: 'Todas em repouso.',
+            fkNowIdleText: 'Nenhuma máquina está trabalhando.',
+            fkNowPrintingTitle: 'Há uma impressão em andamento.',
+            fkNowPrintingText: 'O painel alterna sozinho entre duas vistas{clock}.',
+            fkNowManyTitle: 'Várias máquinas estão trabalhando.',
+            fkNowManyText: 'O painel as mostra de 3 em 3{clock}.',
+            fkNowPauseTitle: 'Há uma máquina em pausa.',
+            fkNowPauseText: 'Fica assim até você retomá-la.',
+            fkNowErrorTitle: 'Uma máquina está com erro.',
+            fkNowErrorText: 'É o mais importante, por isso cobre todo o resto.',
+            fkNowOfflineTitle: 'Uma máquina não responde.',
+            fkNowOfflineText: 'Verifique se está ligada e conectada.',
+            fkNowSpecialTitle: 'Mostrando a sua mensagem.',
+            fkNowSpecialText: 'Ela some sozinha quando o tempo acaba{clock}.',
+            fkNowDoneTitle: 'Uma impressão terminou.',
+            fkNowDoneText: 'O aviso fica um tempo e depois volta ao normal{clock}.',
+            fkNowOffTitle: 'O painel está desligado.',
+            fkNowOffText: 'O NOPAL não está enviando nada para ele.',
+            fkClockContorno: '; o contorno mostra quanto falta',
+            fkClockBarra: '; a barra mostra quanto falta',
+            fkClockMarco: '; a moldura se mexe enquanto isso',
+            fkWhyTitle: 'Por que está mostrando isso?',
+            fkWhyHelp: 'Se várias coisas acontecem ao mesmo tempo, o painel mostra a que está mais à esquerda: um erro sempre vence uma impressão.',
+            fkPrioNow: 'agora',
+            fkPrioError: 'Erro',
+            fkPrioErrorTip: 'Uma máquina informa um erro.',
+            fkPrioPause: 'Pausa',
+            fkPrioPauseTip: 'Uma impressão foi pausada.',
+            fkPrioOffline: 'Desconectada',
+            fkPrioOfflineTip: 'Uma máquina escolhida não responde.',
+            fkPrioSpecial: 'Mensagem',
+            fkPrioSpecialTip: 'Uma mensagem que você enviou, enquanto durar.',
+            fkPrioDone: 'Terminou',
+            fkPrioDoneTip: 'Uma impressão acabou de terminar.',
+            fkPrioPrinting: 'Imprimindo',
+            fkPrioPrintingTip: 'Uma ou várias máquinas trabalhando.',
+            fkPrioNormal: 'Normal',
+            fkPrioNormalTip: 'Tudo online e sem pendências.',
+            fkMsgTitle: 'Enviar uma mensagem ao painel',
+            fkMsgHelp: 'Escreva algo curto e escolha por quanto tempo aparece. Depois some sozinho. Não cobre erros nem pausas.',
+            fkMsgPlaceholder: 'Exemplo: REUNIÃO ÀS 5',
+            fkMsgAria: 'Mensagem',
+            fkMinutesAria: 'Minutos de exibição',
+            fkMsgSend: 'Mostrar no painel',
+            fkAnnLabel: 'Ou mostre um anúncio salvo',
+            fkAnnChoose: 'Escolha um anúncio…',
+            fkAnnShow: 'Mostrar',
+            fkAnnMissing: 'Escolha um anúncio primeiro',
+            fkMsgMissing: 'Digite uma mensagem primeiro',
+            fkMsgOnPanel: 'No painel:',
+            fkMsgRemovesIn: 'some em {time}',
+            fkMsgClear: 'Remover',
             fkSending: 'Enviando…',
-            fkMessageSent: 'Mensagem enviada',
-            fkMessageCleared: 'Mensagem removida',
-            fkMissingText: 'Digite um texto primeiro',
-            fkMissingAnnouncement: 'Escolha um anúncio primeiro',
-            fkNote: 'Só uma sessão por vez com o painel; o NOPAL só envia quando a tela muda (no máximo uma vez por intervalo mínimo).',
-            fkRuleCheckbox: 'Mostrar também no painel FK-8Wa',
-            fkRuleBadgeTitle: 'Esta regra também é mostrada no painel FK-8Wa',
-            fkTimerStyleLabel: 'Contador de tempo',
-            fkTimerGroupExact: 'Contador exato',
-            fkTimerGroupNone: 'Sem contador',
-            fkTimerGroupBorder: 'Molduras do painel (decorativas)',
-            fkTimerContorno: 'Contorno (telas reduzidas)',
-            fkTimerContornoEncima: 'Contorno por cima (telas inteiras)',
-            fkTimerBarra: 'Barra na linha de baixo',
-            fkTimerNinguno: 'Nenhum',
+            fkMsgSent: 'Pronto, já está no painel',
+            fkMsgCleared: 'Mensagem removida',
+            fkMsgFail: 'Não deu certo: {detail}',
+            fkMinutesShort: '{n} min',
+            fkSecondsShort: '{n} s',
+            fkSecondsUnit: 'segundos',
+            fkViewFixed: 'Fixa',
+            fkReadOnly: 'Só um administrador pode alterar as configurações abaixo. Você pode enviar e remover mensagens normalmente.',
+            fkMachTitle: 'Impressoras no painel',
+            fkMachHelp: 'As máquinas que aparecem no painel. P1 é a primeira da lista: arraste-as para mudar a ordem.',
+            fkMachEmpty: 'Nenhuma máquina escolhida ainda.',
+            fkMachMissing: '{id} (não existe mais)',
+            fkMachUp: 'Subir {name}',
+            fkMachDown: 'Descer {name}',
+            fkMachRemove: 'Remover {name}',
+            fkMachAdd: 'Adicionar',
+            fkMachAddAria: 'Adicionar impressora',
+            fkMachNoMore: 'Não há mais para adicionar',
+            fkSaving: 'Salvando…',
+            fkSaved: 'Salvo',
+            fkSaveFail: 'Não foi possível salvar: {detail}',
+            fkBrightTitle: 'Brilho',
+            fkBrightHelp: 'Quão forte os LEDs acendem. De dia aumente; à noite diminua para não ofuscar.',
+            fkBrightNote: 'É aplicado no painel em alguns segundos.',
+            fkTimerTitle: 'Relógio de cada vista',
+            fkTimerHelp: 'Quando o painel precisa mostrar várias coisas (as duas vistas de uma impressão, uma mensagem, o aviso de que terminou), este desenho mostra quanto falta para mudar.',
+            fkStyleContorno: 'Contorno',
+            fkStyleContornoDesc: 'Uma linha acende a borda; ao completar, a vista muda.',
+            fkStyleEncima: 'Contorno por cima',
+            fkStyleEncimaDesc: 'Igual, mas com as letras em tamanho total.',
+            fkStyleBarra: 'Barra embaixo',
+            fkStyleBarraDesc: 'Uma barrinha avança pela linha de baixo.',
+            fkStyleNinguno: 'Sem relógio',
+            fkStyleNingunoDesc: 'Muda de vista sem mostrar o tempo.',
+            fkStyleMarco: 'Moldura do painel',
+            fkStyleMarcoDesc: 'Animação decorativa do próprio painel; não mostra o tempo.',
+            fkMarcoAnim: 'Animação da moldura',
+            fkMarcoPattern: 'Forma da linha',
+            fkMarcoSpeed: 'Velocidade da moldura',
+            fkFaster: 'Mais rápido',
             fkBorderFixed: 'Fixa',
             fkBorderRandom: 'Aleatória',
             fkBorderCw: 'Horário',
@@ -1050,19 +1297,42 @@
             fkBorderLineCcw: 'Uma linha anti-horário',
             fkBorderDlineCw: 'Duas linhas horário',
             fkBorderDlineCcw: 'Duas linhas anti-horário',
-            fkBorderPatternLabel: 'Padrão da moldura',
-            fkPatternDash: 'Traços 4/4',
-            fkPatternSolid: 'Contínuo',
-            fkPatternDot: 'Pontos 2/2',
-            fkPatternDot1: 'Pontos 1/1',
-            fkBorderSpeedLabel: 'Velocidade da moldura (1 a 60; menor = mais rápido)',
-            fkTimerHelpExact: 'A linha completa o contorno exatamente quando cada vista termina.',
-            fkTimerHelpBar: 'A barra chega ao fim exatamente quando cada vista termina.',
-            fkTimerHelpBorder: 'O painel anima a moldura no próprio ritmo; não marca o tempo exato.',
-            fkTimerHelpNone: 'Sem contador: as vistas mudam sem indicador de tempo.',
-            fkViewsLabel: 'Vistas',
-            fkViewFixed: 'Fixa',
-            fkSecondsShort: '{n} s',
+            fkPatternDash: 'Traços',
+            fkPatternSolid: 'Linha contínua',
+            fkPatternDot: 'Pontos',
+            fkPatternDot1: 'Pontos finos',
+            fkConnTitle: 'Conexão e tempos',
+            fkIpLabel: 'Endereço do painel na rede',
+            fkIpHelp: 'O IP que você deu ao painel com o FKShow. Só mude se levar o painel para outra rede.',
+            fkTest: 'Testar',
+            fkTesting: 'Procurando o painel…',
+            fkTestOk: 'Encontrado: painel de 96×16, pronto.',
+            fkTestWrongSize: 'Encontrei um painel de {width}×{height}, mas deve ser de 96×16. Confira a configuração dele com o FKShow.',
+            fkTestFail: 'Não encontro o painel. Verifique se está ligado e se o endereço está correto.',
+            fkViewLabel: 'Cada vista dura',
+            fkViewHelp: 'Ao imprimir, o painel alterna duas vistas (arquivo e porcentagem). Isto é quanto dura cada uma.',
+            fkDoneLabel: 'Aviso de "terminou"',
+            fkDoneHelp: 'Quanto tempo o aviso fica quando uma impressão termina, antes de voltar ao normal.',
+            fkMinLabel: 'Pausa mínima entre mudanças',
+            fkMinHelp: 'O painel pisca por um instante cada vez que o NOPAL envia algo novo. Isso evita enviar coisas com muita frequência.',
+            fkEnabledLabel: 'Painel ligado pelo NOPAL',
+            fkSave: 'Salvar',
+            fkGalleryTitle: 'Ver as 12 telas possíveis',
+            fkGalleryNote: 'Exemplos do que pode aparecer no painel.',
+            fkScreenBoot: 'Inicialização',
+            fkScreenNormal: 'Tudo normal',
+            fkScreenPrint1: 'Imprimindo (vista 1)',
+            fkScreenPrint2: 'Imprimindo (vista 2)',
+            fkScreenMany: 'Várias imprimindo',
+            fkScreenPause: 'Pausa',
+            fkScreenError: 'Erro',
+            fkScreenOffline: 'Desconectada',
+            fkScreenIdle: 'Todas em repouso',
+            fkScreenDone: 'Terminou',
+            fkScreenSpecial: 'Mensagem',
+            fkScreenOff: 'NOPAL desligado',
+            fkRuleCheckbox: 'Mostrar também no painel FK-8Wa',
+            fkRuleBadgeTitle: 'Esta regra também é mostrada no painel FK-8Wa',
         },
     };
 
@@ -2771,43 +3041,87 @@
         renderKPIs();
     }
 
-    // ── Panel FK-8Wa (96x16 monocromo, rojo) ──
+    // ── Panel LED del taller (FK-8Wa, 96x16) ──
     // Panel LED físico por WiFi, independiente de la matriz iPixel BLE de
-    // arriba: el backend (backend/services/fk8wa/) decide qué pantalla
-    // mostrar y la manda solo; esta vista nada más lee su estado, enseña la
-    // vista previa (PNG que renderiza el backend, nunca se dibuja acá) y
-    // edita su configuración. PUT config, /test y /brightness son
-    // require_role("admin"): al operador se le muestra la configuración en
-    // solo lectura (sin botones), igual que el core oculta lo admin-only en
-    // updateTopbarUser(); el mensaje especial sí es de operador y admin.
+    // arriba. El backend (backend/services/fk8wa/) decide qué mostrar y lo
+    // manda solo; esta pestaña lo dibuja LED por LED con las páginas de
+    // GET /fk8wa/frames (1 bit por LED) y deja cambiar lo poco que el taller
+    // necesita. Diseño: maqueta aprobada "Panel LED del taller" (lenguaje
+    // simple, globo "?" en cada cosa, nada técnico a la vista).
+    // PUT /fk8wa/config, /fk8wa/test y /fk8wa/brightness son solo admin: el
+    // operador lo ve todo en solo lectura y sí puede mandar o quitar
+    // mensajes (igual criterio que updateTopbarUser() del core).
+    const FK_W = 96;
+    const FK_H = 16;
+    const FK_POLL_MS = 5000;
     const FK_SCREENS = ['boot', 'normal', 'print1', 'print2', 'many', 'pause', 'error', 'offline', 'idle', 'done', 'special', 'off'];
-    const FK_SCREEN_TR_KEYS = {
+    const FK_SCREEN_KEYS = {
         boot: 'fkScreenBoot', normal: 'fkScreenNormal', print1: 'fkScreenPrint1', print2: 'fkScreenPrint2',
         many: 'fkScreenMany', pause: 'fkScreenPause', error: 'fkScreenError', offline: 'fkScreenOffline',
         idle: 'fkScreenIdle', done: 'fkScreenDone', special: 'fkScreenSpecial', off: 'fkScreenOff',
     };
-    // Mismas clases que el pill del header (mled-status-ok/warn/off).
-    const FK_STATE_META = {
-        disabled: { key: 'fkStateDisabled', cls: 'mled-status-off' },
-        ok: { key: 'fkStateOk', cls: 'mled-status-ok' },
-        unreachable: { key: 'fkStateUnreachable', cls: 'mled-status-warn' },
-        size_mismatch: { key: 'fkStateSizeMismatch', cls: 'mled-status-warn' },
+    // Frase de "Así se ve tu panel ahora" por pantalla: [título, detalle].
+    // Sin datos inventados: no se nombra la máquina porque status no la trae.
+    const FK_NOW_KEYS = {
+        boot: ['fkNowBootTitle', 'fkNowBootText'],
+        normal: ['fkNowNormalTitle', 'fkNowNormalText'],
+        idle: ['fkNowIdleTitle', 'fkNowIdleText'],
+        print1: ['fkNowPrintingTitle', 'fkNowPrintingText'],
+        print2: ['fkNowPrintingTitle', 'fkNowPrintingText'],
+        many: ['fkNowManyTitle', 'fkNowManyText'],
+        pause: ['fkNowPauseTitle', 'fkNowPauseText'],
+        error: ['fkNowErrorTitle', 'fkNowErrorText'],
+        offline: ['fkNowOfflineTitle', 'fkNowOfflineText'],
+        special: ['fkNowSpecialTitle', 'fkNowSpecialText'],
+        done: ['fkNowDoneTitle', 'fkNowDoneText'],
+        off: ['fkNowOffTitle', 'fkNowOffText'],
     };
-    // Contador de tiempo (config.timer_style, ver backend timer.STYLES):
-    // exactos (NOPAL dibuja el avance), "ninguno" y marcos que anima el
-    // propio panel (decorativos, no marcan el tiempo exacto).
-    const FK_TIMER_EXACT = [['contorno', 'fkTimerContorno'], ['contorno_encima', 'fkTimerContornoEncima'], ['barra', 'fkTimerBarra']];
-    const FK_TIMER_NONE = 'ninguno';
-    const FK_TIMER_BORDERS = [
+    // Tira "¿Por qué muestra esto?", de más a menos importante (mismo orden
+    // que PRIORITY_OF de service.py y la máquina de estados).
+    const FK_PRIORITY = [
+        ['error', '⚠', 'fkPrioError', 'fkPrioErrorTip'],
+        ['pause', '‖', 'fkPrioPause', 'fkPrioPauseTip'],
+        ['offline', '◎', 'fkPrioOffline', 'fkPrioOfflineTip'],
+        ['special', '✉', 'fkPrioSpecial', 'fkPrioSpecialTip'],
+        ['done', '✓', 'fkPrioDone', 'fkPrioDoneTip'],
+        ['printing', '▶', 'fkPrioPrinting', 'fkPrioPrintingTip'],
+        ['normal', '●', 'fkPrioNormal', 'fkPrioNormalTip'],
+    ];
+    // Tarjetas del "Reloj de cada vista" (config.timer_style). "marco"
+    // agrupa los 11 marco_* que anima el propio panel.
+    const FK_STYLE_CARDS = [
+        ['contorno', 'fkStyleContorno', 'fkStyleContornoDesc'],
+        ['contorno_encima', 'fkStyleEncima', 'fkStyleEncimaDesc'],
+        ['barra', 'fkStyleBarra', 'fkStyleBarraDesc'],
+        ['ninguno', 'fkStyleNinguno', 'fkStyleNingunoDesc'],
+        ['marco', 'fkStyleMarco', 'fkStyleMarcoDesc'],
+    ];
+    const FK_BORDERS = [
         ['marco_fixed', 'fkBorderFixed'], ['marco_random', 'fkBorderRandom'], ['marco_cw', 'fkBorderCw'], ['marco_ccw', 'fkBorderCcw'],
         ['marco_flash', 'fkBorderFlash'], ['marco_flash_cw', 'fkBorderFlashCw'], ['marco_flash_ccw', 'fkBorderFlashCcw'],
         ['marco_line_cw', 'fkBorderLineCw'], ['marco_line_ccw', 'fkBorderLineCcw'],
         ['marco_dline_cw', 'fkBorderDlineCw'], ['marco_dline_ccw', 'fkBorderDlineCcw'],
     ];
-    const FK_BORDER_PATTERNS = [['dash', 'fkPatternDash'], ['solid', 'fkPatternSolid'], ['dot', 'fkPatternDot'], ['dot1', 'fkPatternDot1']];
-    const FK_POLL_MS = 5000;
-    const FK_PREVIEW_SCALE = 8;
-    const FK_LOCALES = { es: 'es-MX', en: 'en-US', de: 'de-DE', fr: 'fr-FR', 'pt-BR': 'pt-BR' };
+    const FK_PATTERNS = [
+        ['dash', 'fkPatternDash', [1, 1, 1, 1, 0, 0, 0, 0]],
+        ['solid', 'fkPatternSolid', [1]],
+        ['dot', 'fkPatternDot', [1, 1, 0, 0]],
+        ['dot1', 'fkPatternDot1', [1, 0]],
+    ];
+    const FK_MINUTES = [1, 5, 15, 60];
+    // Pastilla de conexión del encabezado: [clave, clase del pill del plugin].
+    const FK_CONN = {
+        ok: ['fkConnOk', 'mled-status-ok'],
+        unreachable: ['fkConnUnreachable', 'mled-status-warn'],
+        size_mismatch: ['fkConnSizeMismatch', 'mled-status-warn'],
+        disabled: ['fkConnDisabled', 'mled-status-off'],
+    };
+    // Orilla del panel en sentido horario (220 LEDs), para dibujar el marco.
+    const FK_RING = [];
+    for (let x = 0; x < FK_W; x += 1) FK_RING.push([x, 0]);
+    for (let y = 1; y < FK_H; y += 1) FK_RING.push([FK_W - 1, y]);
+    for (let x = FK_W - 2; x >= 0; x -= 1) FK_RING.push([x, FK_H - 1]);
+    for (let y = FK_H - 2; y > 0; y -= 1) FK_RING.push([0, y]);
 
     const fk = {
         status: null,
@@ -2816,18 +3130,35 @@
         machinesDraft: [],
         isAdmin: false,
         roleLoaded: false,
-        previewScreen: '',
-        // Firma de lo que muestra la vista previa en vivo: el GIF animado se
-        // reinicia si se le vuelve a poner src, así que solo se recarga
-        // cuando cambia esta firma (o al guardar/enviar algo).
-        previewSig: null,
         timer: null,
+        // Firma de lo que muestra el panel: /frames (sin parámetros) solo se
+        // vuelve a pedir cuando cambia, no en cada consulta de /status.
+        framesSig: null,
+        framesData: null,
+        minutes: 5,
+        msgTimer: null,
+        msgExpiredAt: null,
+        brightness: 8,
+        led: null,
+        main: null,
+        minis: [],
+        gallery: [],
+        minisStale: true,
+        galleryStale: true,
+        paused: true,
+        dragFrom: null,
     };
 
-    function fkScreenLabel(name) { return FK_SCREEN_TR_KEYS[name] ? tr(FK_SCREEN_TR_KEYS[name]) : String(name); }
+    let fkHelpSeq = 0;
 
-    // api() lanza Error(JSON.stringify(detail)): para el usuario se quita el
-    // entrecomillado de JSON cuando el detail es un string simple.
+    function fkScreenLabel(name) { return FK_SCREEN_KEYS[name] ? tr(FK_SCREEN_KEYS[name]) : String(name ?? '—'); }
+
+    function fkReduceMotion() {
+        return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    // api() lanza Error(JSON.stringify(detail)): se quita el entrecomillado
+    // de JSON cuando el detail es un string simple.
     function fkErrorText(error) {
         const raw = error?.message || '';
         try {
@@ -2847,13 +3178,173 @@
         if (kind === 'error') el.classList.add('mled-inline-msg-error');
     }
 
-    // Solo hay red mientras esta pestaña está elegida, la sección del plugin
-    // está en pantalla (el core la oculta con display:none al cambiar de
-    // sección) y la pestaña del navegador está visible.
+    // Solo hay red y animación mientras esta pestaña está elegida, la
+    // sección del plugin está en pantalla (el core la oculta con
+    // display:none al cambiar de sección) y la pestaña del navegador se ve.
     function fkIsVisible() {
         return !!root && state.view === 'fk8wa' && document.visibilityState !== 'hidden' && root.getClientRects().length > 0;
     }
 
+    // ── Dibujo LED por LED ──
+    function fkDecode(b64) {
+        try {
+            return Uint8Array.from(atob(b64 || ''), (char) => char.charCodeAt(0));
+        } catch {
+            return new Uint8Array(FK_W * FK_H / 8);
+        }
+    }
+
+    // 1 bit por LED, bit de menor peso primero, 12 bytes por fila.
+    function fkLit(bytes, x, y) {
+        return bytes ? (bytes[y * 12 + (x >> 3)] >> (x & 7)) & 1 : 0;
+    }
+
+    // Colores del LED físico (blanco sobre negro): vienen de las variables
+    // --mled-fk-led-* del CSS, no del tema.
+    function fkLedColors() {
+        if (!fk.led) {
+            const view = root?.querySelector('#mled-view-fk8wa');
+            const styles = view ? getComputedStyle(view) : null;
+            fk.led = {
+                on: styles?.getPropertyValue('--mled-fk-led-on').trim() || '255, 255, 255',
+                off: styles?.getPropertyValue('--mled-fk-led-off').trim() || '38, 40, 44',
+            };
+        }
+        return fk.led;
+    }
+
+    function fkPatternBits(name) {
+        return (FK_PATTERNS.find(([key]) => key === name) || FK_PATTERNS[0])[2];
+    }
+
+    // Aproximación del marco que anima el panel (marco_*): el panel lo hace
+    // solo; aquí basta con que se parezca.
+    function fkBorderOverlay(style, patternName, tick) {
+        const bits = fkPatternBits(patternName);
+        const total = FK_RING.length;
+        const kind = String(style || '').replace(/^marco_/, '');
+        const dir = kind.endsWith('ccw') ? -1 : 1;
+        const pat = (i, shift) => bits[(((i - shift) % bits.length) + bits.length) % bits.length];
+        const lit = new Uint8Array(total);
+        if (kind === 'fixed') {
+            for (let i = 0; i < total; i += 1) lit[i] = pat(i, 0);
+        } else if (kind === 'random') {
+            for (let i = 0; i < total; i += 1) lit[i] = Math.random() < 0.5 ? 1 : 0;
+        } else if (kind === 'cw' || kind === 'ccw') {
+            for (let i = 0; i < total; i += 1) lit[i] = pat(i, dir * tick);
+        } else if (kind === 'flash') {
+            if (tick % 2 === 0) for (let i = 0; i < total; i += 1) lit[i] = pat(i, 0);
+        } else if (kind === 'flash_cw' || kind === 'flash_ccw') {
+            if (Math.floor(tick / 6) % 2 === 0) for (let i = 0; i < total; i += 1) lit[i] = pat(i, dir * tick);
+        } else if (kind.startsWith('line') || kind.startsWith('dline')) {
+            const heads = kind.startsWith('dline') ? [0, total / 2] : [0];
+            heads.forEach((head) => {
+                const start = (((head + dir * tick * 2) % total) + total) % total;
+                for (let k = 0; k < 24; k += 1) lit[(start - dir * k + total * 2) % total] = pat(k, 0);
+            });
+        }
+        const overlay = new Uint8Array(FK_W * FK_H);
+        lit.forEach((value, i) => {
+            if (value) {
+                const [x, y] = FK_RING[i];
+                overlay[y * FK_W + x] = 1;
+            }
+        });
+        return overlay;
+    }
+
+    function fkDraw(canvas, bytes, overlay, square) {
+        const ctx = canvas?.getContext('2d');
+        if (!ctx) return;
+        const { on, off } = fkLedColors();
+        const cell = canvas.width / FK_W;
+        const alpha = 0.35 + 0.65 * (fk.brightness / 16);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let y = 0; y < FK_H; y += 1) {
+            for (let x = 0; x < FK_W; x += 1) {
+                const isOn = fkLit(bytes, x, y) || (overlay && overlay[y * FK_W + x]);
+                if (square) {
+                    const size = cell - (cell > 2 ? 0.6 : 0);
+                    ctx.fillStyle = isOn ? `rgba(${on}, ${alpha})` : `rgba(${off}, 0.55)`;
+                    ctx.fillRect(x * cell, y * cell, size, size);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(x * cell + cell / 2, y * cell + cell / 2, cell * 0.38, 0, Math.PI * 2);
+                    ctx.fillStyle = isOn ? `rgba(${on}, ${alpha})` : `rgba(${off}, 0.6)`;
+                    ctx.shadowBlur = isOn ? cell * 0.9 : 0;
+                    ctx.shadowColor = `rgba(${on}, ${alpha * 0.8})`;
+                    ctx.fill();
+                }
+            }
+        }
+        ctx.shadowBlur = 0;
+    }
+
+    // border_speed 1..60: menor = más rápido (igual que el panel).
+    function fkRingInterval(speed) {
+        return Math.max(60, 20 + (Number(speed) || 10) * 15);
+    }
+
+    // Reproductor de páginas (como player() de la maqueta): recorre las
+    // páginas en ciclo con stay_ms y, si es marco, anima la orilla encima.
+    function fkPlayer(canvas, { square = false, speedup = 1, still = false, onPage = null } = {}) {
+        const p = { pages: [], stay: 0, idx: 0, tick: 0, marco: null, pattern: 'dash', speed: 10, pageTimer: null, ringTimer: null };
+        p.paint = () => {
+            const overlay = p.marco ? fkBorderOverlay(p.marco, p.pattern, p.tick) : null;
+            fkDraw(canvas, p.pages[p.idx] || null, overlay, square);
+        };
+        p.stop = () => {
+            window.clearTimeout(p.pageTimer);
+            window.clearInterval(p.ringTimer);
+            p.pageTimer = null;
+            p.ringTimer = null;
+        };
+        const schedule = () => {
+            if (p.pages.length < 2 || p.stay <= 0) return;
+            p.pageTimer = window.setTimeout(() => {
+                p.idx = (p.idx + 1) % p.pages.length;
+                p.paint();
+                if (onPage) onPage(p.idx, p.pages.length);
+                schedule();
+            }, Math.max(50, p.stay / speedup));
+        };
+        p.start = () => {
+            p.stop();
+            p.paint();
+            if (onPage) onPage(p.idx, p.pages.length);
+            if (still || fk.paused || fkReduceMotion()) return;
+            schedule();
+            if (p.marco) p.ringTimer = window.setInterval(() => { p.tick += 1; p.paint(); }, fkRingInterval(p.speed));
+        };
+        p.load = (data) => {
+            p.pages = (Array.isArray(data?.pages) ? data.pages : []).map(fkDecode);
+            p.stay = Number(data?.stay_ms) || 0;
+            p.marco = data?.marco ? String(data.style || 'marco_cw') : null;
+            p.speed = data?.border_speed ?? fk.config?.border_speed ?? 10;
+            p.pattern = fk.config?.border_pattern || 'dash';
+            p.idx = 0;
+            p.tick = 0;
+            p.start();
+        };
+        return p;
+    }
+
+    function fkAllPlayers() { return [fk.main, ...fk.minis, ...fk.gallery].filter(Boolean); }
+
+    function fkPauseAnimations() {
+        fk.paused = true;
+        fkAllPlayers().forEach((player) => player.stop());
+    }
+
+    function fkResumeAnimations() {
+        if (!fk.paused) return;
+        fk.paused = false;
+        fkAllPlayers().forEach((player) => player.start());
+    }
+
+    function fkRepaintAll() { fkAllPlayers().forEach((player) => player.paint()); }
+
+    // ── Rol ──
     async function fkLoadRole() {
         try {
             const response = await fetch('/api/auth/me', { credentials: 'same-origin' });
@@ -2870,12 +3361,18 @@
         if (!root) return;
         root.querySelectorAll('[data-fk-admin-input]').forEach((el) => { el.disabled = !fk.isAdmin; });
         root.querySelectorAll('[data-fk-admin-only]').forEach((el) => { el.hidden = !fk.isAdmin; });
-        const note = root.querySelector('#mled-fk-readonly-note');
+        root.querySelectorAll('[data-fk-style]').forEach((el) => { el.setAttribute('aria-disabled', String(!fk.isAdmin)); });
+        const note = root.querySelector('#mled-fk-readonly');
         if (note) note.hidden = fk.isAdmin || !fk.roleLoaded;
         fkRenderMachines();
     }
 
-    async function fkRefreshStatus({ forcePreview = false } = {}) {
+    // ── Estado ──
+    function fkFramesSignature(status) {
+        return JSON.stringify([status?.views || [], status?.current || null, status?.last_sent_at || null]);
+    }
+
+    async function fkRefreshStatus({ forceFrames = false } = {}) {
         try {
             fk.status = await api('/fk8wa/status');
             fk.statusError = false;
@@ -2884,155 +3381,303 @@
         }
         fkRenderStatus();
         fkRenderMessage();
-        if (!fk.statusError || forcePreview) fkMaybeRefreshPreview(forcePreview);
+        if (!fk.statusError) fkMaybeReloadFrames(forceFrames);
+    }
+
+    async function fkMaybeReloadFrames(force = false) {
+        const sig = fkFramesSignature(fk.status);
+        if (!force && sig === fk.framesSig) return;
+        fk.framesSig = sig;
+        try {
+            fk.framesData = await api('/fk8wa/frames');
+        } catch {
+            fk.framesSig = null;   // se reintenta en la siguiente consulta
+            return;
+        }
+        fkRenderNow();
+        fk.main?.load(fk.framesData);
     }
 
     function fkRenderStatus() {
         if (!root) return;
         const s = fk.status || {};
-        const meta = FK_STATE_META[s.state] || { key: 'fkStateUnknown', cls: 'mled-status-off' };
-        const chip = root.querySelector('#mled-fk-state-chip');
-        chip.classList.remove('mled-status-ok', 'mled-status-warn', 'mled-status-off');
-        chip.classList.add(fk.statusError ? 'mled-status-warn' : meta.cls);
-        root.querySelector('#mled-fk-state-text').textContent = fk.statusError ? tr('fkStatusLoadError') : tr(meta.key);
+        const conn = root.querySelector('#mled-fk-conn');
+        const [connKey, connClass] = fk.statusError ? ['fkConnChecking', 'mled-status-off'] : (FK_CONN[s.state] || ['fkConnChecking', 'mled-status-off']);
+        conn.classList.remove('mled-status-ok', 'mled-status-warn', 'mled-status-off');
+        conn.classList.add(connClass);
+        root.querySelector('#mled-fk-conn-text').textContent = tr(connKey);
 
-        const screen = s.current || s.screen;
-        const retry = Number(s.next_retry_in_s);
-        const lastError = s.last_error
-            ? `${s.last_error.message || ''} (${formatRelativeTime(s.last_error.at) || s.last_error.at || '—'})`
-            : tr('noErrorsLogged');
-        const rows = [
-            [tr('fkCurrentScreen'), screen ? fkScreenLabel(screen) : '—'],
-            [tr('lastSentLabel'), formatRelativeTime(s.last_sent_at) || tr('never')],
-            [tr('fkNextRetry'), s.next_retry_in_s != null && Number.isFinite(retry) ? tr('fkInSeconds', { n: Math.max(0, Math.round(retry)) }) : '—'],
-            [tr('fkPanelInfo'), s.panel ? `${s.panel.ip}:${s.panel.port} · ${s.panel.width}×${s.panel.height}` : '—'],
-            [tr('fkViewsLabel'), fkViewsText(s.views)],
-            [tr('fkSendsLabel'), String(s.sends ?? 0)],
-            [tr('lastErrorLabel'), lastError],
-        ];
-        root.querySelector('#mled-fk-status-rows').innerHTML = rows
-            .map(([label, value]) => `<div class="mled-status-row"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`)
-            .join('');
-
-        const sizeWarning = root.querySelector('#mled-fk-size-warning');
-        if (s.state === 'size_mismatch') {
-            const size = s.panel ? `${s.panel.width}x${s.panel.height}` : '?';
-            sizeWarning.textContent = tr('fkSizeMismatch', { size });
-            sizeWarning.hidden = false;
+        const alert = root.querySelector('#mled-fk-alert');
+        if (fk.statusError) {
+            alert.textContent = tr('fkLoadError');
+            alert.hidden = false;
+        } else if (s.state === 'size_mismatch') {
+            const size = s.panel ? `${s.panel.width}×${s.panel.height}` : '?';
+            alert.textContent = tr('fkSizeMismatch', { size });
+            alert.hidden = false;
         } else {
-            sizeWarning.hidden = true;
+            alert.hidden = true;
         }
 
         const missing = Array.isArray(s.missing_machines) ? s.missing_machines : [];
-        const missingWarning = root.querySelector('#mled-fk-missing-warning');
-        missingWarning.textContent = missing.length ? tr('fkMissingMachines', { ids: missing.join(', ') }) : '';
-        missingWarning.hidden = !missing.length;
+        const missingEl = root.querySelector('#mled-fk-missing');
+        missingEl.textContent = missing.length ? tr('fkMissingMachines', { ids: missing.join(', ') }) : '';
+        missingEl.hidden = !missing.length;
+
+        root.querySelectorAll('[data-fk-prio]').forEach((el) => {
+            const isOn = el.dataset.fkPrio === s.priority;
+            el.classList.toggle('is-on', isOn);
+            if (isOn) el.setAttribute('aria-current', 'step');
+            else el.removeAttribute('aria-current');
+        });
+        fkRenderNow();
     }
 
-    function fkPreviewUrl() {
-        const params = new URLSearchParams({ scale: String(FK_PREVIEW_SCALE), t: String(Date.now()) });
-        if (fk.previewScreen) params.set('screen', fk.previewScreen);
-        return `${API_BASE}/fk8wa/preview?${params.toString()}`;
+    function fkDuration(seconds) {
+        const value = Math.round(Number(seconds));
+        if (value >= 60 && value % 60 === 0) return tr('fkMinutesShort', { n: value / 60 });
+        return tr('fkSecondsShort', { n: value });
     }
 
-    function fkViewsText(views) {
-        if (!Array.isArray(views) || !views.length) return '—';
-        return views.map((view) => {
-            const seconds = view?.seconds == null ? null : Number(view.seconds);
-            const duration = seconds == null || !Number.isFinite(seconds)
-                ? tr('fkViewFixed')
-                : tr('fkSecondsShort', { n: Math.round(seconds * 10) / 10 });
-            return `${fkScreenLabel(view?.screen)} · ${duration}`;
-        }).join(' → ');
+    function fkViewText(view) {
+        const seconds = view?.seconds == null ? null : Number(view.seconds);
+        const duration = seconds == null || !Number.isFinite(seconds) ? tr('fkViewFixed') : fkDuration(seconds);
+        return `${fkScreenLabel(view?.screen)} · ${duration}`;
     }
 
-    function fkPreviewSignature(status) {
-        return JSON.stringify([status?.views || [], status?.current || null, status?.last_sent_at || null]);
+    function fkClockNote(views) {
+        if (!views.some((view) => view?.seconds)) return '';
+        const style = fk.framesData?.style || fk.config?.timer_style || 'contorno';
+        if (style === 'ninguno') return '';
+        if (style.startsWith('marco_')) return tr('fkClockMarco');
+        return style === 'barra' ? tr('fkClockBarra') : tr('fkClockContorno');
     }
 
-    function fkRefreshPreview() {
-        const img = root?.querySelector('#mled-fk-preview');
-        if (!img) return;
-        fk.previewSig = fkPreviewSignature(fk.status);
-        img.src = fkPreviewUrl();
+    function fkCurrentViews() {
+        const views = fk.framesData?.views || fk.status?.views;
+        return Array.isArray(views) ? views : [];
     }
 
-    // Vista previa en vivo (GIF animado): solo se recarga si cambió lo que
-    // se ve. Las pantallas de ejemplo (PNG fijo) se cargan al elegirlas.
-    function fkMaybeRefreshPreview(force = false) {
-        if (fk.previewScreen) return;
-        const sig = fkPreviewSignature(fk.status);
-        if (force || sig !== fk.previewSig) fkRefreshPreview();
+    function fkRenderNow() {
+        const nowEl = root?.querySelector('#mled-fk-now');
+        if (!nowEl) return;
+        const views = fkCurrentViews();
+        const keys = FK_NOW_KEYS[fk.status?.current];
+        nowEl.innerHTML = keys
+            ? `<strong>${esc(tr(keys[0]))}</strong> ${esc(tr(keys[1], { clock: fkClockNote(views) }))}`
+            : `<strong>${esc(tr('fkNowWaitingTitle'))}</strong>`;
+        root.querySelector('#mled-fk-views').innerHTML = views
+            .map((view, index) => `<span class="mled-fk-view-chip" data-fk-view="${index}">${esc(fkViewText(view))}</span>`)
+            .join('');
+        if (fk.main) fkHighlightView(fk.main.idx, fk.main.pages.length);
     }
 
-    function fkTick() {
-        if (!fkIsVisible()) return;
-        fkRefreshStatus();
+    // Las páginas se reparten parejo entre las vistas (timer.build_pages).
+    function fkHighlightView(pageIndex, pageCount) {
+        const chips = root?.querySelectorAll('[data-fk-view]') || [];
+        const perView = chips.length ? Math.max(1, pageCount / chips.length) : 1;
+        const active = chips.length > 1 ? Math.floor(pageIndex / perView) : 0;
+        chips.forEach((chip, index) => chip.classList.toggle('is-on', index === active));
     }
 
-    function fkStopPolling() {
-        if (fk.timer) { window.clearInterval(fk.timer); fk.timer = null; }
+    // ── Mensaje ──
+    function fkRenderAnnouncementOptions() {
+        const select = root?.querySelector('#mled-fk-ann');
+        if (!select) return;
+        const selected = select.value;
+        select.innerHTML = `<option value="">${esc(tr('fkAnnChoose'))}</option>`
+            + state.announcements.map((item) => `<option value="${esc(item.id)}">${esc(item.name || item.id)}</option>`).join('');
+        if (state.announcements.some((item) => item.id === selected)) select.value = selected;
     }
 
-    function fkStartPolling() {
-        fkStopPolling();
-        fk.timer = window.setInterval(fkTick, FK_POLL_MS);
+    function fkStopMessageTimer() {
+        if (fk.msgTimer) { window.clearInterval(fk.msgTimer); fk.msgTimer = null; }
     }
 
-    function fkOnVisibilityChange() {
-        if (document.visibilityState === 'visible') fkTick();
+    function fkRenderMessage() {
+        const box = root?.querySelector('#mled-fk-current');
+        if (!box) return;
+        fkStopMessageTimer();
+        const message = fk.status?.message;
+        if (!message?.text) {
+            box.hidden = true;
+            box.innerHTML = '';
+            return;
+        }
+        box.hidden = false;
+        box.innerHTML = `<span>${esc(tr('fkMsgOnPanel'))} <strong class="mled-fk-mono"></strong></span>`
+            + '<span class="mled-fk-muted" data-fk-countdown></span>'
+            + `<button type="button" class="mled-btn mled-btn-small" data-fk-msg-clear>${esc(tr('fkMsgClear'))}</button>`;
+        box.querySelector('strong').textContent = message.text;
+        box.querySelector('[data-fk-msg-clear]').addEventListener('click', fkClearMessage);
+        const expiresAt = Number(message.expires_at);
+        const countdown = box.querySelector('[data-fk-countdown]');
+        const paint = () => {
+            if (!Number.isFinite(expiresAt)) { countdown.textContent = ''; return false; }
+            const left = Math.max(0, Math.round(expiresAt - Date.now() / 1000));
+            const minutes = Math.floor(left / 60);
+            const seconds = String(left % 60).padStart(2, '0');
+            countdown.textContent = tr('fkMsgRemovesIn', { time: `${minutes}:${seconds}` });
+            if (left === 0) {
+                fkStopMessageTimer();
+                // Una sola consulta por mensaje vencido (por si el reloj del
+                // navegador y el del servidor no coinciden).
+                if (fk.msgExpiredAt !== expiresAt) { fk.msgExpiredAt = expiresAt; fkRefreshStatus(); }
+                return false;
+            }
+            return true;
+        };
+        if (paint()) fk.msgTimer = window.setInterval(paint, 1000);
     }
 
+    function fkSyncMinutes() {
+        root.querySelectorAll('[data-fk-minutes]').forEach((button) => {
+            button.setAttribute('aria-pressed', String(Number(button.dataset.fkMinutes) === fk.minutes));
+        });
+    }
+
+    async function fkSendMessage(useAnnouncement) {
+        let body;
+        if (useAnnouncement) {
+            const announcementId = root.querySelector('#mled-fk-ann').value;
+            if (!announcementId) { fkSetMsg('#mled-fk-msg-status', tr('fkAnnMissing'), 'error'); return; }
+            body = { announcement_id: announcementId, minutes: fk.minutes };
+        } else {
+            const text = root.querySelector('#mled-fk-msg-text').value.trim();
+            if (!text) { fkSetMsg('#mled-fk-msg-status', tr('fkMsgMissing'), 'error'); return; }
+            body = { text, minutes: fk.minutes };
+        }
+        fkSetMsg('#mled-fk-msg-status', tr('fkSending'));
+        try {
+            const result = await api('/fk8wa/message', { method: 'POST', body: JSON.stringify(body) });
+            fk.status = { ...(fk.status || {}), message: result.message };
+            fkRenderMessage();
+            if (!useAnnouncement) root.querySelector('#mled-fk-msg-text').value = '';
+            fkSetMsg('#mled-fk-msg-status', tr('fkMsgSent'), 'ok');
+            fkRefreshStatus();
+        } catch (error) {
+            fkSetMsg('#mled-fk-msg-status', tr('fkMsgFail', { detail: fkErrorText(error) }), 'error');
+        }
+    }
+
+    async function fkClearMessage() {
+        try {
+            await api('/fk8wa/message', { method: 'DELETE' });
+            fk.status = { ...(fk.status || {}), message: null };
+            fkRenderMessage();
+            fkSetMsg('#mled-fk-msg-status', tr('fkMsgCleared'), 'ok');
+            fkRefreshStatus();
+        } catch (error) {
+            fkSetMsg('#mled-fk-msg-status', tr('fkMsgFail', { detail: fkErrorText(error) }), 'error');
+        }
+    }
+
+    // ── Configuración ──
     async function fkLoadConfig() {
         try {
             fk.config = await api('/fk8wa/config');
         } catch (error) {
-            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
+            fkSetMsg('#mled-fk-conn-msg', tr('fkSaveFail', { detail: fkErrorText(error) }), 'error');
             return;
         }
-        fkFillConfigForm();
+        fk.machinesDraft = Array.isArray(fk.config.machines) ? [...fk.config.machines] : [];
+        fk.brightness = Number(fk.config.brightness) || 8;
+        fkAllPlayers().forEach((player) => { player.pattern = fk.config.border_pattern || 'dash'; });
+        fkFillConnForm();
+        fkFillBrightness();
+        fkSyncStyleCards();
+        fkRenderMachines();
+        fkRepaintAll();
     }
 
-    function fkFillConfigForm() {
+    function fkFillConnForm() {
         const c = fk.config;
         if (!c || !root) return;
-        root.querySelector('#mled-fk-enabled').checked = !!c.enabled;
         root.querySelector('#mled-fk-ip').value = c.ip || '';
-        root.querySelector('#mled-fk-brightness').value = c.brightness ?? 8;
-        root.querySelector('#mled-fk-brightness-range').value = c.brightness ?? 8;
-        root.querySelector('#mled-fk-min-interval').value = c.min_interval_s ?? '';
         root.querySelector('#mled-fk-view-seconds').value = c.view_seconds ?? '';
         root.querySelector('#mled-fk-done-seconds').value = c.done_seconds ?? '';
-        root.querySelector('#mled-fk-timer-style').value = c.timer_style || 'contorno';
-        root.querySelector('#mled-fk-border-pattern').value = c.border_pattern || 'dash';
-        root.querySelector('#mled-fk-border-speed').value = c.border_speed ?? 10;
-        root.querySelector('#mled-fk-border-speed-range').value = c.border_speed ?? 10;
-        fkSyncTimerFields();
-        fk.machinesDraft = Array.isArray(c.machines) ? [...c.machines] : [];
-        fkRenderMachines();
+        root.querySelector('#mled-fk-min-interval').value = c.min_interval_s ?? '';
+        root.querySelector('#mled-fk-enabled').checked = !!c.enabled;
     }
 
-    // Patrón y velocidad solo aplican a los marco_*; la ayuda cambia según
-    // la familia del contador elegido.
-    function fkSyncTimerFields() {
-        if (!root) return;
-        const style = root.querySelector('#mled-fk-timer-style').value;
-        const isBorder = style.startsWith('marco_');
-        root.querySelector('#mled-fk-border-fields').hidden = !isBorder;
-        let helpKey = 'fkTimerHelpExact';
-        if (isBorder) helpKey = 'fkTimerHelpBorder';
-        else if (style === FK_TIMER_NONE) helpKey = 'fkTimerHelpNone';
-        else if (style === 'barra') helpKey = 'fkTimerHelpBar';
-        root.querySelector('#mled-fk-timer-help').textContent = tr(helpKey);
+    function fkFillBrightness() {
+        root.querySelector('#mled-fk-bright').value = fk.brightness;
+        root.querySelector('#mled-fk-bright-val').textContent = String(fk.brightness);
     }
 
-    function fkTimerOptionsHtml() {
-        const options = (items) => items.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
-        return `<optgroup label="${esc(tr('fkTimerGroupExact'))}">${options(FK_TIMER_EXACT)}</optgroup>`
-            + `<optgroup label="${esc(tr('fkTimerGroupNone'))}">${options([[FK_TIMER_NONE, 'fkTimerNinguno']])}</optgroup>`
-            + `<optgroup label="${esc(tr('fkTimerGroupBorder'))}">${options(FK_TIMER_BORDERS)}</optgroup>`;
+    // Guarda la config completa con algunos campos cambiados (PUT pide el
+    // objeto entero). Solo admin; el backend valida y responde 400 si no.
+    async function fkSavePartial(overrides, msgSelector) {
+        if (!fk.isAdmin || !fk.config) return false;
+        fkSetMsg(msgSelector, tr('fkSaving'));
+        try {
+            fk.config = await api('/fk8wa/config', { method: 'PUT', body: JSON.stringify({ ...fk.config, ...overrides }) });
+            fkSetMsg(msgSelector, tr('fkSaved'), 'ok');
+            return true;
+        } catch (error) {
+            fkSetMsg(msgSelector, tr('fkSaveFail', { detail: fkErrorText(error) }), 'error');
+            return false;
+        }
     }
 
+    function fkNumber(selector) {
+        const raw = root.querySelector(selector).value.trim();
+        return raw === '' ? null : Number(raw);
+    }
+
+    async function fkSaveConnection() {
+        const button = root.querySelector('#mled-fk-save-btn');
+        button.disabled = true;
+        const saved = await fkSavePartial({
+            ip: root.querySelector('#mled-fk-ip').value.trim(),
+            view_seconds: fkNumber('#mled-fk-view-seconds'),
+            done_seconds: fkNumber('#mled-fk-done-seconds'),
+            min_interval_s: fkNumber('#mled-fk-min-interval'),
+            enabled: root.querySelector('#mled-fk-enabled').checked,
+        }, '#mled-fk-conn-msg');
+        button.disabled = false;
+        if (saved) {
+            fkFillConnForm();
+            fkRefreshStatus({ forceFrames: true });
+        }
+    }
+
+    async function fkTestConnection() {
+        const button = root.querySelector('#mled-fk-test-btn');
+        const out = root.querySelector('#mled-fk-test-msg');
+        button.disabled = true;
+        fkSetMsg('#mled-fk-test-msg', tr('fkTesting'));
+        out.removeAttribute('title');
+        try {
+            const result = await api('/fk8wa/test', { method: 'POST' });
+            const rightSize = Number(result.width) === FK_W && Number(result.height) === FK_H;
+            fkSetMsg('#mled-fk-test-msg', tr(rightSize ? 'fkTestOk' : 'fkTestWrongSize', {
+                width: result.width ?? '?', height: result.height ?? '?',
+            }), rightSize ? 'ok' : 'error');
+        } catch (error) {
+            fkSetMsg('#mled-fk-test-msg', tr('fkTestFail'), 'error');
+            out.title = fkErrorText(error);   // el detalle técnico queda en el globo del navegador
+        } finally {
+            button.disabled = false;
+            fkRefreshStatus();
+        }
+    }
+
+    // El deslizador aclara/oscurece el dibujo mientras se mueve; al soltarlo
+    // se aplica al panel (POST /fk8wa/brightness, que también lo guarda).
+    async function fkApplyBrightness() {
+        if (!fk.isAdmin) return;
+        const level = Number(root.querySelector('#mled-fk-bright').value);
+        fkSetMsg('#mled-fk-bright-msg', tr('fkSaving'));
+        try {
+            fk.config = await api('/fk8wa/brightness', { method: 'POST', body: JSON.stringify({ level }) });
+            fkSetMsg('#mled-fk-bright-msg', tr('fkBrightNote'), 'ok');
+        } catch (error) {
+            fkSetMsg('#mled-fk-bright-msg', tr('fkSaveFail', { detail: fkErrorText(error) }), 'error');
+        }
+    }
+
+    // ── Impresoras en el panel ──
     function fkMachineName(id) {
         const machine = state.machines.find((item) => item.id === id);
         return machine ? (machine.name || machine.id) : null;
@@ -3042,304 +3687,403 @@
         const list = root?.querySelector('#mled-fk-machines');
         if (!list) return;
         if (!fk.machinesDraft.length) {
-            list.innerHTML = `<li class="mled-fk-empty">${esc(tr('fkMachinesEmpty'))}</li>`;
+            list.innerHTML = `<li class="mled-fk-empty">${esc(tr('fkMachEmpty'))}</li>`;
         } else {
             const last = fk.machinesDraft.length - 1;
             list.innerHTML = fk.machinesDraft.map((id, index) => {
                 const name = fkMachineName(id);
-                const label = name ?? tr('fkUnknownMachine', { id });
+                const label = name ?? tr('fkMachMissing', { id });
                 const controls = fk.isAdmin ? `
                     <span class="mled-fk-machine-actions">
-                        <button type="button" class="mled-btn mled-btn-small" data-fk-move="-1" data-fk-index="${index}" ${index === 0 ? 'disabled' : ''} title="${esc(tr('fkMoveUp'))}" aria-label="${esc(`${tr('fkMoveUp')}: ${label}`)}">↑</button>
-                        <button type="button" class="mled-btn mled-btn-small" data-fk-move="1" data-fk-index="${index}" ${index === last ? 'disabled' : ''} title="${esc(tr('fkMoveDown'))}" aria-label="${esc(`${tr('fkMoveDown')}: ${label}`)}">↓</button>
-                        <button type="button" class="mled-btn mled-btn-small" data-fk-remove="${index}" title="${esc(tr('fkRemove'))}" aria-label="${esc(`${tr('fkRemove')}: ${label}`)}">×</button>
+                        <button type="button" data-fk-move="-1" data-fk-index="${index}" ${index === 0 ? 'disabled' : ''} aria-label="${esc(tr('fkMachUp', { name: label }))}">↑</button>
+                        <button type="button" data-fk-move="1" data-fk-index="${index}" ${index === last ? 'disabled' : ''} aria-label="${esc(tr('fkMachDown', { name: label }))}">↓</button>
+                        <button type="button" data-fk-remove="${index}" aria-label="${esc(tr('fkMachRemove', { name: label }))}">×</button>
                     </span>` : '';
-                return `<li class="mled-fk-machine${name ? '' : ' is-missing'}"><span class="mled-fk-slot">P${index + 1}</span><span class="mled-fk-machine-name">${esc(label)}</span>${controls}</li>`;
+                return `<li class="mled-fk-machine${name ? '' : ' is-missing'}" data-fk-index="${index}" ${fk.isAdmin ? 'draggable="true"' : ''}><b>P${index + 1}</b><span class="mled-fk-machine-name">${esc(label)}</span>${controls}</li>`;
             }).join('');
         }
-
         const select = root.querySelector('#mled-fk-add-machine');
         const available = state.machines.filter((machine) => !fk.machinesDraft.includes(machine.id));
         select.innerHTML = available.length
             ? available.map((machine) => `<option value="${esc(machine.id)}">${esc(machine.name || machine.id)}</option>`).join('')
-            : `<option value="">${esc(state.machines.length ? tr('fkNoMoreMachines') : tr('noMachinesDetected'))}</option>`;
+            : `<option value="">${esc(state.machines.length ? tr('fkMachNoMore') : tr('noMachinesDetected'))}</option>`;
         select.disabled = !fk.isAdmin || !available.length;
         root.querySelector('#mled-fk-add-machine-btn').disabled = !fk.isAdmin || !available.length;
     }
 
-    function fkOnMachinesClick(event) {
-        if (!fk.isAdmin) return;
-        const moveBtn = event.target.closest('[data-fk-move]');
-        const removeBtn = event.target.closest('[data-fk-remove]');
-        if (moveBtn) {
-            const index = Number(moveBtn.dataset.fkIndex);
-            const target = index + Number(moveBtn.dataset.fkMove);
-            if (target < 0 || target >= fk.machinesDraft.length) return;
-            [fk.machinesDraft[index], fk.machinesDraft[target]] = [fk.machinesDraft[target], fk.machinesDraft[index]];
-            fkRenderMachines();
-        } else if (removeBtn) {
-            fk.machinesDraft.splice(Number(removeBtn.dataset.fkRemove), 1);
-            fkRenderMachines();
-        }
-    }
-
-    function fkAddMachine() {
-        const id = root.querySelector('#mled-fk-add-machine').value;
-        if (!fk.isAdmin || !id || fk.machinesDraft.includes(id)) return;
-        fk.machinesDraft.push(id);
+    async function fkSaveMachines() {
         fkRenderMachines();
+        const saved = await fkSavePartial({ machines: [...fk.machinesDraft] }, '#mled-fk-mach-msg');
+        fk.machinesDraft = Array.isArray(fk.config?.machines) ? [...fk.config.machines] : [];
+        fkRenderMachines();
+        if (saved) fkRefreshStatus();
     }
 
-    function fkNumber(selector) {
-        const raw = root.querySelector(selector).value.trim();
-        return raw === '' ? null : Number(raw);
+    function fkMoveMachine(from, to) {
+        if (from === to || from < 0 || to < 0 || from >= fk.machinesDraft.length || to >= fk.machinesDraft.length) return;
+        const [moved] = fk.machinesDraft.splice(from, 1);
+        fk.machinesDraft.splice(to, 0, moved);
+        fkSaveMachines();
     }
 
-    async function fkSaveConfig() {
-        const button = root.querySelector('#mled-fk-save-btn');
-        button.disabled = true;
-        fkSetMsg('#mled-fk-config-msg', tr('saving'));
-        try {
-            fk.config = await api('/fk8wa/config', {
-                method: 'PUT',
-                body: JSON.stringify({
-                    enabled: root.querySelector('#mled-fk-enabled').checked,
-                    ip: root.querySelector('#mled-fk-ip').value.trim(),
-                    brightness: fkNumber('#mled-fk-brightness'),
-                    machines: [...fk.machinesDraft],
-                    min_interval_s: fkNumber('#mled-fk-min-interval'),
-                    view_seconds: fkNumber('#mled-fk-view-seconds'),
-                    done_seconds: fkNumber('#mled-fk-done-seconds'),
-                    timer_style: root.querySelector('#mled-fk-timer-style').value,
-                    border_pattern: root.querySelector('#mled-fk-border-pattern').value,
-                    border_speed: fkNumber('#mled-fk-border-speed'),
-                }),
-            });
-            fkFillConfigForm();
-            fkSetMsg('#mled-fk-config-msg', tr('savedGeneric'), 'ok');
-            fkRefreshStatus({ forcePreview: true });
-        } catch (error) {
-            fkSetMsg('#mled-fk-config-msg', fkErrorText(error) || tr('errorSaving'), 'error');
-        } finally {
-            button.disabled = false;
-        }
+    function fkBindMachines() {
+        const list = root.querySelector('#mled-fk-machines');
+        list.addEventListener('click', (event) => {
+            if (!fk.isAdmin) return;
+            const moveBtn = event.target.closest('[data-fk-move]');
+            const removeBtn = event.target.closest('[data-fk-remove]');
+            if (moveBtn) {
+                const index = Number(moveBtn.dataset.fkIndex);
+                fkMoveMachine(index, index + Number(moveBtn.dataset.fkMove));
+            } else if (removeBtn) {
+                fk.machinesDraft.splice(Number(removeBtn.dataset.fkRemove), 1);
+                fkSaveMachines();
+            }
+        });
+        list.addEventListener('dragstart', (event) => {
+            const item = event.target.closest('[data-fk-index]');
+            if (!fk.isAdmin || !item) return;
+            fk.dragFrom = Number(item.dataset.fkIndex);
+            item.classList.add('is-dragging');
+            event.dataTransfer?.setData('text/plain', String(fk.dragFrom));
+        });
+        list.addEventListener('dragover', (event) => { if (fk.dragFrom != null) event.preventDefault(); });
+        list.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const item = event.target.closest('[data-fk-index]');
+            const from = fk.dragFrom;
+            fk.dragFrom = null;
+            if (item && from != null) fkMoveMachine(from, Number(item.dataset.fkIndex));
+        });
+        list.addEventListener('dragend', () => {
+            fk.dragFrom = null;
+            list.querySelectorAll('.is-dragging').forEach((el) => el.classList.remove('is-dragging'));
+        });
+        root.querySelector('#mled-fk-add-machine-btn').addEventListener('click', () => {
+            const id = root.querySelector('#mled-fk-add-machine').value;
+            if (!fk.isAdmin || !id || fk.machinesDraft.includes(id)) return;
+            fk.machinesDraft.push(id);
+            fkSaveMachines();
+        });
     }
 
-    async function fkTestConnection() {
-        const button = root.querySelector('#mled-fk-test-btn');
-        button.disabled = true;
-        button.textContent = tr('testing');
-        try {
-            const result = await api('/fk8wa/test', { method: 'POST' });
-            fkSetMsg('#mled-fk-config-msg', tr('fkTestResult', {
-                ip: result.ip ?? '—', port: result.port ?? '—', width: result.width ?? '?', height: result.height ?? '?',
-            }), 'ok');
-        } catch (error) {
-            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
-        } finally {
-            button.disabled = false;
-            button.textContent = tr('testConnectionBtn');
-            fkRefreshStatus();
-        }
+    // ── Reloj de cada vista ──
+    function fkCurrentMarco() {
+        const style = fk.config?.timer_style || '';
+        return style.startsWith('marco_') ? style : 'marco_cw';
     }
 
-    // El slider aplica el brillo al soltarlo (POST /fk8wa/brightness, que
-    // también lo guarda en la config), sin esperar a "Guardar".
-    async function fkApplyBrightness() {
-        if (!fk.isAdmin) return;
-        const level = fkNumber('#mled-fk-brightness');
-        try {
-            fk.config = await api('/fk8wa/brightness', { method: 'POST', body: JSON.stringify({ level }) });
-            fkSetMsg('#mled-fk-config-msg', tr('fkBrightnessApplied', { level: fk.config.brightness ?? level }), 'ok');
-        } catch (error) {
-            fkSetMsg('#mled-fk-config-msg', fkErrorText(error), 'error');
-        }
+    function fkCardStyle(key) { return key === 'marco' ? fkCurrentMarco() : key; }
+
+    function fkSyncStyleCards() {
+        if (!root || !fk.config) return;
+        const style = fk.config.timer_style || 'contorno';
+        const isMarco = style.startsWith('marco_');
+        root.querySelectorAll('[data-fk-style]').forEach((card) => {
+            const key = card.dataset.fkStyle;
+            card.setAttribute('aria-pressed', String(key === 'marco' ? isMarco : key === style));
+        });
+        root.querySelector('#mled-fk-marco-opts').hidden = !isMarco;
+        root.querySelector('#mled-fk-marco-anim').value = fkCurrentMarco();
+        root.querySelector('#mled-fk-marco-pattern').value = fk.config.border_pattern || 'dash';
+        root.querySelector('#mled-fk-marco-speed').value = fk.config.border_speed ?? 10;
+        root.querySelector('#mled-fk-marco-speed-val').textContent = String(fk.config.border_speed ?? 10);
     }
 
-    function fkRenderAnnouncementOptions() {
-        const select = root?.querySelector('#mled-fk-announcement');
-        if (!select) return;
-        const selected = select.value;
-        select.innerHTML = `<option value="">${esc(tr('fkChooseAnnouncement'))}</option>`
-            + state.announcements.map((item) => `<option value="${esc(item.id)}">${esc(item.name || item.id)}</option>`).join('');
-        if (state.announcements.some((item) => item.id === selected)) select.value = selected;
+    // Mini paneles: GET /fk8wa/frames?style=<estilo> (ejemplo de impresión).
+    function fkLoadStyleCards(only) {
+        fk.minisStale = false;
+        root.querySelectorAll('[data-fk-style]').forEach((card, index) => {
+            if (only && card.dataset.fkStyle !== only) return;
+            const style = fkCardStyle(card.dataset.fkStyle);
+            api(`/fk8wa/frames?style=${encodeURIComponent(style)}`)
+                .then((data) => fk.minis[index]?.load(data))
+                .catch(() => {});
+        });
     }
 
-    function fkRenderMessage() {
-        const box = root?.querySelector('#mled-fk-current-message');
-        if (!box) return;
-        const message = fk.status?.message;
-        const clearBtn = root.querySelector('#mled-fk-clear-message-btn');
-        if (!message || !message.text) {
-            box.textContent = tr('fkNoMessage');
-            clearBtn.hidden = true;
-            return;
-        }
-        const expires = new Date(Number(message.expires_at) * 1000);
-        const time = Number.isNaN(expires.getTime())
-            ? '—'
-            : expires.toLocaleTimeString(FK_LOCALES[lang()] || undefined, { hour: '2-digit', minute: '2-digit' });
-        box.innerHTML = `<small>${esc(tr('fkCurrentMessage'))}</small><strong>${esc(message.text)}</strong><small>${esc(tr('fkExpiresAt', { time }))}</small>`;
-        clearBtn.hidden = false;
+    // Galería: GET /fk8wa/frames?screen=<nombre>, con el estilo configurado.
+    function fkLoadGallery() {
+        fk.galleryStale = false;
+        FK_SCREENS.forEach((name, index) => {
+            api(`/fk8wa/frames?screen=${encodeURIComponent(name)}`)
+                .then((data) => fk.gallery[index]?.load(data))
+                .catch(() => {});
+        });
     }
 
-    async function fkSendMessage(useAnnouncement) {
-        const minutes = fkNumber('#mled-fk-minutes') ?? 5;
-        let body;
-        if (useAnnouncement) {
-            const announcementId = root.querySelector('#mled-fk-announcement').value;
-            if (!announcementId) { fkSetMsg('#mled-fk-message-msg', tr('fkMissingAnnouncement'), 'error'); return; }
-            body = { announcement_id: announcementId, minutes };
-        } else {
-            const text = root.querySelector('#mled-fk-message-text').value.trim();
-            if (!text) { fkSetMsg('#mled-fk-message-msg', tr('fkMissingText'), 'error'); return; }
-            body = { text, minutes };
-        }
-        fkSetMsg('#mled-fk-message-msg', tr('fkSending'));
-        try {
-            const result = await api('/fk8wa/message', { method: 'POST', body: JSON.stringify(body) });
-            fk.status = { ...(fk.status || {}), message: result.message };
-            fkRenderMessage();
-            if (!useAnnouncement) root.querySelector('#mled-fk-message-text').value = '';
-            fkSetMsg('#mled-fk-message-msg', tr('fkMessageSent'), 'ok');
-            fkRefreshStatus({ forcePreview: true });
-        } catch (error) {
-            fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
-        }
+    // Cambió el estilo o el marco: se redibuja lo que depende de él.
+    function fkAfterStyleSaved({ reloadMarcoCard = false } = {}) {
+        fkSyncStyleCards();
+        fkRefreshStatus({ forceFrames: true });
+        if (reloadMarcoCard) fkLoadStyleCards('marco');
+        fk.galleryStale = true;
+        if (root.querySelector('#mled-fk-gallery-details').open) fkLoadGallery();
     }
 
-    async function fkClearMessage() {
-        try {
-            await api('/fk8wa/message', { method: 'DELETE' });
-            fk.status = { ...(fk.status || {}), message: null };
-            fkRenderMessage();
-            fkSetMsg('#mled-fk-message-msg', tr('fkMessageCleared'), 'ok');
-            fkRefreshStatus({ forcePreview: true });
-        } catch (error) {
-            fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
-        }
+    function fkBindStyles() {
+        root.querySelector('#mled-fk-styles').addEventListener('click', async (event) => {
+            const card = event.target.closest('[data-fk-style]');
+            if (!card || !fk.isAdmin) return;
+            const style = fkCardStyle(card.dataset.fkStyle);
+            if (style === fk.config?.timer_style) return;
+            if (await fkSavePartial({ timer_style: style }, '#mled-fk-timer-msg')) fkAfterStyleSaved();
+        });
+        root.querySelector('#mled-fk-marco-anim').addEventListener('change', async (event) => {
+            if (await fkSavePartial({ timer_style: event.target.value }, '#mled-fk-timer-msg')) fkAfterStyleSaved({ reloadMarcoCard: true });
+        });
+        root.querySelector('#mled-fk-marco-pattern').addEventListener('change', async (event) => {
+            if (await fkSavePartial({ border_pattern: event.target.value }, '#mled-fk-timer-msg')) {
+                fkAllPlayers().forEach((player) => { player.pattern = fk.config.border_pattern; });
+                fkAfterStyleSaved({ reloadMarcoCard: true });
+            }
+        });
+        const speed = root.querySelector('#mled-fk-marco-speed');
+        speed.addEventListener('input', () => { root.querySelector('#mled-fk-marco-speed-val').textContent = speed.value; });
+        speed.addEventListener('change', async () => {
+            if (await fkSavePartial({ border_speed: Number(speed.value) }, '#mled-fk-timer-msg')) fkAfterStyleSaved({ reloadMarcoCard: true });
+        });
     }
 
-    // Al entrar a la pestaña: rol (una vez), config, máquinas y anuncios
-    // frescos, estado y vista previa; luego el sondeo de 5 s.
+    // ── Sondeo y ciclo de vida de la pestaña ──
+    function fkTick() {
+        if (!fkIsVisible()) { fkPauseAnimations(); return; }
+        fkResumeAnimations();
+        fkRefreshStatus();
+    }
+
+    function fkStopPolling() {
+        if (fk.timer) { window.clearInterval(fk.timer); fk.timer = null; }
+        fkStopMessageTimer();
+        fkPauseAnimations();
+    }
+
+    function fkStartPolling() {
+        if (fk.timer) window.clearInterval(fk.timer);
+        fk.timer = window.setInterval(fkTick, FK_POLL_MS);
+    }
+
+    function fkOnVisibilityChange() {
+        if (state.view !== 'fk8wa') return;
+        if (document.visibilityState === 'hidden') fkPauseAnimations();
+        else fkTick();
+    }
+
     async function fkEnter() {
+        fk.led = null;   // por si cambió el tema
         fkStartPolling();
+        fkResumeAnimations();
         fkRenderAnnouncementOptions();
-        fkRefreshStatus({ forcePreview: true });
+        fkRefreshStatus({ forceFrames: true });
         if (!fk.roleLoaded) await fkLoadRole();
         await loadMachinesForForm();
         await fkLoadConfig();
+        if (fk.minisStale) fkLoadStyleCards();
+        if (fk.galleryStale && root.querySelector('#mled-fk-gallery-details').open) fkLoadGallery();
         fkRenderAnnouncementOptions();
     }
 
+    function fkBindHelp() {
+        const view = root.querySelector('#mled-view-fk8wa');
+        const closeAll = (except) => {
+            view.querySelectorAll('.mled-fk-help.is-open').forEach((help) => {
+                if (help === except) return;
+                help.classList.remove('is-open');
+                help.querySelector('button')?.setAttribute('aria-expanded', 'false');
+            });
+        };
+        view.addEventListener('click', (event) => {
+            const help = event.target.closest('.mled-fk-help');
+            closeAll(help);
+            if (help && event.target.closest('button')) {
+                const open = help.classList.toggle('is-open');
+                help.querySelector('button').setAttribute('aria-expanded', String(open));
+            }
+        });
+        view.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeAll(null); });
+    }
+
     function fkBindEvents() {
-        root.querySelector('#mled-fk-preview-screen').addEventListener('change', (event) => {
-            fk.previewScreen = event.target.value;
-            fkRefreshPreview();
+        fk.main = fkPlayer(root.querySelector('#mled-fk-led-main'), { onPage: fkHighlightView });
+        fk.minis = [...root.querySelectorAll('[data-fk-style] canvas')].map((canvas) => fkPlayer(canvas, { square: true, speedup: 4 }));
+        fk.gallery = [...root.querySelectorAll('[data-fk-gallery] canvas')].map((canvas) => fkPlayer(canvas, { square: true, still: true }));
+        fkBindHelp();
+
+        root.querySelector('#mled-fk-mins').addEventListener('click', (event) => {
+            const button = event.target.closest('[data-fk-minutes]');
+            if (!button) return;
+            fk.minutes = Number(button.dataset.fkMinutes);
+            fkSyncMinutes();
         });
-        root.querySelector('#mled-fk-timer-style').addEventListener('change', fkSyncTimerFields);
-        const preview = root.querySelector('#mled-fk-preview');
-        preview.addEventListener('load', () => { root.querySelector('#mled-fk-preview-msg').hidden = true; });
-        preview.addEventListener('error', () => {
-            const msg = root.querySelector('#mled-fk-preview-msg');
-            msg.textContent = tr('fkPreviewError');
-            msg.hidden = false;
-        });
-        root.querySelector('#mled-fk-machines').addEventListener('click', fkOnMachinesClick);
-        root.querySelector('#mled-fk-add-machine-btn').addEventListener('click', fkAddMachine);
-        root.querySelector('#mled-fk-save-btn').addEventListener('click', fkSaveConfig);
-        root.querySelector('#mled-fk-test-btn').addEventListener('click', fkTestConnection);
-        root.querySelector('#mled-fk-brightness-range').addEventListener('change', fkApplyBrightness);
-        root.querySelector('#mled-fk-brightness').addEventListener('change', fkApplyBrightness);
-        root.querySelector('#mled-fk-send-message-btn').addEventListener('click', () => fkSendMessage(false));
-        root.querySelector('#mled-fk-message-text').addEventListener('keydown', (event) => {
+        fkSyncMinutes();
+        root.querySelector('#mled-fk-msg-send').addEventListener('click', () => fkSendMessage(false));
+        root.querySelector('#mled-fk-msg-text').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') { event.preventDefault(); fkSendMessage(false); }
         });
-        root.querySelector('#mled-fk-send-announcement-btn').addEventListener('click', () => fkSendMessage(true));
-        root.querySelector('#mled-fk-clear-message-btn').addEventListener('click', fkClearMessage);
+        root.querySelector('#mled-fk-ann-send').addEventListener('click', () => fkSendMessage(true));
+
+        fkBindMachines();
+
+        const bright = root.querySelector('#mled-fk-bright');
+        bright.addEventListener('input', () => {
+            fk.brightness = Number(bright.value);
+            root.querySelector('#mled-fk-bright-val').textContent = bright.value;
+            fkRepaintAll();
+        });
+        bright.addEventListener('change', fkApplyBrightness);
+
+        fkBindStyles();
+
+        root.querySelector('#mled-fk-test-btn').addEventListener('click', fkTestConnection);
+        root.querySelector('#mled-fk-save-btn').addEventListener('click', fkSaveConnection);
+        root.querySelector('#mled-fk-gallery-details').addEventListener('toggle', (event) => {
+            if (event.target.open && fk.galleryStale) fkLoadGallery();
+        });
         document.addEventListener('visibilitychange', fkOnVisibilityChange);
         fkApplyRole();
     }
 
+    // ── HTML ──
+    // Globo "?": se abre al pasar el mouse, con el teclado o con un toque.
+    function fkHelp(key, end = false) {
+        fkHelpSeq += 1;
+        const id = `mled-fk-tip-${fkHelpSeq}`;
+        return `<span class="mled-fk-help${end ? ' mled-fk-help-end' : ''}"><button type="button" aria-label="${esc(tr('fkHelp'))}" aria-describedby="${id}" aria-expanded="false">?</button><span class="mled-fk-tip" id="${id}" role="tooltip">${esc(tr(key))}</span></span>`;
+    }
+
+    function fkConnPillHtml() {
+        return `<span class="mled-status-pill mled-status-off mled-fk-conn" id="mled-fk-conn" role="status" aria-live="polite">
+                            <span class="mled-status-dot"></span>
+                            <span id="mled-fk-conn-text">${esc(tr('fkConnChecking'))}</span>
+                        </span>`;
+    }
+
+    function fkField(id, labelKey, helpKey, control) {
+        return `<div class="mled-fk-field"><div class="mled-fk-field-label"><label for="${id}">${esc(tr(labelKey))}</label>${fkHelp(helpKey)}</div>${control}</div>`;
+    }
+
+    function fkSecondsInput(id, min, max) {
+        return `<div class="mled-fk-unit"><input type="number" id="${id}" min="${min}" max="${max}" step="1" data-fk-admin-input disabled><span class="mled-fk-muted">${esc(tr('fkSecondsUnit'))}</span></div>`;
+    }
+
     function fkViewHtml() {
-        const screenOptions = FK_SCREENS.map((name) => `<option value="${name}">${esc(fkScreenLabel(name))}</option>`).join('');
+        const prio = FK_PRIORITY.map(([key, icon, labelKey, tipKey]) => `
+                            <li class="mled-fk-step" data-fk-prio="${key}" data-now="${esc(tr('fkPrioNow'))}" title="${esc(tr(tipKey))}">
+                                <i aria-hidden="true">${icon}</i><span>${esc(tr(labelKey))}</span>
+                                <span class="mled-fk-sr">${esc(tr(tipKey))}</span>
+                            </li>`).join('');
+        const minutes = FK_MINUTES.map((n) => `<button type="button" data-fk-minutes="${n}" aria-pressed="false">${esc(tr('fkMinutesShort', { n }))}</button>`).join('');
+        const styles = FK_STYLE_CARDS.map(([key, titleKey, descKey]) => `
+                            <button type="button" class="mled-fk-style" data-fk-style="${key}" aria-pressed="false">
+                                <span class="mled-fk-mini"><canvas width="288" height="48" aria-hidden="true"></canvas></span>
+                                <strong>${esc(tr(titleKey))}</strong>
+                                <span>${esc(tr(descKey))}</span>
+                            </button>`).join('');
+        const borders = FK_BORDERS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
+        const patterns = FK_PATTERNS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
+        const gallery = FK_SCREENS.map((name) => `
+                            <figure data-fk-gallery="${name}">
+                                <span class="mled-fk-mini"><canvas width="288" height="48" role="img" aria-label="${esc(fkScreenLabel(name))}"></canvas></span>
+                                <figcaption>${esc(fkScreenLabel(name))}</figcaption>
+                            </figure>`).join('');
         return `
                 <div id="mled-view-fk8wa" class="mled-fk-view" hidden>
-                    <div class="mled-fk-grid">
-                        <article class="mled-card mled-fk-preview-card">
-                            <h2>${esc(tr('fkPreviewTitle'))}</h2>
-                            <label class="mled-field"><span>${esc(tr('fkPreviewScreenLabel'))}</span><select id="mled-fk-preview-screen"><option value="">${esc(tr('fkPreviewLive'))}</option>${screenOptions}</select></label>
-                            <div class="mled-fk-preview-frame">
-                                <img id="mled-fk-preview" class="mled-fk-preview-img" alt="${esc(tr('fkPreviewAlt'))}" width="768" height="128">
-                            </div>
-                            <small class="mled-inline-msg mled-inline-msg-error" id="mled-fk-preview-msg" hidden></small>
-                        </article>
+                    <div class="mled-fk-top">${fkConnPillHtml()}</div>
+                    <p class="mled-fk-alert" id="mled-fk-alert" role="alert" hidden></p>
+                    <p class="mled-fk-alert" id="mled-fk-missing" hidden></p>
 
-                        <article class="mled-card mled-fk-status-card">
-                            <div class="mled-card-head-row">
-                                <h2>${esc(tr('fkStatusTitle'))}</h2>
-                                <span class="mled-status-pill mled-status-off" id="mled-fk-state-chip" role="status" aria-live="polite">
-                                    <span class="mled-status-dot"></span>
-                                    <span id="mled-fk-state-text">${esc(tr('checking'))}</span>
-                                </span>
-                            </div>
-                            <p class="mled-fk-alert" id="mled-fk-size-warning" role="alert" hidden></p>
-                            <p class="mled-fk-alert" id="mled-fk-missing-warning" hidden></p>
-                            <div class="mled-fk-status-rows" id="mled-fk-status-rows"></div>
-                        </article>
+                    <section class="mled-fk-card" aria-labelledby="mled-fk-t-now">
+                        <div class="mled-fk-head"><h2 id="mled-fk-t-now">${esc(tr('fkNowTitle'))}</h2>${fkHelp('fkNowHelp', true)}</div>
+                        <div class="mled-fk-led"><canvas id="mled-fk-led-main" width="960" height="160" role="img" aria-label="${esc(tr('fkPanelAria'))}"></canvas></div>
+                        <p class="mled-fk-now" id="mled-fk-now" aria-live="polite"></p>
+                        <div class="mled-fk-views" id="mled-fk-views"></div>
+                    </section>
 
-                        <article class="mled-card mled-fk-message-card">
-                            <h2>${esc(tr('fkMessageTitle'))}</h2>
-                            <div class="mled-fk-current" id="mled-fk-current-message" aria-live="polite">${esc(tr('fkNoMessage'))}</div>
-                            <button type="button" class="mled-btn mled-btn-small mled-fk-clear-btn" id="mled-fk-clear-message-btn" hidden>${esc(tr('fkClearMessageBtn'))}</button>
-                            <label class="mled-field"><span>${esc(tr('fkMessageTextLabel'))}</span><input type="text" id="mled-fk-message-text" maxlength="200" placeholder="${esc(tr('fkMessagePlaceholder'))}" autocomplete="off"></label>
-                            <label class="mled-field"><span>${esc(tr('fkMinutesLabel'))}</span><input type="number" id="mled-fk-minutes" min="1" max="1440" step="1" value="5"></label>
-                            <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-send-message-btn">${esc(tr('fkSendBtn'))}</button>
-                            <span class="mled-field-label mled-fk-or">${esc(tr('fkOrAnnouncement'))}</span>
-                            <div class="mled-fk-add-row">
-                                <label class="mled-field"><span>${esc(tr('fkAnnouncementLabel'))}</span><select id="mled-fk-announcement"></select></label>
-                                <button type="button" class="mled-btn" id="mled-fk-send-announcement-btn">${esc(tr('fkSendAnnouncementBtn'))}</button>
-                            </div>
-                            <span class="mled-inline-msg" id="mled-fk-message-msg" role="status" aria-live="polite"></span>
-                        </article>
+                    <section class="mled-fk-card" aria-labelledby="mled-fk-t-why">
+                        <div class="mled-fk-head"><h2 id="mled-fk-t-why">${esc(tr('fkWhyTitle'))}</h2>${fkHelp('fkWhyHelp', true)}</div>
+                        <ol class="mled-fk-prio" id="mled-fk-prio">${prio}
+                        </ol>
+                    </section>
 
-                        <article class="mled-card mled-fk-config-card">
-                            <h2>${esc(tr('fkConfigTitle'))}</h2>
-                            <p class="mled-sub" id="mled-fk-readonly-note" hidden>${esc(tr('fkReadOnlyNote'))}</p>
-                            <div class="mled-fk-config-cols">
-                                <div>
-                                    <label class="mled-checkbox"><input type="checkbox" id="mled-fk-enabled" data-fk-admin-input disabled><span>${esc(tr('fkEnabledLabel'))}</span></label>
-                                    <label class="mled-field"><span>${esc(tr('fkIpLabel'))}</span><input type="text" id="mled-fk-ip" inputmode="decimal" placeholder="192.168.0.50" autocomplete="off" data-fk-admin-input disabled></label>
-                                    <label class="mled-field"><span>${esc(tr('fkBrightnessLabel'))}</span><input type="range" id="mled-fk-brightness-range" min="1" max="16" step="1" value="8" data-fk-admin-input disabled><input type="number" id="mled-fk-brightness" min="1" max="16" step="1" value="8" aria-label="${esc(tr('fkBrightnessLabel'))}" data-fk-admin-input disabled></label>
-                                    <div class="mled-fk-numbers">
-                                        <label class="mled-field"><span>${esc(tr('fkMinIntervalLabel'))}</span><input type="number" id="mled-fk-min-interval" min="10" max="600" step="1" data-fk-admin-input disabled></label>
-                                        <label class="mled-field"><span>${esc(tr('fkViewSecondsLabel'))}</span><input type="number" id="mled-fk-view-seconds" min="5" max="300" step="1" data-fk-admin-input disabled></label>
-                                        <label class="mled-field"><span>${esc(tr('fkDoneSecondsLabel'))}</span><input type="number" id="mled-fk-done-seconds" min="5" max="3600" step="1" data-fk-admin-input disabled></label>
-                                    </div>
-                                    <label class="mled-field"><span>${esc(tr('fkTimerStyleLabel'))}</span><select id="mled-fk-timer-style" data-fk-admin-input disabled>${fkTimerOptionsHtml()}</select></label>
-                                    <div class="mled-fk-border-fields" id="mled-fk-border-fields" hidden>
-                                        <label class="mled-field"><span>${esc(tr('fkBorderPatternLabel'))}</span><select id="mled-fk-border-pattern" data-fk-admin-input disabled>${FK_BORDER_PATTERNS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('')}</select></label>
-                                        <label class="mled-field"><span>${esc(tr('fkBorderSpeedLabel'))}</span><input type="range" id="mled-fk-border-speed-range" min="1" max="60" step="1" value="10" data-fk-admin-input disabled><input type="number" id="mled-fk-border-speed" min="1" max="60" step="1" value="10" aria-label="${esc(tr('fkBorderSpeedLabel'))}" data-fk-admin-input disabled></label>
-                                    </div>
-                                    <p class="mled-fk-help" id="mled-fk-timer-help" aria-live="polite">${esc(tr('fkTimerHelpExact'))}</p>
-                                </div>
-                                <div>
-                                    <span class="mled-field-label" id="mled-fk-machines-label">${esc(tr('fkMachinesLabel'))}</span>
-                                    <ol class="mled-fk-machines" id="mled-fk-machines" aria-labelledby="mled-fk-machines-label"></ol>
-                                    <div class="mled-fk-add-row" data-fk-admin-only hidden>
-                                        <label class="mled-field"><span>${esc(tr('fkAddMachineLabel'))}</span><select id="mled-fk-add-machine" disabled></select></label>
-                                        <button type="button" class="mled-btn" id="mled-fk-add-machine-btn" disabled>${esc(tr('fkAddBtn'))}</button>
-                                    </div>
-                                </div>
+                    <section class="mled-fk-card" aria-labelledby="mled-fk-t-msg">
+                        <div class="mled-fk-head"><h2 id="mled-fk-t-msg">${esc(tr('fkMsgTitle'))}</h2>${fkHelp('fkMsgHelp', true)}</div>
+                        <div class="mled-fk-msg">
+                            <input type="text" id="mled-fk-msg-text" maxlength="200" placeholder="${esc(tr('fkMsgPlaceholder'))}" aria-label="${esc(tr('fkMsgAria'))}" autocomplete="off">
+                            <div class="mled-fk-mins" id="mled-fk-mins" role="group" aria-label="${esc(tr('fkMinutesAria'))}">${minutes}</div>
+                            <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-msg-send">${esc(tr('fkMsgSend'))}</button>
+                        </div>
+                        <div class="mled-fk-ann">
+                            <label for="mled-fk-ann" class="mled-fk-muted">${esc(tr('fkAnnLabel'))}</label>
+                            <select id="mled-fk-ann"></select>
+                            <button type="button" class="mled-btn mled-btn-small" id="mled-fk-ann-send">${esc(tr('fkAnnShow'))}</button>
+                        </div>
+                        <div class="mled-fk-current" id="mled-fk-current" aria-live="polite" hidden></div>
+                        <span class="mled-inline-msg" id="mled-fk-msg-status" role="status" aria-live="polite"></span>
+                    </section>
+
+                    <p class="mled-fk-readonly" id="mled-fk-readonly" hidden>${esc(tr('fkReadOnly'))}</p>
+
+                    <div class="mled-fk-grid2">
+                        <section class="mled-fk-card" aria-labelledby="mled-fk-t-mach">
+                            <div class="mled-fk-title"><h3 id="mled-fk-t-mach">${esc(tr('fkMachTitle'))}</h3>${fkHelp('fkMachHelp')}</div>
+                            <ol class="mled-fk-machines" id="mled-fk-machines" aria-labelledby="mled-fk-t-mach"></ol>
+                            <div class="mled-fk-add" data-fk-admin-only hidden>
+                                <select id="mled-fk-add-machine" aria-label="${esc(tr('fkMachAddAria'))}" disabled></select>
+                                <button type="button" class="mled-btn" id="mled-fk-add-machine-btn" disabled>${esc(tr('fkMachAdd'))}</button>
                             </div>
-                            <div class="mled-row mled-fk-actions" data-fk-admin-only hidden>
-                                <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-save-btn">${esc(tr('saveBtn'))}</button>
-                                <button type="button" class="mled-btn" id="mled-fk-test-btn">${esc(tr('testConnectionBtn'))}</button>
+                            <span class="mled-inline-msg" id="mled-fk-mach-msg" role="status" aria-live="polite"></span>
+                        </section>
+
+                        <section class="mled-fk-card" aria-labelledby="mled-fk-t-bright">
+                            <div class="mled-fk-title"><h3 id="mled-fk-t-bright">${esc(tr('fkBrightTitle'))}</h3>${fkHelp('fkBrightHelp')}</div>
+                            <div class="mled-fk-bright">
+                                <span aria-hidden="true">☾</span>
+                                <input type="range" id="mled-fk-bright" min="1" max="16" step="1" value="8" aria-label="${esc(tr('fkBrightTitle'))}" data-fk-admin-input disabled>
+                                <span class="mled-fk-mono" id="mled-fk-bright-val">8</span>
                             </div>
-                            <span class="mled-inline-msg" id="mled-fk-config-msg" role="status" aria-live="polite"></span>
-                        </article>
+                            <span class="mled-inline-msg" id="mled-fk-bright-msg" role="status" aria-live="polite">${esc(tr('fkBrightNote'))}</span>
+                        </section>
                     </div>
-                    <p class="mled-fk-note">${esc(tr('fkNote'))}</p>
+
+                    <section class="mled-fk-card" aria-labelledby="mled-fk-t-timer">
+                        <div class="mled-fk-title"><h3 id="mled-fk-t-timer">${esc(tr('fkTimerTitle'))}</h3>${fkHelp('fkTimerHelp')}</div>
+                        <div class="mled-fk-styles" id="mled-fk-styles">${styles}
+                        </div>
+                        <div class="mled-fk-marco-opts" id="mled-fk-marco-opts" hidden>
+                            <div class="mled-fk-field"><label for="mled-fk-marco-anim">${esc(tr('fkMarcoAnim'))}</label><select id="mled-fk-marco-anim" data-fk-admin-input disabled>${borders}</select></div>
+                            <div class="mled-fk-field"><label for="mled-fk-marco-pattern">${esc(tr('fkMarcoPattern'))}</label><select id="mled-fk-marco-pattern" data-fk-admin-input disabled>${patterns}</select></div>
+                            <div class="mled-fk-field"><label for="mled-fk-marco-speed">${esc(tr('fkMarcoSpeed'))}</label>
+                                <div class="mled-fk-bright"><span class="mled-fk-muted">${esc(tr('fkFaster'))}</span><input type="range" id="mled-fk-marco-speed" min="1" max="60" step="1" value="10" data-fk-admin-input disabled><span class="mled-fk-mono" id="mled-fk-marco-speed-val">10</span></div>
+                            </div>
+                        </div>
+                        <span class="mled-inline-msg" id="mled-fk-timer-msg" role="status" aria-live="polite"></span>
+                    </section>
+
+                    <details class="mled-fk-details" id="mled-fk-conn-details">
+                        <summary>${esc(tr('fkConnTitle'))}</summary>
+                        <div class="mled-fk-inner">
+                            <div class="mled-fk-fields">
+                                ${fkField('mled-fk-ip', 'fkIpLabel', 'fkIpHelp', `<div class="mled-fk-row"><input type="text" id="mled-fk-ip" inputmode="decimal" autocomplete="off" data-fk-admin-input disabled><button type="button" class="mled-btn" id="mled-fk-test-btn" data-fk-admin-only hidden>${esc(tr('fkTest'))}</button></div><span class="mled-inline-msg" id="mled-fk-test-msg" role="status" aria-live="polite"></span>`)}
+                                ${fkField('mled-fk-view-seconds', 'fkViewLabel', 'fkViewHelp', fkSecondsInput('mled-fk-view-seconds', 5, 300))}
+                                ${fkField('mled-fk-done-seconds', 'fkDoneLabel', 'fkDoneHelp', fkSecondsInput('mled-fk-done-seconds', 5, 3600))}
+                                ${fkField('mled-fk-min-interval', 'fkMinLabel', 'fkMinHelp', fkSecondsInput('mled-fk-min-interval', 10, 600))}
+                            </div>
+                            <label class="mled-fk-check"><input type="checkbox" id="mled-fk-enabled" data-fk-admin-input disabled><span>${esc(tr('fkEnabledLabel'))}</span></label>
+                            <div class="mled-fk-row" data-fk-admin-only hidden>
+                                <button type="button" class="mled-btn mled-btn-primary" id="mled-fk-save-btn">${esc(tr('fkSave'))}</button>
+                                <span class="mled-inline-msg" id="mled-fk-conn-msg" role="status" aria-live="polite"></span>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="mled-fk-details" id="mled-fk-gallery-details">
+                        <summary>${esc(tr('fkGalleryTitle'))}</summary>
+                        <div class="mled-fk-inner">
+                            <p class="mled-fk-muted">${esc(tr('fkGalleryNote'))}</p>
+                            <div class="mled-fk-gallery" id="mled-fk-gallery">${gallery}
+                            </div>
+                        </div>
+                    </details>
                 </div>`;
     }
 

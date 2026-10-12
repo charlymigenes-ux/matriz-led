@@ -123,3 +123,25 @@ def test_lifecycle_hooks_exist():
     from ..conftest import _ROUTER_MODULE
 
     assert callable(_ROUTER_MODULE.on_startup) and callable(_ROUTER_MODULE.on_shutdown)
+
+
+class TestFrames:
+    def test_current_frames_and_priority(self, client, as_operator):
+        data = client.get(BASE + "/frames").json()
+        assert data["style"] == "contorno" and len(data["pages"]) == 1
+        import base64
+        assert len(base64.b64decode(data["pages"][0])) == 192
+        assert client.get(BASE + "/status").json()["priority"] in (None, "normal")
+
+    def test_style_sample_is_the_printing_example(self, client, as_admin):
+        data = client.get(BASE + "/frames", params={"style": "barra"}).json()
+        assert [v["screen"] for v in data["views"]] == ["print1", "print2"]
+        assert len(data["pages"]) == 16 and data["stay_ms"] == 1875
+
+    def test_marco_flag_and_gallery(self, client, as_admin):
+        assert client.get(BASE + "/frames", params={"style": "marco_cw"}).json()["marco"] is True
+        assert len(client.get(BASE + "/frames", params={"screen": "pause"}).json()["pages"]) == 1
+
+    def test_invalid(self, client, as_admin):
+        assert client.get(BASE + "/frames", params={"style": "x"}).status_code == 400
+        assert client.get(BASE + "/frames", params={"screen": "x"}).status_code == 400

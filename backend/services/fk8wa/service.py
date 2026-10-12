@@ -6,8 +6,9 @@ on_startup() del plugin y la detiene on_shutdown() (gancho de NOPAL core).
 
 from __future__ import annotations
 
+import base64
 import io
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from PIL import Image
 
@@ -35,14 +36,66 @@ async def stop() -> None:
         await _runner.stop()
 
 
+# Pantalla -> paso de la tira "¿Por qué muestra esto?" (misma prioridad que state_machine).
+PRIORITY_OF = {
+    "error": "error", "pause": "pause", "offline": "offline", "special": "special", "done": "done",
+    "print1": "printing", "print2": "printing", "many": "printing",
+    "normal": "normal", "idle": "normal", "boot": "normal", "off": "normal",
+}
+
+# Ejemplo de impresión para las tarjetas del "reloj de cada vista".
+SAMPLE_PRINTING = [
+    ("print1", {"printer": "P1", "file": "soporte_motor", "pct": 72}, 15.0),
+    ("print2", {"printer": "P1", "file": "soporte_motor", "pct": 72, "elapsed": "01:24"}, 15.0),
+]
+
+
 def status() -> Dict[str, Any]:
     cfg = config.load()
     msg = messages.current()
     current = runner().current
+    screen = current[0][0] if current else None
     return {**runner().status, "enabled": cfg["enabled"], "ip": cfg["ip"],
-            "current": current[0][0] if current else None,
+            "current": screen, "priority": PRIORITY_OF.get(screen),
             "views": [{"screen": n, "seconds": s} for n, _, s in current] if current else [],
             "message": msg}
+
+
+def _encode(page) -> str:
+    """Página de 96x16 (o 94x14 de marco, centrada) a 192 bytes en base64:
+    1 bit por LED, bit de menor peso primero, 12 bytes por fila."""
+    if page.size == (94, 14):
+        full = Image.new("1", (96, 16), 0)
+        full.paste(page, (1, 1))
+        page = full
+    out = bytearray(192)
+    for y in range(16):
+        for x in range(96):
+            if page.getpixel((x, y)):
+                out[y * 12 + x // 8] |= 1 << (x % 8)
+    return base64.b64encode(bytes(out)).decode("ascii")
+
+
+def frames(style: Optional[str] = None, screen: Optional[str] = None) -> Dict[str, Any]:
+    """Páginas tal como las mostrará el panel, para dibujarlas LED por LED en
+    la pestaña (sin tocar el panel):
+    - sin parámetros: lo que tiene ahora, con el estilo configurado;
+    - `style`: un ejemplo de impresión con ese estilo (tarjetas del reloj);
+    - `screen`: una de las 12 pantallas de ejemplo (galería)."""
+    cfg = config.load()
+    chosen = style or cfg["timer_style"]
+    if chosen not in timer.STYLES:
+        raise ValueError("Estilo de contador desconocido")
+    if screen:
+        segments: List = [(screen, {}, None)]
+    elif style:
+        segments = SAMPLE_PRINTING
+    else:
+        segments = runner().current or [("boot", {"progress": 0}, None)]
+    pages, stay = timer.build_pages(segments, chosen)
+    return {"style": chosen, "marco": chosen.startswith("marco_"), "stay_ms": stay,
+            "border_speed": cfg["border_speed"], "pages": [_encode(p) for p in pages],
+            "views": [{"screen": n, "seconds": s} for n, _, s in segments]}
 
 
 def preview(screen: Optional[str] = None, scale: int = 6) -> Tuple[bytes, str]:
