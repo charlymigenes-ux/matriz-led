@@ -1727,6 +1727,14 @@
     padding: 6px 0;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
+    /* Color de resplandor de cada pestaña, declarado una sola vez con los
+       colores semánticos del tema de NOPAL (cambian solos con dark/green/
+       red/custom/light). */
+    --mled-fk-tab-glow-1: var(--status-danger, var(--red));
+    --mled-fk-tab-glow-2: var(--status-warn, var(--orange));
+    --mled-fk-tab-glow-3: var(--status-ok, var(--green));
+    --mled-fk-tab-glow-4: var(--status-info, var(--accent));
+    --mled-fk-tab-glow-5: var(--accent, var(--status-info));
 }
 
 .mled-fk-tab {
@@ -1739,12 +1747,28 @@
     background: var(--panel-bg);
     color: var(--text-secondary);
     cursor: pointer;
+    --mled-fk-glow: var(--accent);
+    box-shadow: 0 0 6px 0 color-mix(in srgb, var(--mled-fk-glow) 30%, transparent);
+    transition: box-shadow 0.2s ease;
+}
+
+#mled-fk-tab-panel { --mled-fk-glow: var(--mled-fk-tab-glow-1); }
+#mled-fk-tab-mach { --mled-fk-glow: var(--mled-fk-tab-glow-2); }
+#mled-fk-tab-clock { --mled-fk-glow: var(--mled-fk-tab-glow-3); }
+#mled-fk-tab-fx { --mled-fk-glow: var(--mled-fk-tab-glow-4); }
+#mled-fk-tab-screens { --mled-fk-glow: var(--mled-fk-tab-glow-5); }
+
+.mled-fk-tab:hover,
+.mled-fk-tab:focus-visible {
+    border-color: color-mix(in srgb, var(--mled-fk-glow) 70%, var(--border));
+    box-shadow: 0 0 12px 1px color-mix(in srgb, var(--mled-fk-glow) 55%, transparent);
 }
 
 .mled-fk-tab[aria-selected="true"] {
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 18%, var(--panel-bg));
     color: var(--text);
+    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--mled-fk-glow) 75%, transparent);
 }
 
 .mled-fk-grid {
@@ -2231,6 +2255,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .mled-fk-tab {
+        transition: none;
+    }
+
     .mled-fk-tip {
         transition: none;
     }

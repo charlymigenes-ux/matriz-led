@@ -190,11 +190,14 @@ tiene un interruptor "En mantenimiento" (lo cambia el admin). Una máquina en
 mantenimiento desaparece del panel por completo: no avisa desconectada, error,
 calentando ni trabajando. Sirve para equipos desarmados o en reparación.
 
-**Cambio entre pantallas**: cuando una situación tiene varias pantallas (p. ej. las
-vistas de trabajo y la de una máquina que calienta) y no elegiste efecto, NOPAL usa
-"Entrar desde la izquierda" (probado en el panel) para pasar de una a otra, porque
-con el efecto estático el panel real no avanzaba solo. El contorno que marca el
-tiempo es la excepción: sus páginas siguen estáticas.
+**Rotación de pantallas**: en el panel real los programas de varias pantallas NO
+avanzan solos (probado con efectos de entrada y de desplazamiento). Por eso NOPAL
+rota las vistas: sube una pantalla fija por vez, cada `view_seconds` (no menos que
+`min_interval_s`). Cada vista usa el efecto y el contorno de su propia situación.
+Consecuencia: los contornos que marcan el tiempo (contorno, contorno encima, barra)
+ya no avanzan, porque dependían de que el panel pasara páginas; el texto que corre
+sí funciona (es un programa del propio panel). El marco animado del panel y el
+contorno según la temperatura siguen igual.
 
 **Efectos de entrada**: el panel solo anima cómo APARECE cada pantalla (36
 efectos de FKShow en 8 familias: Desplazar, Entrar, Cubrir, Persiana,

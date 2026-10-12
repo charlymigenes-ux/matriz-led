@@ -49,6 +49,20 @@ def effect_for(segments, cfg: Dict[str, Any]) -> Optional[Tuple[str, int, int]]:
     return effect_id, pair[0], pair[1]
 
 
+def rotate(segments, now: float, cfg: Dict[str, Any]):
+    """La vista que toca mostrar ahora. En el panel real los programas de varias
+    pantallas NO avanzan solos (probado con efectos de entrada y desplazamiento),
+    así que NOPAL las rota: sube una por vez, cada `view_seconds` (no menos que
+    `min_interval_s`, lo mínimo entre subidas). Siempre una sola página fija
+    (sin contador de tiempo, que dependía de que el panel avanzara páginas).
+    El texto que corre (scroll) sí es un programa del panel y se sube entero."""
+    if segments[0][0] == "scroll":
+        return segments
+    dwell = max(float(cfg["view_seconds"]), float(cfg["min_interval_s"]))
+    name, data, _ = segments[int(now // dwell) % len(segments)]
+    return [(name, data, None)]
+
+
 def make_program(segments, cfg: Dict[str, Any]) -> bytes:
     """Programa del panel para estas vistas con la configuración vigente."""
     if segments[0][0] == "scroll":
@@ -153,8 +167,9 @@ class Runner:
                 return          # un efecto de prueba está en el panel: no se pisa todavía
             self._demo_until = None
             self._last_image, self._last_send = None, None     # restaura lo que corresponde
+        shown_now = rotate(segments, now, cfg)
         sig = (cfg["timer_style"], repr(sorted(cfg["situation_styles"].items())), cfg["border_pattern"], cfg["border_speed"], repr(sorted(cfg["effects"].items())),
-               cfg["scroll_dir"], cfg["scroll_speed"], state_machine.signature(segments))
+               cfg["scroll_dir"], cfg["scroll_speed"], state_machine.signature(shown_now))
 
         if sig == self._last_image and not self._brightness_pending:
             return
@@ -162,8 +177,8 @@ class Runner:
             return  # se enviará en un tick posterior, ya con el estado más reciente
         data = None
         if sig != self._last_image:
-            data = await self._to_thread(make_program, segments, cfg)
-        await self._send(data, sig, segments[0][0], cfg)
+            data = await self._to_thread(make_program, shown_now, cfg)
+        await self._send(data, sig, shown_now[0][0], cfg)
 
     async def _send(self, data: Optional[bytes], payload: Any, name: str, cfg: Dict[str, Any]) -> None:
         """Sube `data` (si no es None) y, si hace falta, el brillo. `payload` es

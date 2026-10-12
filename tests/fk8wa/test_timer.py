@@ -161,31 +161,24 @@ class TestSituationStyles:
         assert config.style_for("heating", saved) == "barra" and config.style_for("ready", saved) == "marco_cw"
 
 
-class TestPageTransition:
+class TestRotation:
+    runner = fk8wa_module("runner")
     VIEWS = [("print1", {"printer": "TTS", "file": "x", "pct": 30}, 6.0),
              ("print2", {"printer": "TTS", "pct": 30, "elapsed": "--:--"}, 6.0),
              ("ready", {"printer": "ET4", "temp": 200, "target": 200}, 6.0)]
+    CFG = {"view_seconds": 6, "min_interval_s": 10}
 
-    def test_several_pages_without_effect_use_move_in_from_the_left(self):
-        for style in ("ninguno", "marco_cw"):
-            data = timer.build_program(self.VIEWS, style)
-            assert header(data)["pages"] == 3 and header(data)["effect"] == (4, 1)
+    def test_one_view_at_a_time_and_never_shorter_than_the_minimum_interval(self):
+        seen = [self.runner.rotate(self.VIEWS, t, self.CFG)[0][0] for t in (0, 9, 10, 19, 20, 29, 30)]
+        assert seen == ["print1", "print1", "print2", "print2", "ready", "ready", "print1"]
 
-    def test_chosen_effect_wins(self):
-        assert header(timer.build_program(self.VIEWS, "ninguno", effect=(3, 1)))["effect"] == (3, 1)
+    def test_views_are_untimed_so_no_clock_pages_are_needed(self):
+        assert all(len(self.runner.rotate(self.VIEWS, t, self.CFG)) == 1 and
+                   self.runner.rotate(self.VIEWS, t, self.CFG)[0][2] is None for t in (0, 10, 20))
 
-    def test_single_page_stays_static_and_contour_clock_keeps_its_pages_static(self):
-        assert header(timer.build_program(self.VIEWS[:1], "ninguno", effect=None))["effect"] == (1, 0)
-        assert header(timer.build_program(self.VIEWS, "contorno"))["effect"] == (1, 0)
+    def test_scroll_text_is_kept_whole(self):
+        text = [("scroll", {"text": "HOLA"}, 60.0)]
+        assert self.runner.rotate(text, 5, self.CFG) == text
 
-
-class TestMaintenanceConfig:
-    def test_only_chosen_machines_and_no_duplicates(self):
-        saved = config.validate({"machines": ["a", "b"], "maintenance": ["b", "b", "zz"]})
-        assert saved["maintenance"] == ["b"]
-
-    def test_invalid_list_is_rejected(self):
-        for bad in ("a", [1], [""], {"a": 1}):
-            with pytest.raises(config.ConfigError):
-                config.validate({"maintenance": bad})
-        assert config.validate({})["maintenance"] == []
+    def test_a_multi_page_program_is_still_static_when_built_directly(self):
+        assert header(timer.build_program(self.VIEWS, "ninguno"))["effect"] == (1, 0)

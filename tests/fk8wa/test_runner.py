@@ -276,15 +276,15 @@ class TestEffectsAndScroll:
         await r.tick()
         assert header(FakeClient.last_program)["effect"] == (1, 0)
 
-    async def test_timed_situation_with_contour_clock_gets_no_effect(self):
+    async def test_timed_situation_takes_the_effect_now_that_views_are_single_pages(self):
         r, clock, state = make(cfg={"effects": {**config.DEFAULTS["effects"], "rest": "cover_1"}})
         await r.tick()
-        assert header(FakeClient.last_program) == {"effect": (1, 0), "pages": 16}
+        assert header(FakeClient.last_program) == {"effect": (3, 1), "pages": 1}     # una vista por vez: NOPAL rota
 
     async def test_timed_situation_without_clock_uses_the_effect(self):
         r, clock, state = make(cfg={"timer_style": "ninguno", "effects": {**config.DEFAULTS["effects"], "rest": "cover_1"}})
         await r.tick()
-        assert header(FakeClient.last_program) == {"effect": (3, 1), "pages": 2}
+        assert header(FakeClient.last_program) == {"effect": (3, 1), "pages": 1}
 
     async def test_changing_the_effect_resends(self):
         r, clock, state = make(machines=self.machines("error"))
@@ -376,15 +376,21 @@ class TestSituationContours:
         await r.tick()
         assert header(FakeClient.last_program)["effect"] == (7, 1)
 
-    async def test_working_and_heating_machines_share_one_program(self):
+    async def test_working_and_heating_machines_take_turns_one_page_at_a_time(self):
         machines = [{"id": "a", "name": "TTS", "type": "laser", "online": True,
                      "status": {"state": "printing", "job": {"filename": "x.nc", "percent": 30}}},
                     *self.hot((120, 200))[:1]]
         machines[1]["id"] = "b"
-        r, clock, state = make(machines=machines, cfg={"machines": ["a", "b"]})
-        await r.tick()
+        r, clock, state = make(machines=machines, cfg={"machines": ["a", "b"], "view_seconds": 10, "min_interval_s": 10})
+        shown = []
+        for _ in range(4):
+            await r.tick()
+            shown.append(r.status["screen"])
+            assert header(FakeClient.last_program)["pages"] == 1     # el panel no avanza páginas solo
+            clock.t += 10
         assert [n for n, _, _ in r.current] == ["print1", "print2", "heating"]
-        assert header(FakeClient.last_program)["pages"] == 15      # 3 vistas x 5 páginas de contorno
+        assert set(shown) == {"print1", "print2", "heating"} and len(uploads()) == 4
+
 
 
 class TestMaintenance:
