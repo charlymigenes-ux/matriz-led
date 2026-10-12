@@ -147,10 +147,11 @@ cada una tiene su configuración y su estado.
 3. Elige las máquinas en orden (P1, P2, P3...), el brillo (1-16) y activa
    el panel.
 
-**Cómo decide qué mostrar** (prioridad): error > pausa > desconectada >
-mensaje especial > terminado (60 s) > trabajando (vista 1 y 2 alternan cada
-15 s; con dos o más activas, "varias", de 3 en 3) > calentando / en
-temperatura / enfriando > todo
+**Cómo decide qué mostrar** (prioridad): error y pausa (una vista por cada
+máquina afectada, tapan todo) > mensaje especial > terminado (60 s) > trabajando
+(vista 1 y 2 alternan cada 15 s; con dos o más activas, "varias", de 3 en 3),
+junto con una vista por cada máquina que calienta / está en temperatura /
+enfría o está **desconectada** (no tapan nada, entran al ciclo) > todo
 normal / todas en reposo (alternan).
 "Apagado" (HASTA PRONTO) se muestra al detener NOPAL. La pantalla de error
 dice "ERROR": el estado de las máquinas no trae el texto del error.

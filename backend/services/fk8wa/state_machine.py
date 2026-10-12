@@ -4,9 +4,10 @@ máquinas elegidas (spec RF11-RF14). Sin E/S: recibe la lista de máquinas
 elegidos en orden (P1, P2, ...), la hora y una memoria que guarda lo que
 depende del tiempo (alternancia de vistas, aviso de terminado).
 
-Prioridad aprobada: error > pausa > desconectada > mensaje especial >
-terminado > impresión > calentando / en temperatura / enfriando >
-inactivas / normal. Una impresora que calentó y no imprime se queda en
+Prioridad aprobada: error > pausa > mensaje especial > terminado >
+impresión > calentando / en temperatura / enfriando / desconectada >
+inactivas / normal. La desconectada ya no tapa nada: entra al ciclo junto
+con lo que trabaja o calienta (una vista por máquina). Una impresora que calentó y no imprime se queda en
 "en temperatura" hasta que se imprima o se apague el calentador; luego
 "enfriando" hasta bajar de COOL_LIMIT_C.
 
@@ -139,12 +140,23 @@ def _thermal_data(e: Dict[str, Any], memory: Memory) -> Screen:
     return phase, {"printer": e["label"], "temp": temp, "target": target}
 
 
-def _thermal_segments(entries: List[Dict[str, Any]], memory: Memory, seconds: float):
+def _cycle_extras(entries: List[Dict[str, Any]], memory: Memory, seconds: Optional[float]):
     """Una vista por máquina que calienta, está en temperatura o se enfría
-    (las que imprimen no cuentan: su estado manda)."""
+    (las que imprimen no cuentan: su estado manda) y una por cada máquina
+    desconectada. Se suman al ciclo en vez de ocultarse."""
     order = {"heating": 0, "ready": 1, "cooling": 2}
     hot = sorted((e for e in entries if e["thermal"]), key=lambda e: order[e["thermal"][0]])
-    return [(*_thermal_data(e, memory), seconds) for e in hot]
+    out = [(*_thermal_data(e, memory), seconds) for e in hot]
+    return out + [("offline", {"printer": e["label"]}, seconds) for e in entries if e["state"] == "offline"]
+
+
+def _alerts(entries: List[Dict[str, Any]], seconds: float):
+    """Todas las máquinas con error y luego todas las pausadas, una vista cada
+    una; con una sola la pantalla queda fija."""
+    hits = [("error", e) for e in entries if e["state"] == "error"] + [("pause", e) for e in entries if e["state"] == "paused"]
+    out = [(screen, {"printer": e["label"], **({"error": "ERROR"} if screen == "error" else {})},
+            seconds if len(hits) > 1 else None) for screen, e in hits]
+    return out
 
 
 def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[str], now: float,
@@ -166,7 +178,7 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
         else:
             memory.peak.pop(e["id"], None)
 
-    for state, screen in (("error", "error"), ("paused", "pause"), ("offline", "offline")):
+    for state, screen in (("error", "error"), ("paused", "pause")):
         hit = next((e for e in entries if e["state"] == state), None)
         if hit:
             data = {"printer": hit["label"]}
@@ -203,6 +215,9 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
         hit = next((e for e in entries if e["thermal"] and e["thermal"][0] == phase), None)
         if hit:
             return _thermal_data(hit, memory)
+    offline = next((e for e in entries if e["state"] == "offline"), None)
+    if offline:
+        return "offline", {"printer": offline["label"]}
     if entries and all(e["state"] in QUIET_STATES for e in entries):
         return "idle", {"total": len(entries), "time": time_text}
     online = sum(1 for e in entries if e["state"] != "offline")
@@ -221,20 +236,29 @@ def playlist(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequenc
              short_names: Optional[Dict[str, str]] = None) -> List[Tuple[str, Dict[str, Any], Optional[float]]]:
     """Serie de vistas que el panel recorre solo, cada una con su duración
     (None = pantalla fija, sin contador). Misma prioridad que select():
+    - error y pausa: una vista por cada máquina afectada (tapan todo lo demás);
     - trabajando: vista 1 y vista 2 (una máquina) o grupos de 3 (varias), y
       además una vista por cada máquina que calienta / está en temperatura /
-      enfría, para que no se oculten;
+      enfría o está desconectada, para que no se oculten;
     - en reposo: "todo normal" y "todas en reposo" se alternan;
     - terminado y mensaje: lo que les falta por mostrarse;
     - un mensaje largo es un texto que corre (pantalla "scroll")."""
     name, data = select(machines, selected_ids, now, memory, clock, message, view_seconds, done_seconds, short_names)
+    if name in ("error", "pause"):
+        entries = _entries(machines or [], selected_ids, short_names)
+        return _alerts(entries, view_seconds) or [(name, data, None)]
     if name in ("print1", "print2", "many"):
-        # lo que trabaja alterna con lo que calienta, está en temperatura o se enfría
-        extra = _thermal_segments(_entries(machines, selected_ids, short_names), memory, view_seconds)
+        # lo que trabaja alterna con lo que calienta, está en temperatura o se enfría, o está desconectado
+        extra = _cycle_extras(_entries(machines, selected_ids, short_names), memory, view_seconds)
         if name == "many":
             return [("many", {"machines": group}, view_seconds) for group in memory.many_groups] + extra
         return [("print1", memory.print_views[0], view_seconds),
                 ("print2", memory.print_views[1], view_seconds)] + extra
+    if name in ("heating", "ready", "cooling", "offline"):
+        cycle = _cycle_extras(_entries(machines or [], selected_ids, short_names), memory, view_seconds)
+        if len(cycle) > 1:
+            return cycle
+        return [(name, data, None)]
     if name == "done" and memory.done:
         return [("done", data, max(1.0, memory.done["until"] - now))]
     if name == "special":

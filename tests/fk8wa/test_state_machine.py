@@ -40,8 +40,10 @@ class TestPriority:
     def test_pause_over_offline_and_message(self):
         assert pick([m("a", online=False), m("b", "paused"), m("c")], message="x") == ("pause", {"printer": "B"})
 
-    def test_offline_over_message(self):
-        assert pick([m("a"), m("b"), m("c", online=False)], message="x") == ("offline", {"printer": "C"})
+    def test_message_over_offline(self):
+        # la desconectada ya no tapa nada: el mensaje manda y ella entra al ciclo cuando no hay mensaje
+        assert pick([m("a"), m("b"), m("c", online=False)], message="x") == ("special", {"msg": "x"})
+        assert pick([m("a"), m("b"), m("c", online=False)]) == ("offline", {"printer": "C"})
 
     def test_message_over_printing(self):
         assert pick([m("a", "printing", filename="x.gcode")], message="TODO BIEN") == ("special", {"msg": "TODO BIEN"})
@@ -247,6 +249,42 @@ class TestWorkingMixedWithHeat:
     def test_nothing_extra_when_nobody_is_hot(self):
         segs = self.play([mach("a", "TTS", "printing", kind="laser", filename="x.nc"), mach("b", "ET4")], ["a", "b"])
         assert [n for n, _, _ in segs] == ["print1", "print2"]
+
+
+class TestAlertsAndOffline:
+    def play(self, ms, ids, mem=None):
+        return sm.playlist(ms, ids, 100.0, mem or sm.Memory(started_at=0.0), CLOCK, None, 15.0, 60.0)
+
+    def test_every_offline_machine_gets_its_view_and_work_is_not_hidden(self):
+        ms = [mach("a", "Klipper ET4"), mach("b", "TTS 55 PRO", "printing", kind="laser", filename="x.nc"),
+              mach("c", "CNC 3018", kind="cnc")]
+        ms[0]["online"] = False
+        ms[2]["online"] = False
+        segs = self.play(ms, ["a", "b", "c"])
+        assert [(n, d.get("printer")) for n, d, _ in segs] == [
+            ("print1", "TTS"), ("print2", "TTS"), ("offline", "ET4"), ("offline", "CNC")]
+
+    def test_offline_alone_alternates_between_machines_or_stays_fixed(self):
+        ms = [mach("a", "ET4"), mach("b", "CNC 3018", kind="cnc")]
+        ms[0]["online"] = False
+        assert self.play(ms, ["a", "b"]) == [("offline", {"printer": "ET4"}, None)]
+        ms[1]["online"] = False
+        assert [(n, d["printer"], s) for n, d, s in self.play(ms, ["a", "b"])] == [("offline", "ET4", 15.0), ("offline", "CNC", 15.0)]
+
+    def test_offline_joins_heat(self):
+        ms = [mach("a", "ET4", hotend=(200, 200)), mach("b", "CNC", kind="cnc")]
+        ms[1]["online"] = False
+        assert [n for n, _, _ in self.play(ms, ["a", "b"])] == ["ready", "offline"]
+
+    def test_all_errors_then_all_pauses_cover_everything(self):
+        ms = [mach("a", "ET4", "error"), mach("b", "TTS", "paused", kind="laser"), mach("c", "CNC", "error", kind="cnc"),
+              mach("d", "ET5", "printing", filename="x.gc")]
+        segs = self.play(ms, list("abcd"))
+        assert [(n, d["printer"]) for n, d, _ in segs] == [("error", "ET4"), ("error", "CNC"), ("pause", "TTS")]
+        assert all(sec == 15.0 for _, _, sec in segs)
+
+    def test_a_single_alert_stays_fixed(self):
+        assert self.play([mach("a", "ET4", "error")], ["a"]) == [("error", {"printer": "ET4", "error": "ERROR"}, None)]
 
 
 class TestPlaylistRestAndMessages:
