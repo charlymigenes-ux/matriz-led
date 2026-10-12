@@ -15,6 +15,7 @@
     min-height: 0;
     overflow: auto;
     box-sizing: border-box;
+    padding-top: 6px;
 }
 
 .mled-view {
@@ -160,6 +161,16 @@
     flex-wrap: wrap;
     background: transparent;
     border-bottom: 1px solid var(--border);
+    /* Compacto: el core pinta todo <header> con 24px arriba y abajo y el
+       subtítulo traía 14px de margen; aquí quedan unos 10px arriba y
+       13px abajo (el gap de la sección se compensa con el margen negativo). */
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-bottom: -8px;
+}
+
+.mled-header .mled-sub {
+    margin: 0;
 }
 
 .mled-header h1,
@@ -1230,6 +1241,7 @@
 @media (max-width: 760px) {
     .mled-section {
         padding: 14px;
+        padding-top: 6px;
     }
 
     .mled-top-fields {
@@ -1239,6 +1251,7 @@
     .mled-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 8px;
     }
 
     .mled-grid {
