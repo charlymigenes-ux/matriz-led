@@ -24,6 +24,7 @@ class FakeClient:
     """Panel simulado: registra subidas y brillo; puede fallar a pedido."""
 
     log = []
+    last_program = None
     fail = None          # excepción a lanzar en la próxima operación (o None)
     size = (96, 16)
     active = 0
@@ -54,6 +55,7 @@ class FakeClient:
                 time.sleep(FakeClient.delay)
             self._maybe_fail()
             FakeClient.log.append(("upload", self.ip, len(data)))
+            FakeClient.last_program = data
             return {"width": 96, "height": 16, "port": 5858, "ip": self.ip}
         finally:
             self._exit()
@@ -107,7 +109,7 @@ class TestSending:
         r, clock, _ = make()
         await r.tick()
         assert FakeClient.log == [("upload", "192.168.0.90", FakeClient.log[0][2]), ("brightness", 9)]
-        assert r.status["state"] == "ok" and r.status["screen"] == "idle" and r.status["sends"] == 1
+        assert r.status["state"] == "ok" and r.status["screen"] == "normal" and r.status["sends"] == 1
 
     async def test_unchanged_image_is_not_resent(self):
         r, clock, _ = make()
@@ -251,3 +253,88 @@ class TestConcurrencyAndShutdown:
         r._sleep = no_sleep
         await r._loop()
         assert len(calls) == 3
+
+
+def header(data):
+    import struct
+    return {"effect": (data[332], data[333]), "pages": struct.unpack_from("<H", data, 330)[0]}
+
+
+class TestEffectsAndScroll:
+    def machines(self, state="idle"):
+        return [{"id": "a", "name": "Klipper ET4", "type": "printer", "online": True,
+                 "status": {"state": state, "job": None}}]
+
+    async def test_error_screen_uses_its_configured_effect(self):
+        r, clock, state = make(cfg={"effects": {**config.DEFAULTS["effects"], "error": "flash_1"}},
+                               machines=self.machines("error"))
+        await r.tick()
+        assert header(FakeClient.last_program)["effect"] == (7, 1)
+
+    async def test_no_effect_configured_keeps_the_verified_static_program(self):
+        r, clock, state = make(machines=self.machines("error"))
+        await r.tick()
+        assert header(FakeClient.last_program)["effect"] == (1, 0)
+
+    async def test_timed_situation_with_contour_clock_gets_no_effect(self):
+        r, clock, state = make(cfg={"effects": {**config.DEFAULTS["effects"], "rest": "cover_1"}})
+        await r.tick()
+        assert header(FakeClient.last_program) == {"effect": (1, 0), "pages": 16}
+
+    async def test_timed_situation_without_clock_uses_the_effect(self):
+        r, clock, state = make(cfg={"timer_style": "ninguno", "effects": {**config.DEFAULTS["effects"], "rest": "cover_1"}})
+        await r.tick()
+        assert header(FakeClient.last_program) == {"effect": (3, 1), "pages": 2}
+
+    async def test_changing_the_effect_resends(self):
+        r, clock, state = make(machines=self.machines("error"))
+        await r.tick()
+        state["cfg"] = {**state["cfg"], "effects": {**config.DEFAULTS["effects"], "error": "movein_3"}}
+        clock.t += 30
+        await r.tick()
+        assert len(uploads()) == 2 and header(FakeClient.last_program)["effect"] == (4, 3)
+
+    async def test_long_message_scrolls_in_the_chosen_direction(self):
+        text = "MATERIAL BAJO EN LA ENDER CAMBIA EL CARRETE"
+        r, clock, state = make(cfg={"scroll_dir": "r"}, message={"text": text, "expires_at": 10 ** 12})
+        await r.tick()
+        h = header(FakeClient.last_program)
+        assert h["effect"] == (2, 2) and h["pages"] > 2
+
+    async def test_short_message_is_a_screen_with_the_special_effect(self):
+        r, clock, state = make(cfg={"timer_style": "ninguno", "effects": {**config.DEFAULTS["effects"], "special": "movein_4"}},
+                               message={"text": "TODO BIEN", "expires_at": 10 ** 12})
+        await r.tick()
+        assert header(FakeClient.last_program)["effect"] == (4, 4) and r.status["screen"] == "special"
+
+
+class TestDemoEffect:
+    async def test_demo_sends_pair_and_marks_tested(self, tmp_path, monkeypatch):
+        effects = fk8wa_module("effects")
+        monkeypatch.setattr(effects, "TESTED_PATH", tmp_path / "tested.json")
+        r, clock, state = make()
+        await r.demo_effect("movein_4")
+        assert header(FakeClient.last_program) == {"effect": (4, 4), "pages": 2}
+        assert "movein_4" in effects.load_tested()
+
+    async def test_demo_holds_the_panel_then_restores(self, tmp_path, monkeypatch):
+        effects = fk8wa_module("effects")
+        monkeypatch.setattr(effects, "TESTED_PATH", tmp_path / "tested.json")
+        r, clock, state = make()
+        await r.tick()
+        await r.demo_effect("cover_5")
+        sent = len(uploads())
+        state["message"] = {"text": "HOLA", "expires_at": 10 ** 12}
+        clock.t += 5
+        await r.tick()
+        assert len(uploads()) == sent                      # no se pisa durante la prueba
+        clock.t += 20
+        await r.tick()
+        assert len(uploads()) == sent + 1 and r.status["screen"] == "special"   # restaura
+
+    async def test_demo_rejects_unknown_effect_and_missing_ip(self):
+        r, clock, state = make(cfg={"ip": ""})
+        with pytest.raises(ValueError):
+            await r.demo_effect("nope")
+        with pytest.raises(protocol.Fk8waError):
+            await r.demo_effect("cover_5")

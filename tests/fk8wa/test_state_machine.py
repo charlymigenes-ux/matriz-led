@@ -32,16 +32,16 @@ class TestPriority:
 
     def test_error_wins_over_everything(self):
         ms = [m("a", "paused"), m("b", "error"), m("c", online=False)]
-        assert pick(ms, message="hola") == ("error", {"printer": "P2", "error": "ERROR"})
+        assert pick(ms, message="hola") == ("error", {"printer": "B", "error": "ERROR"})
 
     def test_first_error_by_order(self):
-        assert pick([m("a", "error"), m("b", "error"), m("c")])[1]["printer"] == "P1"
+        assert pick([m("a", "error"), m("b", "error"), m("c")])[1]["printer"] == "A"
 
     def test_pause_over_offline_and_message(self):
-        assert pick([m("a", online=False), m("b", "paused"), m("c")], message="x") == ("pause", {"printer": "P2"})
+        assert pick([m("a", online=False), m("b", "paused"), m("c")], message="x") == ("pause", {"printer": "B"})
 
     def test_offline_over_message(self):
-        assert pick([m("a"), m("b"), m("c", online=False)], message="x") == ("offline", {"printer": "P3"})
+        assert pick([m("a"), m("b"), m("c", online=False)], message="x") == ("offline", {"printer": "C"})
 
     def test_message_over_printing(self):
         assert pick([m("a", "printing", filename="x.gcode")], message="TODO BIEN") == ("special", {"msg": "TODO BIEN"})
@@ -56,7 +56,7 @@ class TestPriority:
         assert pick([m("a")], ids=[]) == ("normal", {"online": 0, "time": "17:42"})
 
     def test_missing_machine_is_ignored(self):
-        assert pick([m("a", "printing", filename="x.gc", percent=5)], ids=["zz", "a"])[1]["printer"] == "P2"
+        assert pick([m("a", "printing", filename="x.gc", percent=5)], ids=["zz", "a"])[1]["printer"] == "A"
         assert sm.missing_ids([m("a")], ["zz", "a"]) == ["zz"]
 
 
@@ -67,26 +67,26 @@ class TestPrinting:
         seen = [sm.select(ms, IDS, t, mem, CLOCK)[0] for t in (100, 110, 115, 129, 130, 145)]
         assert seen == ["print1", "print1", "print2", "print2", "print1", "print2"]
         assert sm.select(ms, IDS, 116, mem, CLOCK) == (
-            "print2", {"printer": "P1", "file": "CUBO.gcode", "pct": 72, "elapsed": "01:24"})
+            "print2", {"printer": "A", "file": "CUBO.gcode", "pct": 72, "kind": "printer", "elapsed": "01:24"})
 
     def test_missing_progress_data(self):
         mem = sm.Memory(started_at=0.0)
         ms = [m("a", "printing", filename="x.gc")]
         sm.select(ms, ["a"], 0, mem, CLOCK)
-        assert sm.select(ms, ["a"], 16, mem, CLOCK)[1] == {"printer": "P1", "file": "x.gc", "pct": 0, "elapsed": "--:--"}
+        assert sm.select(ms, ["a"], 16, mem, CLOCK)[1] == {"printer": "A", "file": "x.gc", "pct": 0, "kind": "printer", "elapsed": "--:--"}
 
     def test_many_shows_only_active_up_to_3(self):
         ms = [m(i, "printing", filename="f.gc") for i in "abcd"] + [m("e")]
         name, data = pick(ms, ids=list("eabcd"))
         assert name == "many"
-        assert [x["label"] for x in data["machines"]] == ["P2", "P3", "P4"]
+        assert [x["label"] for x in data["machines"]] == ["A", "B", "C"]
 
 
 class TestDone:
     def test_done_shows_60s_then_back(self):
         mem = sm.Memory(started_at=0.0)
         sm.select([m("a", "printing", filename="CUBO.gcode", percent=99)], ["a"], 0, mem, CLOCK)
-        assert sm.select([m("a", "complete")], ["a"], 10, mem, CLOCK) == ("done", {"printer": "P1", "file": "CUBO.gcode"})
+        assert sm.select([m("a", "complete")], ["a"], 10, mem, CLOCK) == ("done", {"printer": "A", "file": "CUBO.gcode"})
         assert sm.select([m("a", "complete")], ["a"], 69, mem, CLOCK)[0] == "done"
         assert sm.select([m("a", "complete")], ["a"], 71, mem, CLOCK)[0] == "idle"
 
@@ -109,3 +109,90 @@ class TestDone:
 @pytest.mark.parametrize("seconds, text", [(0, "00:00"), (5040, "01:24"), (45000, "12:30"), (None, None), (-3, None)])
 def test_elapsed_format(seconds, text):
     assert sm._elapsed(seconds) == text
+
+
+# ── Nombres reales, láser/CNC, calentando, reposo alternando y mensajes largos ──
+
+def mach(mid, name, state="idle", kind="printer", hotend=None, bed=None, **job):
+    status = {"state": state, "job": ({"filename": job.get("filename"), "percent": job.get("percent"),
+                                       "elapsed_s": job.get("elapsed")} if job else None)}
+    if hotend:
+        status["hotend"] = {"current": hotend[0], "target": hotend[1]}
+    if bed:
+        status["bed"] = {"current": bed[0], "target": bed[1]}
+    return {"id": mid, "name": name, "type": kind, "online": True, "status": status}
+
+
+class TestRealNames:
+    def test_label_is_the_short_name_of_the_real_name(self):
+        ms = [mach("klipper:7125", "Klipper ET4", "error"), mach("laser:x", "TTS 55 PRO")]
+        assert pick(ms, ids=["klipper:7125", "laser:x"]) == ("error", {"printer": "ET4", "error": "ERROR"})
+
+    def test_configured_short_name_wins(self):
+        ms = [mach("klipper:7125", "Klipper ET4", "paused")]
+        memory = sm.Memory(started_at=0.0)
+        got = sm.select(ms, ["klipper:7125"], 100.0, memory, CLOCK, short_names={"klipper:7125": "BIGO"})
+        assert got == ("pause", {"printer": "BIGO"})
+
+    def test_laser_print2_has_kind_and_no_elapsed(self):
+        mem = sm.Memory(started_at=0.0)
+        ms = [mach("laser:x", "TTS 55 PRO", "printing", kind="laser", filename="cristo.gc", percent=38)]
+        sm.select(ms, ["laser:x"], 0, mem, CLOCK)
+        name, data = sm.select(ms, ["laser:x"], 16, mem, CLOCK)
+        assert name == "print2" and data["kind"] == "laser" and data["elapsed"] == "--:--"
+
+    def test_mixed_machines_show_names_in_many(self):
+        ms = [mach("a", "Klipper ET4", "printing", filename="x.gc"),
+              mach("b", "TTS 55 PRO", "printing", kind="laser", filename="y.gc"),
+              mach("c", "CNC 3018", "printing", kind="cnc", filename="z.nc")]
+        name, data = pick(ms)
+        assert name == "many" and [x["label"] for x in data["machines"]] == ["ET4", "TTS", "CNC"]
+
+
+class TestHeating:
+    def test_heating_printer_shows_temperatures(self):
+        ms = [mach("a", "Klipper ET4", hotend=(165.4, 200)), mach("b", "Otra")]
+        assert pick(ms) == ("heating", {"printer": "ET4", "temp": 165, "target": 200})
+
+    def test_bed_counts_when_nozzle_has_no_target(self):
+        ms = [mach("a", "ET4", bed=(40, 60))]
+        assert pick(ms, ids=["a"]) == ("heating", {"printer": "ET4", "temp": 40, "target": 60})
+
+    @pytest.mark.parametrize("hotend", [(198, 200), (200, 200), (25, 0), (None, 200)])
+    def test_not_heating(self, hotend):
+        assert pick([mach("a", "ET4", hotend=hotend)], ids=["a"])[0] != "heating"
+
+    def test_laser_never_heats(self):
+        assert pick([mach("a", "TTS", kind="laser", hotend=(20, 200))], ids=["a"])[0] != "heating"
+
+    def test_printing_wins_over_heating_and_error_wins_over_both(self):
+        ms = [mach("a", "ET4", hotend=(100, 200)), mach("b", "ET5", "printing", filename="x.gc")]
+        assert pick(ms, ids=["a", "b"])[0] in ("print1", "print2")
+        ms.append(mach("c", "ET6", "error"))
+        assert pick(ms, ids=["a", "b", "c"])[0] == "error"
+
+
+class TestPlaylistRestAndMessages:
+    def play(self, ms, ids, message=None, seconds=None):
+        return sm.playlist(ms, ids, 100.0, sm.Memory(started_at=0.0), CLOCK, message, 15.0, 60.0, seconds)
+
+    def test_rest_alternates_normal_and_idle(self):
+        segs = self.play([mach("a", "ET4"), mach("b", "TTS")], ["a", "b"])
+        assert [(n, d["online" if n == "normal" else "total"], s) for n, d, s in segs] == [("normal", 2, 15.0), ("idle", 2, 15.0)]
+
+    def test_no_machines_is_a_fixed_normal(self):
+        assert self.play([mach("a", "ET4")], []) == [("normal", {"online": 0, "time": "17:42"}, None)]
+
+    def test_heating_is_fixed(self):
+        segs = self.play([mach("a", "ET4", hotend=(100, 200))], ["a"])
+        assert segs == [("heating", {"printer": "ET4", "temp": 100, "target": 200}, None)]
+
+    def test_short_message_is_a_screen_and_long_one_scrolls(self):
+        short = self.play([mach("a", "ET4")], ["a"], "TODO BIEN", 120.0)
+        assert short == [("special", {"msg": "TODO BIEN"}, 120.0)]
+        long = self.play([mach("a", "ET4")], ["a"], "MATERIAL BAJO EN LA ENDER CAMBIA EL CARRETE", 120.0)
+        assert long == [("scroll", {"text": "MATERIAL BAJO EN LA ENDER CAMBIA EL CARRETE"}, 120.0)]
+
+    def test_error_still_beats_a_long_message(self):
+        segs = self.play([mach("a", "ET4", "error")], ["a"], "MATERIAL BAJO EN LA ENDER CAMBIA EL CARRETE")
+        assert segs[0][0] == "error"

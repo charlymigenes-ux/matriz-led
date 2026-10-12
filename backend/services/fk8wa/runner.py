@@ -20,11 +20,11 @@ import asyncio
 import logging
 import time
 from datetime import datetime
-from typing import Any, Awaitable, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from . import config as config_mod
 from . import messages as messages_mod
-from . import state_machine, timer
+from . import effects, scrolltext, state_machine, timer
 from .protocol import Fk8waClient, Fk8waError, SizeMismatch
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,30 @@ logger = logging.getLogger(__name__)
 TICK_S = 5.0
 RETRY_STEPS_S = (15, 30, 60, 120, 300)
 SHUTDOWN_WAIT_S = 5.0
+DEMO_SECONDS = 12.0      # cuánto se queda un efecto de prueba antes de restaurar el panel
+
+
+def effect_for(segments, cfg: Dict[str, Any]) -> Optional[Tuple[str, int, int]]:
+    """(id, tipo, subtipo) del efecto de entrada que corresponde a estas vistas,
+    o None. Los programas con reloj de contorno o barra y vistas con tiempo no
+    llevan efecto: son varias imágenes y se repetiría en cada una."""
+    situation = effects.SITUATION_OF.get(segments[0][0])
+    effect_id = (cfg.get("effects") or {}).get(situation) if situation else None
+    pair = effects.effect(effect_id)
+    if pair is None:
+        return None
+    if cfg["timer_style"] in timer.PROGRESSIVE and any(seconds for _, _, seconds in segments):
+        return None
+    return effect_id, pair[0], pair[1]
+
+
+def make_program(segments, cfg: Dict[str, Any]) -> bytes:
+    """Programa del panel para estas vistas con la configuración vigente."""
+    if segments[0][0] == "scroll":
+        return scrolltext.build_program(segments[0][1]["text"], cfg["scroll_dir"], cfg["scroll_speed"])
+    chosen = effect_for(segments, cfg)
+    return timer.build_program(segments, cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"],
+                               (chosen[1], chosen[2]) if chosen else None)
 
 
 class Runner:
@@ -59,6 +83,7 @@ class Runner:
         self._reset_panel(None)
         self.memory = state_machine.Memory(started_at=self._clock())
         self._machines: Optional[List[Dict[str, Any]]] = None
+        self._demo_until: Optional[float] = None
         self.current: Optional[list] = None       # serie de vistas de la última selección
         self.status: Dict[str, Any] = {
             "state": "disabled", "screen": None, "last_sent_at": None, "last_error": None,
@@ -117,10 +142,17 @@ class Runner:
             remaining = max(1.0, float(message.get("expires_at", 0)) - self._wall())
         segments = state_machine.playlist(
             self._machines, cfg["machines"], now, self.memory, self._now_local(),
-            message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"], remaining)
+            message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"], remaining,
+            cfg["short_names"])
         self.current = segments
         self.status["missing_machines"] = state_machine.missing_ids(self._machines or [], cfg["machines"])
-        sig = (cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"], state_machine.signature(segments))
+        if self._demo_until is not None:
+            if now < self._demo_until:
+                return          # un efecto de prueba está en el panel: no se pisa todavía
+            self._demo_until = None
+            self._last_image, self._last_send = None, None     # restaura lo que corresponde
+        sig = (cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"], repr(sorted(cfg["effects"].items())),
+               cfg["scroll_dir"], cfg["scroll_speed"], state_machine.signature(segments))
 
         if sig == self._last_image and not self._brightness_pending:
             return
@@ -128,8 +160,7 @@ class Runner:
             return  # se enviará en un tick posterior, ya con el estado más reciente
         data = None
         if sig != self._last_image:
-            data = await self._to_thread(timer.build_program, segments, cfg["timer_style"],
-                                         cfg["border_pattern"], cfg["border_speed"])
+            data = await self._to_thread(make_program, segments, cfg)
         await self._send(data, sig, segments[0][0], cfg)
 
     async def _send(self, data: Optional[bytes], payload: Any, name: str, cfg: Dict[str, Any]) -> None:
@@ -181,6 +212,25 @@ class Runner:
             self._size_blocked = True
             self._set_error("size_mismatch", str(SizeMismatch(info["width"], info["height"])))
         return info
+
+    async def demo_effect(self, effect_id: str) -> None:
+        """"Probar en mi panel": sube un ejemplo de dos pantallas con el efecto
+        elegido y lo deja unos segundos; después el ciclo restaura el panel.
+        Si sale bien, el efecto queda anotado como probado en esta instalación."""
+        pair = effects.effect(effect_id)
+        if pair is None:
+            raise ValueError("Efecto desconocido")
+        cfg = self._load_config()
+        if not cfg["ip"]:
+            raise Fk8waError("Falta la IP del panel")
+        sample = [("normal", {"online": 3, "time": "17:42"}, 3.0),
+                  ("print1", {"printer": "ET4", "file": "soporte_motor", "pct": 72}, 3.0)]
+        data = timer.build_program(sample, "ninguno", effect=pair)
+        client = self._client_factory(cfg["ip"])
+        async with self._lock:
+            await self._to_thread(client.upload, data)
+        self._demo_until = self._clock() + DEMO_SECONDS
+        effects.mark_tested(effect_id)
 
     def brightness_changed(self) -> None:
         """La configuración cambió el brillo: se envía en el próximo tick."""

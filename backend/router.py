@@ -15,6 +15,7 @@ from backend.auth_deps import require_auth, require_role
 
 from .services import screen_service
 from .services.fk8wa import config as fk8wa_config
+from .services.fk8wa import effects as fk8wa_effects
 from .services.fk8wa import messages as fk8wa_messages
 from .services.fk8wa import screens as fk8wa_screens
 from .services.fk8wa import service as fk8wa
@@ -304,6 +305,40 @@ async def fk8wa_frames_endpoint(style: str = "", screen: str = "", user: dict = 
         raise HTTPException(status_code=400, detail="Pantalla desconocida")
     try:
         return await asyncio.to_thread(fk8wa.frames, style or None, screen or None)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/effects")
+async def fk8wa_effects_endpoint(user: dict = Depends(require_auth)):
+    """Catálogo de efectos de entrada (con cuáles están probados) y las situaciones."""
+    return fk8wa.effects_catalog()
+
+
+@router.post("/api/plugins/matriz-led/fk8wa/effects/test")
+async def fk8wa_effect_test_endpoint(payload: Dict[str, Any], user: dict = Depends(require_role("admin"))):
+    """"Probar en mi panel": manda un ejemplo con el efecto unos segundos y luego restaura."""
+    try:
+        await fk8wa.test_effect(str(payload.get("effect") or ""))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Fk8waError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {"ok": True}
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/machines")
+async def fk8wa_machines_endpoint(user: dict = Depends(require_auth)):
+    """Máquinas conocidas con su nombre corto para el panel."""
+    return {"machines": await fk8wa.machine_list()}
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/scroll-preview")
+async def fk8wa_scroll_preview_endpoint(text: str = "", dir: str = "l1", level: int = 5,
+                                        user: dict = Depends(require_auth)):
+    """Cómo correría un texto, para la prueba de la pestaña (no toca el panel)."""
+    try:
+        return await asyncio.to_thread(fk8wa.scroll_payload, text[:200] or " ", dir, max(1, min(10, level)))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

@@ -145,3 +145,63 @@ class TestFrames:
     def test_invalid(self, client, as_admin):
         assert client.get(BASE + "/frames", params={"style": "x"}).status_code == 400
         assert client.get(BASE + "/frames", params={"screen": "x"}).status_code == 400
+
+
+class TestEffectsAndMachinesApi:
+    def test_catalog_for_any_session(self, client, as_operator):
+        data = client.get(BASE + "/effects").json()
+        assert len(data["effects"]) == 36 and len(data["situations"]) == 8
+        assert next(e for e in data["effects"] if e["id"] == "flash_1")["tested"] is True
+        assert set(data["scroll_dirs"]) == {"l1", "r", "u", "d", "l"}
+
+    def test_scroll_preview(self, client, as_operator):
+        data = client.get(BASE + "/scroll-preview", params={"text": "MATERIAL BAJO EN LA ENDER, CAMBIA EL CARRETE", "dir": "u"}).json()
+        assert data["static"] is False and data["strip"]["width"] > 96 and len(data["pages"]) >= 1
+        assert client.get(BASE + "/scroll-preview", params={"text": "OK"}).json()["static"] is True
+        assert client.get(BASE + "/scroll-preview", params={"dir": "z"}).status_code == 400
+
+    def test_machines_with_short_names(self, client, as_operator, monkeypatch):
+        async def fake():
+            return [{"id": "klipper:7125", "name": "Klipper ET4", "type": "printer", "online": True},
+                    {"id": "laser:x", "name": "TTS 55 PRO", "type": "laser", "online": False}]
+
+        monkeypatch.setattr(screen_service, "list_machines", fake)
+        config.save({"short_names": {"laser:x": "TTSX"}})
+        machines = client.get(BASE + "/machines").json()["machines"]
+        assert [(m["id"], m["kind"], m["short"], m["short_auto"]) for m in machines] == [
+            ("klipper:7125", "printer", "ET4", "ET4"), ("laser:x", "laser", "TTSX", "TTS")]
+
+    def test_effect_test_is_admin_only(self, client, as_operator):
+        assert client.post(BASE + "/effects/test", json={"effect": "cover_5"}).status_code == 403
+
+    def test_effect_test_unknown_and_unreachable(self, client, as_admin):
+        assert client.post(BASE + "/effects/test", json={"effect": "nope"}).status_code == 400
+        client.put(BASE + "/config", json={"ip": "192.168.0.90"})
+        class Fail:
+            def __init__(self, ip): pass
+            def upload(self, data): raise protocol.PanelUnreachable("sin respuesta")
+        service._runner._client_factory = Fail
+        response = client.post(BASE + "/effects/test", json={"effect": "cover_5"})
+        assert response.status_code == 502 and "sin respuesta" in response.json()["detail"]
+
+    def test_config_accepts_new_keys_and_rejects_bad_ones(self, client, as_admin):
+        ok = client.put(BASE + "/config", json={"scroll_dir": "d", "effects": {"error": "flash_1"}, "short_names": {"a": "ET4"}})
+        assert ok.status_code == 200 and ok.json()["effects"]["error"] == "flash_1"
+        assert client.put(BASE + "/config", json={"effects": {"error": "arcoiris"}}).status_code == 400
+        assert client.put(BASE + "/config", json={"short_names": {"a": "DEMASIADO"}}).status_code == 400
+
+    def test_frames_report_the_effect_of_the_current_situation(self, client, as_operator):
+        service._runner.current = [("error", {"printer": "ET4", "error": "ERROR"}, None)]
+        config.save({"effects": {"error": "flash_1"}})
+        data = client.get(BASE + "/frames").json()
+        assert data["effect"] == {"id": "flash_1", "type": 7, "subtype": 1}
+
+    def test_frames_of_a_long_message_describe_the_scroll(self, client, as_operator):
+        service._runner.current = [("scroll", {"text": "MATERIAL BAJO EN LA ENDER, CAMBIA EL CARRETE"}, 60.0)]
+        data = client.get(BASE + "/frames").json()
+        assert data["pages"] == [] and data["scroll"]["dir"] == "l1" and data["scroll"]["strip"]["width"] > 96
+        assert client.get(BASE + "/status").json()["priority"] == "special"
+
+    def test_gallery_has_13_screens(self, client, as_operator):
+        for name in ["boot", "normal", "idle", "print1", "print2", "many", "heating", "pause", "error", "offline", "done", "special", "off"]:
+            assert len(client.get(BASE + "/frames", params={"screen": name}).json()["pages"]) == 1

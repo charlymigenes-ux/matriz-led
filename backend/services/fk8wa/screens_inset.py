@@ -11,9 +11,9 @@ from typing import Any, Dict, Optional
 from PIL import Image
 
 from . import screens
-from .pixelfont import BIG, SMALL, TINY, draw_text, text_width
-from .screens import (DEFAULTS, STATE_ICON, _bar, _clip, _fit, _icon, _message, _name, _right, _sep,
-                      _wrapped, display_file)
+from .pixelfont import BIG, SMALL, TINY, draw_text, fits, normalize, text_width
+from .screens import (DEFAULTS, KIND_TAG, NAME_ZONE_MIN, STATE_ICON, THERMO, _bar, _clip, _elapsed_or_kind, _fit,
+                      _icon, _message, _name, _right, _sep, _wrapped, display_file)
 
 IW, IH = 92, 12
 
@@ -48,6 +48,15 @@ def _base(logo: bool = True) -> Image.Image:
 
 def _sep(img, x, dotted=False):  # noqa: F811 -- versión de 12 filas
     screens._sep(img, x, dotted, y0=1, y1=10)
+
+
+def _machine_name(img, text, x):
+    """Como screens._machine_name, para la versión de 12 filas. Devuelve la x del separador."""
+    text = _clip(text, BIG if fits(text, BIG) else SMALL, 4 * 7 - 1)
+    font = BIG if fits(text, BIG) else (SMALL if fits(text, SMALL) else TINY)
+    zone = max(NAME_ZONE_MIN, text_width(text, font))
+    draw_text(img, x, (IH - font.height + 1) // 2, text, font)
+    return x + zone + 2
 
 
 def _dot(img, x, y):
@@ -89,66 +98,96 @@ def s_normal(data):
 
 def s_print1(data):
     img = _base()
-    _name(img, data["printer"], x=12, maxw=16)
-    _sep(img, 30)
-    text, font = _fit([data["file"]], 59)
-    draw_text(img, 33, 0 if font is SMALL else 1, text, font)
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep)
+    ix = sep + 3
+    text, font = _fit([data["file"]], 92 - ix)
+    draw_text(img, ix, 0 if font is SMALL else 1, text, font)
     pct = f"{int(data['pct'])}%"
-    _bar(img, 33, 8, 91 - text_width(pct, TINY) - 2 - 33, data["pct"])
+    _bar(img, ix, 8, 91 - text_width(pct, TINY) - 2 - ix, data["pct"])
     _right(img, 91, 7, pct, TINY)
     return img
 
 
 def s_print2(data):
     img = _base()
-    _name(img, data["printer"], x=12, maxw=16)
-    _sep(img, 30)
-    elapsed = _clip(str(data["elapsed"]), TINY, 30)
-    room = 91 - text_width(elapsed, TINY) - 33 - 2
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep)
+    px = sep + 3
+    elapsed = _clip(_elapsed_or_kind(data), TINY, 30)
+    room = 91 - text_width(elapsed, TINY) - px - 2
     ptext, pfont = _fit([f"{int(data['pct'])}%"], room, (BIG, SMALL, TINY))
-    draw_text(img, 33, (IH - pfont.height + 1) // 2, ptext, pfont)
+    draw_text(img, px, (IH - pfont.height + 1) // 2, ptext, pfont)
     _right(img, 91, 7, elapsed, TINY)
     return img
+
+
+def _label_with_icon(img, x, label, state, slot):
+    icon = STATE_ICON.get(state, "online")
+    label = normalize(label)
+    for font, small in ((BIG, False), (BIG, True), (SMALL, True), (TINY, True)):
+        icon_w = 5 if small else 8
+        if fits(label, font) and text_width(label, font) + 2 + icon_w <= slot:
+            end = draw_text(img, x, (IH - font.height + 1) // 2, label, font)
+            _icon(img, icon, end + 2, 3 if small else 2, small)
+            return
+    end = draw_text(img, x, (IH - TINY.height + 1) // 2, _clip(label, TINY, slot - 7), TINY)
+    _icon(img, icon, end + 2, 3, True)
 
 
 def s_many(data):
     img = _base()
     x = 12
     for machine in list(data["machines"])[:3]:
-        label, font = _fit([machine.get("label", "?")], 15, (BIG, SMALL, TINY))
-        end = draw_text(img, x, (IH - font.height + 1) // 2, label, font)
-        _icon(img, STATE_ICON.get(machine.get("state"), "online"), end + 2, 2)
+        _label_with_icon(img, x, machine.get("label", "?"), machine.get("state"), 27)
         x += 27
     return img
 
 
 def s_pause(data):
     img = _base()
-    _name(img, data["printer"], x=12, maxw=16)
-    _sep(img, 30, dotted=True)
-    _icon(img, "pause", 33, 2)
-    text, font = _fit(["PAUSA"], 48, (BIG, SMALL, TINY))
-    draw_text(img, 43, (IH - font.height + 1) // 2, text, font)
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep, dotted=True)
+    _icon(img, "pause", sep + 3, 2)
+    text, font = _fit(["PAUSA"], 92 - (sep + 13), (BIG, SMALL, TINY))
+    draw_text(img, sep + 13, (IH - font.height + 1) // 2, text, font)
     return img
 
 
 def s_error(data):
     img = _base()
-    _name(img, data["printer"], x=12, maxw=16)
-    _sep(img, 30, dotted=True)
-    _icon(img, "warn", 33, 2)
-    if not _message(img, 43, data["error"], 49):
-        _wrapped(img, 43, data["error"], 49)
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep, dotted=True)
+    _icon(img, "warn", sep + 3, 2)
+    room = 92 - (sep + 13)
+    if not _message(img, sep + 13, data["error"], room):
+        _wrapped(img, sep + 13, data["error"], room)
     return img
 
 
 def s_offline(data):
     img = _base()
-    _name(img, data["printer"], x=12, maxw=16)
-    _sep(img, 30, dotted=True)
-    _icon(img, "ring", 33, 2)
-    text, font = _fit(["OFFLINE", "OFF"], 49)
-    draw_text(img, 43, (IH - font.height + 1) // 2, text, font)
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep, dotted=True)
+    _icon(img, "ring", sep + 3, 2)
+    text, font = _fit(["OFFLINE", "OFF"], 92 - (sep + 13))
+    draw_text(img, sep + 13, (IH - font.height + 1) // 2, text, font)
+    return img
+
+
+def s_heating(data):
+    img = _base()
+    sep = _machine_name(img, data["printer"], 12)
+    _sep(img, sep)
+    px = img.load()
+    for j, row in enumerate(THERMO):
+        for i, c in enumerate(row):
+            if c == "#":
+                px[sep + 3 + i, 1 + j] = 1
+    now, goal = int(data.get("temp", 0)), max(1, int(data.get("target", 1)))
+    text, font = _fit([f"{now}/{goal}"], 92 - (sep + 11), (SMALL, TINY))
+    draw_text(img, sep + 11, 0 if font is SMALL else 1, text, font)
+    _bar(img, sep + 11, 8, 92 - (sep + 11) - 1, 100 * now / goal)
     return img
 
 
@@ -196,7 +235,7 @@ def s_off(data):
 
 SCREENS = {
     "boot": s_boot, "normal": s_normal, "print1": s_print1, "print2": s_print2, "many": s_many,
-    "pause": s_pause, "error": s_error, "offline": s_offline, "idle": s_idle, "done": s_done,
+    "pause": s_pause, "error": s_error, "offline": s_offline, "heating": s_heating, "idle": s_idle, "done": s_done,
     "special": s_special, "off": s_off,
 }
 

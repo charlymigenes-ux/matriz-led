@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from PIL import Image
 
-from .pixelfont import BIG, SMALL, TINY, Font, draw_text, normalize, text_width
+from .pixelfont import BIG, SMALL, TINY, Font, draw_text, fits, normalize, text_width
 
 W, H = 96, 16
 
@@ -25,6 +25,21 @@ DEFAULTS: Dict[str, Any] = {
     "machines": [{"label": "P1", "state": "printing"}, {"label": "P2", "state": "printing"},
                  {"label": "P3", "state": "printing"}],
 }
+
+THERMO = ["..##..", "..##..", "..##..", "..##..", "..##..", "..##..", ".####.", "######", "######", ".####."]
+
+# Iconos de estado de 5x5 para etiquetas largas (ET4, TTS...) en la pantalla de varias máquinas.
+ICONS5 = {
+    "online": [".###.", "#####", "#####", "#####", ".###."],
+    "offline": [".###.", "#...#", "#.#.#", "#...#", ".###."],
+    "ring": [".###.", "#...#", "#.#.#", "#...#", ".###."],
+    "pause": ["##.##", "##.##", "##.##", "##.##", "##.##"],
+    "warn": ["..#..", ".#.#.", ".#.#.", "#...#", "#####"],
+    "check": ["....#", "...##", "#.##.", "###..", ".#..."],
+}
+NAME_ZONE_MIN = 16      # ancho reservado al nombre (cabe "P1"); con nombres más largos crece
+NAME_MAX_CHARS = 4
+KIND_TAG = {"laser": "LASER", "cnc": "CNC"}
 
 ICONS = {
     "online": ["..####..", ".######.", "########", "########", "########", "########", ".######.", "..####.."],
@@ -65,9 +80,9 @@ def cactus() -> Image.Image:
     return img
 
 
-def _icon(img: Image.Image, name: str, x: int, y: int) -> None:
+def _icon(img: Image.Image, name: str, x: int, y: int, small: bool = False) -> None:
     px = img.load()
-    for j, row in enumerate(ICONS[name]):
+    for j, row in enumerate((ICONS5 if small else ICONS)[name]):
         for i, c in enumerate(row):
             if c == "#" and 0 <= x + i < img.width and 0 <= y + j < img.height:
                 px[x + i, y + j] = 1
@@ -124,10 +139,21 @@ def _right(img: Image.Image, right: int, y: int, text: str, font: Font) -> None:
 
 
 def _name(img: Image.Image, text: str, x: int = 18, maxw: int = 36) -> int:
-    """Nombre grande (NOPAL, P1). Devuelve la x donde termina."""
+    """Nombre grande (NOPAL). Devuelve la x donde termina."""
     text, font = _fit([text], maxw, (BIG, SMALL, TINY))
     y = (img.height - font.height + 1) // 2
     return draw_text(img, x, y, text, font)
+
+
+def _machine_name(img: Image.Image, text: str, x: int) -> int:
+    """Nombre corto de una máquina (hasta 4 caracteres) en letra grande.
+    Devuelve la x del separador: deja la zona de siempre (16 px, cabe "P1") y
+    solo crece si el nombre es más largo, así lo que sigue se corre lo justo."""
+    text = _clip(text, BIG if fits(text, BIG) else SMALL, 4 * 7 - 1)
+    font = BIG if fits(text, BIG) else (SMALL if fits(text, SMALL) else TINY)
+    zone = max(NAME_ZONE_MIN, text_width(text, font))
+    draw_text(img, x, (img.height - font.height + 1) // 2, text, font)
+    return x + zone + 2
 
 
 def _two_lines(text: str, maxw: int, fonts: Sequence[Font] = (SMALL, TINY)) -> Optional[Tuple[List[str], Font]]:
@@ -217,67 +243,110 @@ def s_normal(data):
 
 def s_print1(data):
     img = _base()
-    _name(img, data["printer"], x=19, maxw=16)
-    _sep(img, 37)
-    text, font = _fit([data["file"]], 56)
-    draw_text(img, 40, 0 if font is SMALL else 1, text, font)
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep)
+    ix = sep + 3
+    text, font = _fit([data["file"]], 96 - ix)
+    draw_text(img, ix, 0 if font is SMALL else 1, text, font)
     pct = f"{int(data['pct'])}%"
-    _bar(img, 40, 10, 95 - text_width(pct, SMALL) - 2 - 40, data["pct"])
+    _bar(img, ix, 10, 95 - text_width(pct, SMALL) - 2 - ix, data["pct"])
     _right(img, 95, 9, pct, SMALL)
     return img
 
 
+def _elapsed_or_kind(data) -> str:
+    """Tiempo transcurrido; un láser o CNC no lo informa y muestra su tipo."""
+    elapsed = str(data.get("elapsed") or "")
+    if elapsed in ("", "--:--") and data.get("kind") in KIND_TAG:
+        return KIND_TAG[data["kind"]]
+    return elapsed or "--:--"
+
+
 def s_print2(data):
     img = _base()
-    _name(img, data["printer"], x=19, maxw=16)
-    _sep(img, 37)
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep)
+    px = sep + 4
     pct = f"{int(data['pct'])}%"
-    elapsed, efont = _fit([str(data["elapsed"])], 30)
-    room = 95 - text_width(elapsed, efont) - 41 - 2
+    elapsed, efont = _fit([_elapsed_or_kind(data)], 30)
+    room = 95 - text_width(elapsed, efont) - px - 2
     ptext, pfont = _fit([pct], room, (BIG, SMALL, TINY))
-    draw_text(img, 41, (H - pfont.height + 1) // 2, ptext, pfont)
+    draw_text(img, px, (H - pfont.height + 1) // 2, ptext, pfont)
     _right(img, 95, 9 if efont is SMALL else 11, elapsed, efont)
     return img
+
+
+def _label_with_icon(img: Image.Image, x: int, y0: int, label: str, state: Optional[str], slot: int,
+                     icon_y: int) -> None:
+    """Etiqueta + icono de estado dentro de `slot` px: la letra más grande con
+    el icono de 8x8 que quepa; si el nombre es largo, icono de 5x5 y letra
+    más chica."""
+    icon = STATE_ICON.get(state, "online")
+    label = normalize(label)
+    for font, small in ((BIG, False), (BIG, True), (SMALL, True), (TINY, True)):
+        icon_w = 5 if small else 8
+        if fits(label, font) and text_width(label, font) + 2 + icon_w <= slot:
+            end = draw_text(img, x, (img.height - font.height + 1) // 2, label, font)
+            _icon(img, icon, end + 2, icon_y + (1 if small else 0), small)
+            return
+    end = draw_text(img, x, (img.height - TINY.height + 1) // 2, _clip(label, TINY, slot - 7), TINY)
+    _icon(img, icon, end + 2, icon_y + 1, True)
 
 
 def s_many(data):
     img = _base()
     x = 18
     for machine in list(data["machines"])[:3]:
-        label, font = _fit([machine.get("label", "?")], 15, (BIG, SMALL, TINY))
-        end = draw_text(img, x, (H - font.height + 1) // 2, label, font)
-        _icon(img, STATE_ICON.get(machine.get("state"), "online"), end + 2, 4)
+        _label_with_icon(img, x, 0, machine.get("label", "?"), machine.get("state"), 26, 4)
         x += 26
     return img
 
 
 def s_pause(data):
     img = _base()
-    _name(img, data["printer"], x=19, maxw=16)
-    _sep(img, 37, dotted=True)
-    _icon(img, "pause", 40, 4)
-    text, font = _fit(["PAUSA"], 46, (BIG, SMALL, TINY))
-    draw_text(img, 50, (H - font.height + 1) // 2, text, font)
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep, dotted=True)
+    _icon(img, "pause", sep + 3, 4)
+    text, font = _fit(["PAUSA"], 96 - (sep + 13), (BIG, SMALL, TINY))
+    draw_text(img, sep + 13, (H - font.height + 1) // 2, text, font)
     return img
 
 
 def s_error(data):
     img = _base()
-    _name(img, data["printer"], x=19, maxw=16)
-    _sep(img, 37, dotted=True)
-    _icon(img, "warn", 40, 4)
-    if not _message(img, 50, data["error"], 46):
-        _wrapped(img, 50, data["error"], 46)
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep, dotted=True)
+    _icon(img, "warn", sep + 3, 4)
+    room = 96 - (sep + 13)
+    if not _message(img, sep + 13, data["error"], room):
+        _wrapped(img, sep + 13, data["error"], room)
     return img
 
 
 def s_offline(data):
     img = _base()
-    _name(img, data["printer"], x=19, maxw=16)
-    _sep(img, 37, dotted=True)
-    _icon(img, "ring", 40, 4)
-    text, font = _fit(["OFFLINE", "OFF"], 46)
-    draw_text(img, 50, (H - font.height + 1) // 2, text, font)
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep, dotted=True)
+    _icon(img, "ring", sep + 3, 4)
+    text, font = _fit(["OFFLINE", "OFF"], 96 - (sep + 13))
+    draw_text(img, sep + 13, (H - font.height + 1) // 2, text, font)
+    return img
+
+
+def s_heating(data):
+    """Una máquina calentando antes de imprimir: temperatura actual/objetivo y barra."""
+    img = _base()
+    sep = _machine_name(img, data["printer"], 19)
+    _sep(img, sep)
+    px = img.load()
+    for j, row in enumerate(THERMO):
+        for i, c in enumerate(row):
+            if c == "#":
+                px[sep + 3 + i, 3 + j] = 1
+    now, goal = int(data.get("temp", 0)), max(1, int(data.get("target", 1)))
+    text, font = _fit([f"{now}/{goal}"], 96 - (sep + 12))
+    draw_text(img, sep + 12, 1 if font is SMALL else 2, text, font)
+    _bar(img, sep + 12, 10, 96 - (sep + 12) - 2, 100 * now / goal)
     return img
 
 
@@ -333,7 +402,8 @@ SCREENS = {
     "boot": ("1. Arranque", s_boot), "normal": ("2. Todo normal", s_normal),
     "print1": ("3. Impresion activa (vista 1)", s_print1), "print2": ("4. Impresion activa (vista 2)", s_print2),
     "many": ("5. Varias impresoras", s_many), "pause": ("6. Pausada", s_pause), "error": ("7. Error", s_error),
-    "offline": ("8. Desconectada", s_offline), "idle": ("9. Todas detenidas", s_idle),
+    "offline": ("8. Desconectada", s_offline), "heating": ("13. Calentando", s_heating),
+    "idle": ("9. Todas detenidas", s_idle),
     "done": ("10. Trabajo terminado", s_done), "special": ("11. Mensaje especial", s_special),
     "off": ("12. Apagado", s_off),
 }

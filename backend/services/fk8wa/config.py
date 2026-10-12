@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from . import program
+from . import effects, names, program
 from .timer import STYLES as TIMER_STYLES
 
 CONFIG_PATH = Path("data/plugins/matriz-led/fk8wa.json")
@@ -29,10 +29,14 @@ DEFAULTS: Dict[str, Any] = {
     "timer_style": "contorno",   # ver timer.STYLES
     "border_pattern": "dash",    # solo para los marcos del panel (marco_*)
     "border_speed": 10,
+    "short_names": {},           # id de máquina -> nombre corto (hasta 4 caracteres); sin él, uno automático
+    "effects": dict(effects.DEFAULT_ASSIGN),   # situación -> efecto de entrada (o None)
+    "scroll_dir": "l1",          # texto corrido de los mensajes largos: l1, r, u, d, l
+    "scroll_speed": 5,           # 1 (lento) a 10 (rápido)
 }
 
 RANGES = {"brightness": (1, 16), "min_interval_s": (10, 600), "view_seconds": (5, 300), "done_seconds": (5, 3600),
-          "border_speed": (1, 60)}
+          "border_speed": (1, 60), "scroll_speed": (1, 10)}
 
 
 class ConfigError(ValueError):
@@ -70,6 +74,29 @@ def validate(payload: Any) -> Dict[str, Any]:
         raise ConfigError("Una máquina aparece repetida en la lista")
     if len(machines) > MAX_MACHINES:
         raise ConfigError(f"Se pueden elegir hasta {MAX_MACHINES} máquinas")
+    short_names = merged["short_names"]
+    if not isinstance(short_names, dict):
+        raise ConfigError("Los nombres cortos no son válidos")
+    cleaned_names = {}
+    for machine_id, value in short_names.items():
+        try:
+            cleaned_names[str(machine_id)] = names.validate(str(value))
+        except ValueError as exc:
+            raise ConfigError(f"Nombre corto de {machine_id}: {exc}")
+    assigned = merged["effects"]
+    if not isinstance(assigned, dict):
+        raise ConfigError("Los efectos no son válidos")
+    cleaned_effects = dict(effects.DEFAULT_ASSIGN)
+    for situation, effect_id in assigned.items():
+        if situation not in effects.SITUATIONS:
+            raise ConfigError(f"Situación desconocida: {situation}")
+        if effect_id in (None, ""):
+            continue
+        if effect_id not in effects.CATALOG:
+            raise ConfigError(f"Efecto desconocido: {effect_id}")
+        cleaned_effects[situation] = effect_id
+    if merged["scroll_dir"] not in effects.SCROLL_DIRS:
+        raise ConfigError("Dirección del texto corrido desconocida")
     if merged["timer_style"] not in TIMER_STYLES:
         raise ConfigError("Estilo de contador desconocido")
     if merged["border_pattern"] not in program.BORDER_PATTERNS:
@@ -85,6 +112,10 @@ def validate(payload: Any) -> Dict[str, Any]:
         "timer_style": merged["timer_style"],
         "border_pattern": merged["border_pattern"],
         "border_speed": _int_in(merged["border_speed"], "border_speed"),
+        "short_names": cleaned_names,
+        "effects": cleaned_effects,
+        "scroll_dir": merged["scroll_dir"],
+        "scroll_speed": _int_in(merged["scroll_speed"], "scroll_speed"),
     }
 
 

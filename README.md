@@ -148,10 +148,43 @@ cada una tiene su configuración y su estado.
    el panel.
 
 **Cómo decide qué mostrar** (prioridad): error > pausa > desconectada >
-mensaje especial > terminado (60 s) > impresión (vista 1 y 2 alternan cada
-15 s; con dos o más activas, "varias") > todas detenidas / normal.
+mensaje especial > terminado (60 s) > trabajando (vista 1 y 2 alternan cada
+15 s; con dos o más activas, "varias", de 3 en 3) > calentando > todo
+normal / todas en reposo (alternan).
 "Apagado" (HASTA PRONTO) se muestra al detener NOPAL. La pantalla de error
 dice "ERROR": el estado de las máquinas no trae el texto del error.
+
+**Nombres de las máquinas**: en el panel cada máquina usa un **nombre corto de
+hasta 4 caracteres** que sale solo del nombre real (Klipper ET4 → ET4,
+TTS 55 PRO → TTS, CNC 3018 → CNC); se puede cambiar en la pestaña. Las
+impresoras 3D, los láser y los CNC entran igual. Un láser o CNC no informa
+el tiempo transcurrido: en su vista 2 aparece LASER o CNC en lugar de la hora.
+
+**Calentando**: una impresora 3D que tiene temperatura objetivo y aún le
+faltan más de 3 °C (boquilla o cama) sin estar imprimiendo muestra su
+temperatura actual/objetivo con una barra. Va debajo de "trabajando" en la
+prioridad. Con todo en reposo, "Todo normal" y "Todas en reposo" se alternan
+cada 15 s.
+
+**Efectos de entrada**: el panel solo anima cómo APARECE cada pantalla (36
+efectos de FKShow en 8 familias: Desplazar, Entrar, Cubrir, Persiana,
+Sombra, Parpadeo, Extender y Sector; no hay efectos de salida documentados y
+no se inventan). Se elige uno por situación (Error, Pausa, Terminó...). Están
+marcados como "probados" los que ya se vieron en el panel real
+(`PROTOCOL.md`); el botón "Probar en mi panel" manda un ejemplo unos 12 s y
+luego restaura, y anota el efecto como probado en esa instalación
+(`data/plugins/matriz-led/fk8wa_effects_tested.json`). Un programa lleva un
+solo efecto, así que las situaciones con reloj de cada vista (todo tranquilo,
+trabajando, terminó, mensaje corto) no lo usan con el reloj de **contorno,
+contorno encima o barra** (son varias imágenes y el efecto se repetiría en
+cada una); con "Sin reloj" o "Marco del panel" sí.
+
+**Texto corrido**: un mensaje que no cabe quieto (más de unos 13 caracteres
+en letra normal) corre por la pantalla con letra al doble de tamaño: de
+derecha a izquierda, de izquierda a derecha, continuo, o por páginas hacia
+arriba o hacia abajo. Dirección y velocidad (1 lento a 10 rápido) en la
+pestaña; la relación exacta entre la velocidad y los píxeles por segundo no
+está medida y se ajusta viendo el panel.
 
 **Mensaje especial**: texto libre o un anuncio (se muestra su nombre) desde
 la pestaña (operador y admin), las reglas con la casilla "También mostrar en

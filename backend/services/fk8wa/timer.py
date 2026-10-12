@@ -99,23 +99,29 @@ def _stay(seconds: Optional[float], pages_per_segment: int) -> int:
 
 
 def build_program(segments: Sequence[Segment], style: str, border_pattern: str = "dash",
-                  border_speed: int = 10) -> bytes:
-    """Programa listo para subir. Una sola página fija usa el programa
-    verificado de pantalla completa (screen_program)."""
+                  border_speed: int = 10, effect: Optional[Tuple[int, int]] = None) -> bytes:
+    """Programa listo para subir. `effect` = (tipo, subtipo) de entrada de cada
+    página. Con el reloj de contorno o barra y vistas con tiempo no se usa:
+    esas vistas son varias imágenes y el efecto se repetiría en cada una.
+    Una sola página fija sin efecto usa el programa verificado de pantalla
+    completa (screen_program)."""
     pages, stay = build_pages(segments, style)
+    if effect and style in PROGRESSIVE and any(s[2] for s in segments):
+        effect = None
+    entry = effect or program.STATIC
     if style.startswith("marco_"):
         strip = Image.new("1", (94 * len(pages), 14), 0)
         for k, page in enumerate(pages):
             strip.paste(page, (94 * k, 0))
         style_id = program.BORDER_STYLES[style[len("marco_"):]][0]
-        return program.build_scroll(strip, 10, "NOPAL", program.STATIC, stay, program.BORDERED,
+        return program.build_scroll(strip, 10, "NOPAL", entry, stay, program.BORDERED,
                                     (style_id, border_pattern, border_speed))
-    if len(pages) == 1:
+    if len(pages) == 1 and not effect:
         return program.screen_program(pages[0])
     strip = Image.new("1", (96 * len(pages), 16), 0)
     for k, page in enumerate(pages):
         strip.paste(page, (96 * k, 0))
-    return program.build_scroll(strip, 10, "NOPAL", program.STATIC, stay, program.PLAIN)
+    return program.build_scroll(strip, 10, "NOPAL", entry, stay, program.PLAIN)
 
 
 def preview_gif(segments: Sequence[Segment], style: str, scale: int = 6) -> bytes:
