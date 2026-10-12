@@ -184,6 +184,12 @@ enfriar; NOPAL vuelve a subir la pantalla cuando cambia la temperatura, cada
 o ninguno. Lo que no se elige usa `timer_style`. Por omisión: calentando y
 enfriando `temp`, en temperatura marco horario.
 
+**Cambio entre pantallas**: cuando una situación tiene varias pantallas (p. ej. las
+vistas de trabajo y la de una máquina que calienta) y no elegiste efecto, NOPAL usa
+"Entrar desde la izquierda" (probado en el panel) para pasar de una a otra, porque
+con el efecto estático el panel real no avanzaba solo. El contorno que marca el
+tiempo es la excepción: sus páginas siguen estáticas.
+
 **Efectos de entrada**: el panel solo anima cómo APARECE cada pantalla (36
 efectos de FKShow en 8 familias: Desplazar, Entrar, Cubrir, Persiana,
 Sombra, Parpadeo, Extender y Sector; no hay efectos de salida documentados y

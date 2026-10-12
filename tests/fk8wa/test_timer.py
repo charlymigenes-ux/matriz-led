@@ -159,3 +159,21 @@ class TestSituationStyles:
         saved = config.validate({"timer_style": "barra", "situation_styles": {"heating": ""}})
         assert "heating" not in saved["situation_styles"]
         assert config.style_for("heating", saved) == "barra" and config.style_for("ready", saved) == "marco_cw"
+
+
+class TestPageTransition:
+    VIEWS = [("print1", {"printer": "TTS", "file": "x", "pct": 30}, 6.0),
+             ("print2", {"printer": "TTS", "pct": 30, "elapsed": "--:--"}, 6.0),
+             ("ready", {"printer": "ET4", "temp": 200, "target": 200}, 6.0)]
+
+    def test_several_pages_without_effect_use_move_in_from_the_left(self):
+        for style in ("ninguno", "marco_cw"):
+            data = timer.build_program(self.VIEWS, style)
+            assert header(data)["pages"] == 3 and header(data)["effect"] == (4, 1)
+
+    def test_chosen_effect_wins(self):
+        assert header(timer.build_program(self.VIEWS, "ninguno", effect=(3, 1)))["effect"] == (3, 1)
+
+    def test_single_page_stays_static_and_contour_clock_keeps_its_pages_static(self):
+        assert header(timer.build_program(self.VIEWS[:1], "ninguno", effect=None))["effect"] == (1, 0)
+        assert header(timer.build_program(self.VIEWS, "contorno"))["effect"] == (1, 0)

@@ -35,6 +35,10 @@ TEMP = "temp"
 INSET_STYLES = ("contorno", "barra", TEMP)
 # Estilos que se pueden elegir por situación: los de reloj (STYLES) y el de temperatura.
 SITUATION_STYLES = STYLES + (TEMP,)
+# Con varias pantallas y sin efecto elegido, el panel no avanza solo con el efecto
+# Estático (visto en el panel real): se pasa de una a otra con "Entrar desde la
+# izquierda" (MoveIn 1, probado en el panel).
+PAGE_TRANSITION = (4, 1)
 # Páginas por programa: 16 es lo verificado en el panel real (texto largo).
 MAX_PAGES = 16
 MAX_STAY_MS = 65535
@@ -127,8 +131,11 @@ def build_program(segments: Sequence[Segment], style: str, border_pattern: str =
     Una sola página fija sin efecto usa el programa verificado de pantalla
     completa (screen_program)."""
     pages, stay = build_pages(segments, style)
-    if effect and style in PROGRESSIVE and any(s[2] for s in segments):
+    clock_pages = style in PROGRESSIVE and any(s[2] for s in segments)
+    if effect and clock_pages:
         effect = None
+    if effect is None and len(pages) > 1 and not clock_pages:
+        effect = PAGE_TRANSITION
     entry = effect or program.STATIC
     if style.startswith("marco_"):
         strip = Image.new("1", (94 * len(pages), 14), 0)
