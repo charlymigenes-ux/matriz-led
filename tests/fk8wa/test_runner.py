@@ -9,6 +9,7 @@ from ..conftest import fk8wa_module
 
 runner_mod = fk8wa_module("runner")
 protocol = fk8wa_module("protocol")
+config = fk8wa_module("config")
 
 
 class Clock:
@@ -77,8 +78,8 @@ def reset_fake():
 
 def make(cfg=None, machines=None, message=None):
     clock = Clock()
-    state = {"cfg": {"enabled": True, "ip": "192.168.0.90", "brightness": 9, "machines": ["a"],
-                     "min_interval_s": 15, "view_seconds": 15, "done_seconds": 60, **(cfg or {})},
+    state = {"cfg": {**config.DEFAULTS, "enabled": True, "ip": "192.168.0.90", "brightness": 9, "machines": ["a"],
+                     **(cfg or {})},
              "machines": machines if machines is not None else [
                  {"id": "a", "online": True, "status": {"state": "idle", "job": None}}],
              "message": message}

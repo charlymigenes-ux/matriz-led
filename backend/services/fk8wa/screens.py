@@ -69,7 +69,7 @@ def _icon(img: Image.Image, name: str, x: int, y: int) -> None:
     px = img.load()
     for j, row in enumerate(ICONS[name]):
         for i, c in enumerate(row):
-            if c == "#" and 0 <= x + i < W and 0 <= y + j < H:
+            if c == "#" and 0 <= x + i < img.width and 0 <= y + j < img.height:
                 px[x + i, y + j] = 1
 
 
@@ -126,7 +126,7 @@ def _right(img: Image.Image, right: int, y: int, text: str, font: Font) -> None:
 def _name(img: Image.Image, text: str, x: int = 18, maxw: int = 36) -> int:
     """Nombre grande (NOPAL, P1). Devuelve la x donde termina."""
     text, font = _fit([text], maxw, (BIG, SMALL, TINY))
-    y = (H - font.height + 1) // 2
+    y = (img.height - font.height + 1) // 2
     return draw_text(img, x, y, text, font)
 
 
@@ -154,9 +154,12 @@ def _wrap_clip(text: str, font: Font, maxw: int) -> List[str]:
 
 def _wrapped(img: Image.Image, x: int, text: str, maxw: int, font: Font = TINY) -> None:
     """Último recurso: dos renglones en `font`, recortando el final."""
-    top = 0 if font is SMALL else 2
+    top, step = _two_line_rows(img, font)
+    if step is None:
+        font = TINY
+        top, step = _two_line_rows(img, font)
     for k, line in enumerate(_wrap_clip(text, font, maxw)):
-        draw_text(img, x, top + k * (font.height + 2), line, font)
+        draw_text(img, x, top + k * step, line, font)
 
 
 def _message(img: Image.Image, x: int, text: str, maxw: int) -> bool:
@@ -165,16 +168,28 @@ def _message(img: Image.Image, x: int, text: str, maxw: int) -> bool:
     diminutos. False si no cabe en ninguna forma."""
     for font in (SMALL, TINY):
         if text_width(text, font) <= maxw:
-            draw_text(img, x, (H - font.height + 1) // 2, text, font)
+            draw_text(img, x, (img.height - font.height + 1) // 2, text, font)
             return True
+        top, step = _two_line_rows(img, font)
+        if step is None:
+            continue
         split = _two_lines(text, maxw, (font,))
         if split:
             lines, _ = split
-            top = 0 if font is SMALL else 2
             draw_text(img, x, top, lines[0], font)
-            draw_text(img, x, top + font.height + 2, lines[1], font)
+            draw_text(img, x, top + step, lines[1], font)
             return True
     return False
+
+
+def _two_line_rows(img: Image.Image, font: Font) -> Tuple[int, Optional[int]]:
+    """Fila del primer renglón y salto al segundo para dos renglones en esta
+    imagen; (0, None) si no caben. En 16 filas: los de la vista aprobada."""
+    if img.height >= 16:
+        return (0, font.height + 2) if font is SMALL else (2, font.height + 2)
+    if 2 * font.height + 1 <= img.height:
+        return (img.height - 2 * font.height - 1) // 2, font.height + 1
+    return 0, None
 
 
 # ---------------------------------------------------------------- pantallas

@@ -7,12 +7,12 @@ on_startup() del plugin y la detiene on_shutdown() (gancho de NOPAL core).
 from __future__ import annotations
 
 import io
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from PIL import Image
 
 from .. import screen_service
-from . import config, messages, screens
+from . import config, messages, timer
 from .runner import Runner
 
 PREVIEW_SCALE_MAX = 12
@@ -38,25 +38,27 @@ async def stop() -> None:
 def status() -> Dict[str, Any]:
     cfg = config.load()
     msg = messages.current()
+    current = runner().current
     return {**runner().status, "enabled": cfg["enabled"], "ip": cfg["ip"],
-            "current": runner().current[0] if runner().current else None,
+            "current": current[0][0] if current else None,
+            "views": [{"screen": n, "seconds": s} for n, _, s in current] if current else [],
             "message": msg}
 
 
-def preview_png(screen: Optional[str] = None, scale: int = 6) -> bytes:
-    """PNG ampliado de la pantalla actual (o de una de las 12 con datos de
-    ejemplo). No toca el panel."""
+def preview(screen: Optional[str] = None, scale: int = 6) -> Tuple[bytes, str]:
+    """Vista previa sin tocar el panel: GIF animado de la serie actual (con el
+    contador avanzando), o PNG de una de las 12 pantallas de ejemplo con el
+    estilo configurado."""
     scale = max(1, min(PREVIEW_SCALE_MAX, int(scale)))
+    style = config.load()["timer_style"]
     if screen:
-        image = screens.render(screen)
-    elif runner().current:
-        image = screens.render(*runner().current)
-    else:
-        image = screens.render("boot", {"progress": 0})
-    big = image.resize((image.width * scale, image.height * scale), Image.NEAREST)
-    out = io.BytesIO()
-    big.convert("L").save(out, format="PNG")
-    return out.getvalue()
+        image = timer.screen_image(screen, {}, "contorno" if style.startswith("marco_") else style)
+        big = image.resize((image.width * scale, image.height * scale), Image.NEAREST)
+        out = io.BytesIO()
+        big.convert("L").save(out, format="PNG")
+        return out.getvalue(), "image/png"
+    segments = runner().current or [("boot", {"progress": 0}, None)]
+    return timer.preview_gif(segments, style, scale), "image/gif"
 
 
 def save_config(payload: Dict[str, Any]) -> Dict[str, Any]:

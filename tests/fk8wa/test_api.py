@@ -109,10 +109,10 @@ class TestMessageAndPreview:
     def test_invalid_message_400(self, client, as_admin):
         assert client.post(BASE + "/message", json={"text": ""}).status_code == 400
 
-    @pytest.mark.parametrize("screen", ["", "print1", "off"])
-    def test_preview_png(self, client, as_admin, screen):
+    @pytest.mark.parametrize("screen, media", [("", "image/gif"), ("print1", "image/png"), ("off", "image/png")])
+    def test_preview(self, client, as_admin, screen, media):
         response = client.get(BASE + "/preview", params={"screen": screen, "scale": 4})
-        assert response.status_code == 200 and response.headers["content-type"] == "image/png"
+        assert response.status_code == 200 and response.headers["content-type"] == media
         assert Image.open(io.BytesIO(response.content)).size == (96 * 4, 16 * 4)
 
     def test_preview_unknown_screen(self, client, as_admin):

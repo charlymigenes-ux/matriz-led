@@ -12,6 +12,9 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+from . import program
+from .timer import STYLES as TIMER_STYLES
+
 CONFIG_PATH = Path("data/plugins/matriz-led/fk8wa.json")
 MAX_MACHINES = 20
 
@@ -23,9 +26,13 @@ DEFAULTS: Dict[str, Any] = {
     "min_interval_s": 15,
     "view_seconds": 15,
     "done_seconds": 60,
+    "timer_style": "contorno",   # ver timer.STYLES
+    "border_pattern": "dash",    # solo para los marcos del panel (marco_*)
+    "border_speed": 10,
 }
 
-RANGES = {"brightness": (1, 16), "min_interval_s": (10, 600), "view_seconds": (5, 300), "done_seconds": (5, 3600)}
+RANGES = {"brightness": (1, 16), "min_interval_s": (10, 600), "view_seconds": (5, 300), "done_seconds": (5, 3600),
+          "border_speed": (1, 60)}
 
 
 class ConfigError(ValueError):
@@ -63,6 +70,10 @@ def validate(payload: Any) -> Dict[str, Any]:
         raise ConfigError("Una máquina aparece repetida en la lista")
     if len(machines) > MAX_MACHINES:
         raise ConfigError(f"Se pueden elegir hasta {MAX_MACHINES} máquinas")
+    if merged["timer_style"] not in TIMER_STYLES:
+        raise ConfigError("Estilo de contador desconocido")
+    if merged["border_pattern"] not in program.BORDER_PATTERNS:
+        raise ConfigError("Patrón de marco desconocido")
     return {
         "enabled": bool(merged["enabled"]),
         "ip": ip,
@@ -71,6 +82,9 @@ def validate(payload: Any) -> Dict[str, Any]:
         "min_interval_s": _int_in(merged["min_interval_s"], "min_interval_s"),
         "view_seconds": _int_in(merged["view_seconds"], "view_seconds"),
         "done_seconds": _int_in(merged["done_seconds"], "done_seconds"),
+        "timer_style": merged["timer_style"],
+        "border_pattern": merged["border_pattern"],
+        "border_speed": _int_in(merged["border_speed"], "border_speed"),
     }
 
 

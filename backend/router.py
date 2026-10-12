@@ -293,8 +293,8 @@ async def fk8wa_status_endpoint(user: dict = Depends(require_auth)):
 async def fk8wa_preview_endpoint(screen: str = "", scale: int = 6, user: dict = Depends(require_auth)):
     if screen and screen not in fk8wa_screens.SCREENS:
         raise HTTPException(status_code=400, detail="Pantalla desconocida")
-    png = await asyncio.to_thread(fk8wa.preview_png, screen or None, scale)
-    return Response(content=png, media_type="image/png", headers={"Cache-Control": "no-store"})
+    content, media = await asyncio.to_thread(fk8wa.preview, screen or None, scale)
+    return Response(content=content, media_type=media, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/api/plugins/matriz-led/fk8wa/config")

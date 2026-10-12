@@ -211,6 +211,38 @@
             fkNote: 'Una sola sesión a la vez con el panel; NOPAL solo envía cuando la pantalla cambia (como mucho cada intervalo mínimo).',
             fkRuleCheckbox: 'También mostrar en el panel FK-8Wa',
             fkRuleBadgeTitle: 'Esta regla también se muestra en el panel FK-8Wa',
+            fkTimerStyleLabel: 'Contador de tiempo',
+            fkTimerGroupExact: 'Contador exacto',
+            fkTimerGroupNone: 'Sin contador',
+            fkTimerGroupBorder: 'Marcos del panel (decorativos)',
+            fkTimerContorno: 'Contorno (pantallas achicadas)',
+            fkTimerContornoEncima: 'Contorno encima (pantallas completas)',
+            fkTimerBarra: 'Barra en la fila de abajo',
+            fkTimerNinguno: 'Ninguno',
+            fkBorderFixed: 'Fijo',
+            fkBorderRandom: 'Aleatorio',
+            fkBorderCw: 'Horario',
+            fkBorderCcw: 'Antihorario',
+            fkBorderFlash: 'Parpadeo',
+            fkBorderFlashCw: 'Parpadeo horario',
+            fkBorderFlashCcw: 'Parpadeo antihorario',
+            fkBorderLineCw: 'Una línea horario',
+            fkBorderLineCcw: 'Una línea antihorario',
+            fkBorderDlineCw: 'Dos líneas horario',
+            fkBorderDlineCcw: 'Dos líneas antihorario',
+            fkBorderPatternLabel: 'Patrón del marco',
+            fkPatternDash: 'Guiones 4/4',
+            fkPatternSolid: 'Continuo',
+            fkPatternDot: 'Puntos 2/2',
+            fkPatternDot1: 'Puntos 1/1',
+            fkBorderSpeedLabel: 'Velocidad del marco (1 a 60; menor = más rápido)',
+            fkTimerHelpExact: 'La línea completa el contorno justo cuando termina cada vista.',
+            fkTimerHelpBar: 'La barra llega al final justo cuando termina cada vista.',
+            fkTimerHelpBorder: 'El panel anima el marco a su ritmo; no marca el tiempo exacto.',
+            fkTimerHelpNone: 'Sin contador: las vistas cambian sin indicador de tiempo.',
+            fkViewsLabel: 'Vistas',
+            fkViewFixed: 'Fija',
+            fkSecondsShort: '{n} s',
         },
         en: {
             effectStatic: 'Static', effectBlink: 'Blink',
@@ -384,6 +416,38 @@
             fkNote: 'Only one session at a time with the panel; NOPAL only sends when the screen changes (at most once per minimum interval).',
             fkRuleCheckbox: 'Also show on the FK-8Wa panel',
             fkRuleBadgeTitle: 'This rule is also shown on the FK-8Wa panel',
+            fkTimerStyleLabel: 'Time counter',
+            fkTimerGroupExact: 'Exact counter',
+            fkTimerGroupNone: 'No counter',
+            fkTimerGroupBorder: 'Panel frames (decorative)',
+            fkTimerContorno: 'Outline (shrunk screens)',
+            fkTimerContornoEncima: 'Outline on top (full-size screens)',
+            fkTimerBarra: 'Bar on the bottom row',
+            fkTimerNinguno: 'None',
+            fkBorderFixed: 'Fixed',
+            fkBorderRandom: 'Random',
+            fkBorderCw: 'Clockwise',
+            fkBorderCcw: 'Counterclockwise',
+            fkBorderFlash: 'Blink',
+            fkBorderFlashCw: 'Blink clockwise',
+            fkBorderFlashCcw: 'Blink counterclockwise',
+            fkBorderLineCw: 'One line clockwise',
+            fkBorderLineCcw: 'One line counterclockwise',
+            fkBorderDlineCw: 'Two lines clockwise',
+            fkBorderDlineCcw: 'Two lines counterclockwise',
+            fkBorderPatternLabel: 'Frame pattern',
+            fkPatternDash: 'Dashes 4/4',
+            fkPatternSolid: 'Solid',
+            fkPatternDot: 'Dots 2/2',
+            fkPatternDot1: 'Dots 1/1',
+            fkBorderSpeedLabel: 'Frame speed (1 to 60; lower = faster)',
+            fkTimerHelpExact: 'The line completes the outline right when each view ends.',
+            fkTimerHelpBar: 'The bar reaches the end right when each view ends.',
+            fkTimerHelpBorder: 'The panel animates the frame at its own pace; it does not mark the exact time.',
+            fkTimerHelpNone: 'No counter: views change without a time indicator.',
+            fkViewsLabel: 'Views',
+            fkViewFixed: 'Fixed',
+            fkSecondsShort: '{n} s',
         },
         de: {
             effectStatic: 'Statisch', effectBlink: 'Blinken',
@@ -557,6 +621,38 @@
             fkNote: 'Nur eine Sitzung gleichzeitig mit dem Panel; NOPAL sendet nur, wenn sich der Bildschirm ändert (höchstens einmal pro Mindestabstand).',
             fkRuleCheckbox: 'Auch auf dem FK-8Wa-Panel anzeigen',
             fkRuleBadgeTitle: 'Diese Regel wird auch auf dem FK-8Wa-Panel angezeigt',
+            fkTimerStyleLabel: 'Zeitanzeige',
+            fkTimerGroupExact: 'Exakter Zähler',
+            fkTimerGroupNone: 'Kein Zähler',
+            fkTimerGroupBorder: 'Panel-Rahmen (dekorativ)',
+            fkTimerContorno: 'Umriss (verkleinerte Bildschirme)',
+            fkTimerContornoEncima: 'Umriss darüber (volle Bildschirme)',
+            fkTimerBarra: 'Balken in der unteren Zeile',
+            fkTimerNinguno: 'Keiner',
+            fkBorderFixed: 'Fest',
+            fkBorderRandom: 'Zufällig',
+            fkBorderCw: 'Im Uhrzeigersinn',
+            fkBorderCcw: 'Gegen den Uhrzeigersinn',
+            fkBorderFlash: 'Blinken',
+            fkBorderFlashCw: 'Blinken im Uhrzeigersinn',
+            fkBorderFlashCcw: 'Blinken gegen den Uhrzeigersinn',
+            fkBorderLineCw: 'Eine Linie im Uhrzeigersinn',
+            fkBorderLineCcw: 'Eine Linie gegen den Uhrzeigersinn',
+            fkBorderDlineCw: 'Zwei Linien im Uhrzeigersinn',
+            fkBorderDlineCcw: 'Zwei Linien gegen den Uhrzeigersinn',
+            fkBorderPatternLabel: 'Rahmenmuster',
+            fkPatternDash: 'Striche 4/4',
+            fkPatternSolid: 'Durchgehend',
+            fkPatternDot: 'Punkte 2/2',
+            fkPatternDot1: 'Punkte 1/1',
+            fkBorderSpeedLabel: 'Rahmengeschwindigkeit (1 bis 60; kleiner = schneller)',
+            fkTimerHelpExact: 'Die Linie schließt den Umriss genau dann, wenn jede Ansicht endet.',
+            fkTimerHelpBar: 'Der Balken erreicht das Ende genau dann, wenn jede Ansicht endet.',
+            fkTimerHelpBorder: 'Das Panel animiert den Rahmen in seinem eigenen Tempo; die genaue Zeit wird nicht angezeigt.',
+            fkTimerHelpNone: 'Kein Zähler: Die Ansichten wechseln ohne Zeitanzeige.',
+            fkViewsLabel: 'Ansichten',
+            fkViewFixed: 'Fest',
+            fkSecondsShort: '{n} s',
         },
         fr: {
             effectStatic: 'Statique', effectBlink: 'Clignotement',
@@ -730,6 +826,38 @@
             fkNote: 'Une seule session à la fois avec le panneau ; NOPAL n\'envoie que lorsque l\'écran change (au plus une fois par intervalle minimal).',
             fkRuleCheckbox: 'Afficher aussi sur le panneau FK-8Wa',
             fkRuleBadgeTitle: 'Cette règle s\'affiche aussi sur le panneau FK-8Wa',
+            fkTimerStyleLabel: 'Compteur de temps',
+            fkTimerGroupExact: 'Compteur exact',
+            fkTimerGroupNone: 'Sans compteur',
+            fkTimerGroupBorder: 'Cadres du panneau (décoratifs)',
+            fkTimerContorno: 'Contour (écrans réduits)',
+            fkTimerContornoEncima: 'Contour par-dessus (écrans pleine taille)',
+            fkTimerBarra: 'Barre sur la rangée du bas',
+            fkTimerNinguno: 'Aucun',
+            fkBorderFixed: 'Fixe',
+            fkBorderRandom: 'Aléatoire',
+            fkBorderCw: 'Sens horaire',
+            fkBorderCcw: 'Sens antihoraire',
+            fkBorderFlash: 'Clignotement',
+            fkBorderFlashCw: 'Clignotement horaire',
+            fkBorderFlashCcw: 'Clignotement antihoraire',
+            fkBorderLineCw: 'Une ligne horaire',
+            fkBorderLineCcw: 'Une ligne antihoraire',
+            fkBorderDlineCw: 'Deux lignes horaires',
+            fkBorderDlineCcw: 'Deux lignes antihoraires',
+            fkBorderPatternLabel: 'Motif du cadre',
+            fkPatternDash: 'Tirets 4/4',
+            fkPatternSolid: 'Continu',
+            fkPatternDot: 'Points 2/2',
+            fkPatternDot1: 'Points 1/1',
+            fkBorderSpeedLabel: 'Vitesse du cadre (1 à 60 ; plus petit = plus rapide)',
+            fkTimerHelpExact: 'La ligne complète le contour exactement à la fin de chaque vue.',
+            fkTimerHelpBar: 'La barre atteint la fin exactement à la fin de chaque vue.',
+            fkTimerHelpBorder: 'Le panneau anime le cadre à son rythme ; il n\'indique pas le temps exact.',
+            fkTimerHelpNone: 'Sans compteur : les vues changent sans indicateur de temps.',
+            fkViewsLabel: 'Vues',
+            fkViewFixed: 'Fixe',
+            fkSecondsShort: '{n} s',
         },
         'pt-BR': {
             effectStatic: 'Estático', effectBlink: 'Piscar',
@@ -903,6 +1031,38 @@
             fkNote: 'Só uma sessão por vez com o painel; o NOPAL só envia quando a tela muda (no máximo uma vez por intervalo mínimo).',
             fkRuleCheckbox: 'Mostrar também no painel FK-8Wa',
             fkRuleBadgeTitle: 'Esta regra também é mostrada no painel FK-8Wa',
+            fkTimerStyleLabel: 'Contador de tempo',
+            fkTimerGroupExact: 'Contador exato',
+            fkTimerGroupNone: 'Sem contador',
+            fkTimerGroupBorder: 'Molduras do painel (decorativas)',
+            fkTimerContorno: 'Contorno (telas reduzidas)',
+            fkTimerContornoEncima: 'Contorno por cima (telas inteiras)',
+            fkTimerBarra: 'Barra na linha de baixo',
+            fkTimerNinguno: 'Nenhum',
+            fkBorderFixed: 'Fixa',
+            fkBorderRandom: 'Aleatória',
+            fkBorderCw: 'Horário',
+            fkBorderCcw: 'Anti-horário',
+            fkBorderFlash: 'Piscar',
+            fkBorderFlashCw: 'Piscar horário',
+            fkBorderFlashCcw: 'Piscar anti-horário',
+            fkBorderLineCw: 'Uma linha horário',
+            fkBorderLineCcw: 'Uma linha anti-horário',
+            fkBorderDlineCw: 'Duas linhas horário',
+            fkBorderDlineCcw: 'Duas linhas anti-horário',
+            fkBorderPatternLabel: 'Padrão da moldura',
+            fkPatternDash: 'Traços 4/4',
+            fkPatternSolid: 'Contínuo',
+            fkPatternDot: 'Pontos 2/2',
+            fkPatternDot1: 'Pontos 1/1',
+            fkBorderSpeedLabel: 'Velocidade da moldura (1 a 60; menor = mais rápido)',
+            fkTimerHelpExact: 'A linha completa o contorno exatamente quando cada vista termina.',
+            fkTimerHelpBar: 'A barra chega ao fim exatamente quando cada vista termina.',
+            fkTimerHelpBorder: 'O painel anima a moldura no próprio ritmo; não marca o tempo exato.',
+            fkTimerHelpNone: 'Sem contador: as vistas mudam sem indicador de tempo.',
+            fkViewsLabel: 'Vistas',
+            fkViewFixed: 'Fixa',
+            fkSecondsShort: '{n} s',
         },
     };
 
@@ -2633,6 +2793,18 @@
         unreachable: { key: 'fkStateUnreachable', cls: 'mled-status-warn' },
         size_mismatch: { key: 'fkStateSizeMismatch', cls: 'mled-status-warn' },
     };
+    // Contador de tiempo (config.timer_style, ver backend timer.STYLES):
+    // exactos (NOPAL dibuja el avance), "ninguno" y marcos que anima el
+    // propio panel (decorativos, no marcan el tiempo exacto).
+    const FK_TIMER_EXACT = [['contorno', 'fkTimerContorno'], ['contorno_encima', 'fkTimerContornoEncima'], ['barra', 'fkTimerBarra']];
+    const FK_TIMER_NONE = 'ninguno';
+    const FK_TIMER_BORDERS = [
+        ['marco_fixed', 'fkBorderFixed'], ['marco_random', 'fkBorderRandom'], ['marco_cw', 'fkBorderCw'], ['marco_ccw', 'fkBorderCcw'],
+        ['marco_flash', 'fkBorderFlash'], ['marco_flash_cw', 'fkBorderFlashCw'], ['marco_flash_ccw', 'fkBorderFlashCcw'],
+        ['marco_line_cw', 'fkBorderLineCw'], ['marco_line_ccw', 'fkBorderLineCcw'],
+        ['marco_dline_cw', 'fkBorderDlineCw'], ['marco_dline_ccw', 'fkBorderDlineCcw'],
+    ];
+    const FK_BORDER_PATTERNS = [['dash', 'fkPatternDash'], ['solid', 'fkPatternSolid'], ['dot', 'fkPatternDot'], ['dot1', 'fkPatternDot1']];
     const FK_POLL_MS = 5000;
     const FK_PREVIEW_SCALE = 8;
     const FK_LOCALES = { es: 'es-MX', en: 'en-US', de: 'de-DE', fr: 'fr-FR', 'pt-BR': 'pt-BR' };
@@ -2645,6 +2817,10 @@
         isAdmin: false,
         roleLoaded: false,
         previewScreen: '',
+        // Firma de lo que muestra la vista previa en vivo: el GIF animado se
+        // reinicia si se le vuelve a poner src, así que solo se recarga
+        // cuando cambia esta firma (o al guardar/enviar algo).
+        previewSig: null,
         timer: null,
     };
 
@@ -2699,7 +2875,7 @@
         fkRenderMachines();
     }
 
-    async function fkRefreshStatus() {
+    async function fkRefreshStatus({ forcePreview = false } = {}) {
         try {
             fk.status = await api('/fk8wa/status');
             fk.statusError = false;
@@ -2708,6 +2884,7 @@
         }
         fkRenderStatus();
         fkRenderMessage();
+        if (!fk.statusError || forcePreview) fkMaybeRefreshPreview(forcePreview);
     }
 
     function fkRenderStatus() {
@@ -2729,6 +2906,7 @@
             [tr('lastSentLabel'), formatRelativeTime(s.last_sent_at) || tr('never')],
             [tr('fkNextRetry'), s.next_retry_in_s != null && Number.isFinite(retry) ? tr('fkInSeconds', { n: Math.max(0, Math.round(retry)) }) : '—'],
             [tr('fkPanelInfo'), s.panel ? `${s.panel.ip}:${s.panel.port} · ${s.panel.width}×${s.panel.height}` : '—'],
+            [tr('fkViewsLabel'), fkViewsText(s.views)],
             [tr('fkSendsLabel'), String(s.sends ?? 0)],
             [tr('lastErrorLabel'), lastError],
         ];
@@ -2757,16 +2935,39 @@
         return `${API_BASE}/fk8wa/preview?${params.toString()}`;
     }
 
+    function fkViewsText(views) {
+        if (!Array.isArray(views) || !views.length) return '—';
+        return views.map((view) => {
+            const seconds = view?.seconds == null ? null : Number(view.seconds);
+            const duration = seconds == null || !Number.isFinite(seconds)
+                ? tr('fkViewFixed')
+                : tr('fkSecondsShort', { n: Math.round(seconds * 10) / 10 });
+            return `${fkScreenLabel(view?.screen)} · ${duration}`;
+        }).join(' → ');
+    }
+
+    function fkPreviewSignature(status) {
+        return JSON.stringify([status?.views || [], status?.current || null, status?.last_sent_at || null]);
+    }
+
     function fkRefreshPreview() {
         const img = root?.querySelector('#mled-fk-preview');
-        if (img) img.src = fkPreviewUrl();
+        if (!img) return;
+        fk.previewSig = fkPreviewSignature(fk.status);
+        img.src = fkPreviewUrl();
+    }
+
+    // Vista previa en vivo (GIF animado): solo se recarga si cambió lo que
+    // se ve. Las pantallas de ejemplo (PNG fijo) se cargan al elegirlas.
+    function fkMaybeRefreshPreview(force = false) {
+        if (fk.previewScreen) return;
+        const sig = fkPreviewSignature(fk.status);
+        if (force || sig !== fk.previewSig) fkRefreshPreview();
     }
 
     function fkTick() {
         if (!fkIsVisible()) return;
         fkRefreshStatus();
-        // Las 11 pantallas de ejemplo no cambian: solo se refresca "en vivo".
-        if (!fk.previewScreen) fkRefreshPreview();
     }
 
     function fkStopPolling() {
@@ -2802,8 +3003,34 @@
         root.querySelector('#mled-fk-min-interval').value = c.min_interval_s ?? '';
         root.querySelector('#mled-fk-view-seconds').value = c.view_seconds ?? '';
         root.querySelector('#mled-fk-done-seconds').value = c.done_seconds ?? '';
+        root.querySelector('#mled-fk-timer-style').value = c.timer_style || 'contorno';
+        root.querySelector('#mled-fk-border-pattern').value = c.border_pattern || 'dash';
+        root.querySelector('#mled-fk-border-speed').value = c.border_speed ?? 10;
+        root.querySelector('#mled-fk-border-speed-range').value = c.border_speed ?? 10;
+        fkSyncTimerFields();
         fk.machinesDraft = Array.isArray(c.machines) ? [...c.machines] : [];
         fkRenderMachines();
+    }
+
+    // Patrón y velocidad solo aplican a los marco_*; la ayuda cambia según
+    // la familia del contador elegido.
+    function fkSyncTimerFields() {
+        if (!root) return;
+        const style = root.querySelector('#mled-fk-timer-style').value;
+        const isBorder = style.startsWith('marco_');
+        root.querySelector('#mled-fk-border-fields').hidden = !isBorder;
+        let helpKey = 'fkTimerHelpExact';
+        if (isBorder) helpKey = 'fkTimerHelpBorder';
+        else if (style === FK_TIMER_NONE) helpKey = 'fkTimerHelpNone';
+        else if (style === 'barra') helpKey = 'fkTimerHelpBar';
+        root.querySelector('#mled-fk-timer-help').textContent = tr(helpKey);
+    }
+
+    function fkTimerOptionsHtml() {
+        const options = (items) => items.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('');
+        return `<optgroup label="${esc(tr('fkTimerGroupExact'))}">${options(FK_TIMER_EXACT)}</optgroup>`
+            + `<optgroup label="${esc(tr('fkTimerGroupNone'))}">${options([[FK_TIMER_NONE, 'fkTimerNinguno']])}</optgroup>`
+            + `<optgroup label="${esc(tr('fkTimerGroupBorder'))}">${options(FK_TIMER_BORDERS)}</optgroup>`;
     }
 
     function fkMachineName(id) {
@@ -2883,12 +3110,14 @@
                     min_interval_s: fkNumber('#mled-fk-min-interval'),
                     view_seconds: fkNumber('#mled-fk-view-seconds'),
                     done_seconds: fkNumber('#mled-fk-done-seconds'),
+                    timer_style: root.querySelector('#mled-fk-timer-style').value,
+                    border_pattern: root.querySelector('#mled-fk-border-pattern').value,
+                    border_speed: fkNumber('#mled-fk-border-speed'),
                 }),
             });
             fkFillConfigForm();
             fkSetMsg('#mled-fk-config-msg', tr('savedGeneric'), 'ok');
-            fkRefreshStatus();
-            fkRefreshPreview();
+            fkRefreshStatus({ forcePreview: true });
         } catch (error) {
             fkSetMsg('#mled-fk-config-msg', fkErrorText(error) || tr('errorSaving'), 'error');
         } finally {
@@ -2973,8 +3202,7 @@
             fkRenderMessage();
             if (!useAnnouncement) root.querySelector('#mled-fk-message-text').value = '';
             fkSetMsg('#mled-fk-message-msg', tr('fkMessageSent'), 'ok');
-            fkRefreshStatus();
-            fkRefreshPreview();
+            fkRefreshStatus({ forcePreview: true });
         } catch (error) {
             fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
         }
@@ -2986,8 +3214,7 @@
             fk.status = { ...(fk.status || {}), message: null };
             fkRenderMessage();
             fkSetMsg('#mled-fk-message-msg', tr('fkMessageCleared'), 'ok');
-            fkRefreshStatus();
-            fkRefreshPreview();
+            fkRefreshStatus({ forcePreview: true });
         } catch (error) {
             fkSetMsg('#mled-fk-message-msg', fkErrorText(error), 'error');
         }
@@ -2998,8 +3225,7 @@
     async function fkEnter() {
         fkStartPolling();
         fkRenderAnnouncementOptions();
-        fkRefreshStatus();
-        fkRefreshPreview();
+        fkRefreshStatus({ forcePreview: true });
         if (!fk.roleLoaded) await fkLoadRole();
         await loadMachinesForForm();
         await fkLoadConfig();
@@ -3011,6 +3237,7 @@
             fk.previewScreen = event.target.value;
             fkRefreshPreview();
         });
+        root.querySelector('#mled-fk-timer-style').addEventListener('change', fkSyncTimerFields);
         const preview = root.querySelector('#mled-fk-preview');
         preview.addEventListener('load', () => { root.querySelector('#mled-fk-preview-msg').hidden = true; });
         preview.addEventListener('error', () => {
@@ -3089,6 +3316,12 @@
                                         <label class="mled-field"><span>${esc(tr('fkViewSecondsLabel'))}</span><input type="number" id="mled-fk-view-seconds" min="5" max="300" step="1" data-fk-admin-input disabled></label>
                                         <label class="mled-field"><span>${esc(tr('fkDoneSecondsLabel'))}</span><input type="number" id="mled-fk-done-seconds" min="5" max="3600" step="1" data-fk-admin-input disabled></label>
                                     </div>
+                                    <label class="mled-field"><span>${esc(tr('fkTimerStyleLabel'))}</span><select id="mled-fk-timer-style" data-fk-admin-input disabled>${fkTimerOptionsHtml()}</select></label>
+                                    <div class="mled-fk-border-fields" id="mled-fk-border-fields" hidden>
+                                        <label class="mled-field"><span>${esc(tr('fkBorderPatternLabel'))}</span><select id="mled-fk-border-pattern" data-fk-admin-input disabled>${FK_BORDER_PATTERNS.map(([value, key]) => `<option value="${value}">${esc(tr(key))}</option>`).join('')}</select></label>
+                                        <label class="mled-field"><span>${esc(tr('fkBorderSpeedLabel'))}</span><input type="range" id="mled-fk-border-speed-range" min="1" max="60" step="1" value="10" data-fk-admin-input disabled><input type="number" id="mled-fk-border-speed" min="1" max="60" step="1" value="10" aria-label="${esc(tr('fkBorderSpeedLabel'))}" data-fk-admin-input disabled></label>
+                                    </div>
+                                    <p class="mled-fk-help" id="mled-fk-timer-help" aria-live="polite">${esc(tr('fkTimerHelpExact'))}</p>
                                 </div>
                                 <div>
                                     <span class="mled-field-label" id="mled-fk-machines-label">${esc(tr('fkMachinesLabel'))}</span>

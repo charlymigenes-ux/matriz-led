@@ -24,7 +24,7 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from . import config as config_mod
 from . import messages as messages_mod
-from . import program, screens, state_machine
+from . import state_machine, timer
 from .protocol import Fk8waClient, Fk8waError, SizeMismatch
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,7 @@ class Runner:
         load_config: Callable[[], Dict[str, Any]] = config_mod.load,
         current_message: Callable[[], Optional[Dict[str, Any]]] = messages_mod.current,
         clock: Callable[[], float] = time.monotonic,
+        wall: Callable[[], float] = time.time,
         now_local: Callable[[], datetime] = datetime.now,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
         to_thread: Callable[..., Awaitable[Any]] = asyncio.to_thread,
@@ -51,13 +52,14 @@ class Runner:
         self._load_config = load_config
         self._current_message = current_message
         self._clock, self._now_local, self._sleep, self._to_thread = clock, now_local, sleep, to_thread
+        self._wall = wall
         self._lock = asyncio.Lock()
         self._task: Optional[asyncio.Task] = None
         self._stopping = False
         self._reset_panel(None)
         self.memory = state_machine.Memory(started_at=self._clock())
         self._machines: Optional[List[Dict[str, Any]]] = None
-        self.current: Optional[tuple] = None      # (pantalla, datos) de la última selección
+        self.current: Optional[list] = None       # serie de vistas de la última selección
         self.status: Dict[str, Any] = {
             "state": "disabled", "screen": None, "last_sent_at": None, "last_error": None,
             "next_retry_in_s": None, "panel": None, "missing_machines": [], "sends": 0,
@@ -66,7 +68,7 @@ class Runner:
     # ------------------------------------------------------------ estado interno
     def _reset_panel(self, ip: Optional[str]) -> None:
         self._ip = ip
-        self._last_image: Optional[bytes] = None
+        self._last_image: Optional[Any] = None    # firma de lo último que se subió
         self._last_send: Optional[float] = None
         self._retry_step = 0
         self._retry_at: Optional[float] = None
@@ -110,27 +112,35 @@ class Runner:
         except Exception as exc:  # sin estado nuevo: se queda con el último
             logger.warning(f"Panel FK-8Wa: no se pudo leer el estado de las máquinas ({exc})")
         message = self._current_message()
-        name, data = state_machine.select(
+        remaining = None
+        if message:
+            remaining = max(1.0, float(message.get("expires_at", 0)) - self._wall())
+        segments = state_machine.playlist(
             self._machines, cfg["machines"], now, self.memory, self._now_local(),
-            message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"])
-        self.current = (name, data)
+            message["text"] if message else None, cfg["view_seconds"], cfg["done_seconds"], remaining)
+        self.current = segments
         self.status["missing_machines"] = state_machine.missing_ids(self._machines or [], cfg["machines"])
-        image = await self._to_thread(screens.render, name, data)
-        payload = image.tobytes()
+        sig = (cfg["timer_style"], cfg["border_pattern"], cfg["border_speed"], state_machine.signature(segments))
 
-        if payload == self._last_image and not self._brightness_pending:
+        if sig == self._last_image and not self._brightness_pending:
             return
         if self._last_send is not None and now - self._last_send < cfg["min_interval_s"]:
             return  # se enviará en un tick posterior, ya con el estado más reciente
-        await self._send(image, payload, name, cfg)
+        data = None
+        if sig != self._last_image:
+            data = await self._to_thread(timer.build_program, segments, cfg["timer_style"],
+                                         cfg["border_pattern"], cfg["border_speed"])
+        await self._send(data, sig, segments[0][0], cfg)
 
-    async def _send(self, image, payload: bytes, name: str, cfg: Dict[str, Any]) -> None:
+    async def _send(self, data: Optional[bytes], payload: Any, name: str, cfg: Dict[str, Any]) -> None:
+        """Sube `data` (si no es None) y, si hace falta, el brillo. `payload` es
+        la firma de lo que se ve, para no volver a subir lo mismo."""
         client = self._client_factory(cfg["ip"])
         self._last_send = self._clock()
         try:
             async with self._lock:
-                if payload != self._last_image:
-                    info = await self._to_thread(client.upload, program.screen_program(image))
+                if data is not None:
+                    info = await self._to_thread(client.upload, data)
                     self.status["panel"] = info
                 if self._brightness_pending:
                     await self._to_thread(client.brightness, cfg["brightness"])
@@ -191,10 +201,10 @@ class Runner:
             logger.warning("Panel FK-8Wa: la subida en curso no terminó a tiempo; no se envía HASTA PRONTO")
             return
         try:
-            image = screens.render("off")
+            data = timer.build_program([("off", {}, None)], cfg["timer_style"], cfg["border_pattern"],
+                                       cfg["border_speed"])
             await asyncio.wait_for(
-                self._to_thread(self._client_factory(cfg["ip"]).upload, program.screen_program(image)),
-                timeout=SHUTDOWN_WAIT_S)
+                self._to_thread(self._client_factory(cfg["ip"]).upload, data), timeout=SHUTDOWN_WAIT_S)
         except (Fk8waError, asyncio.TimeoutError) as exc:
             logger.warning(f"Panel FK-8Wa: no se pudo mostrar HASTA PRONTO ({exc})")
         finally:

@@ -112,3 +112,52 @@ def test_rule_checkbox_key_in_every_language():
     for lang in LANGS:
         assert "fkRuleCheckbox:" in blocks[lang], lang
         assert "fkRuleBadgeTitle:" in blocks[lang], lang
+
+
+EXACT_STYLES = ["contorno", "contorno_encima", "barra"]
+BORDER_STYLES = ["marco_fixed", "marco_random", "marco_cw", "marco_ccw", "marco_flash", "marco_flash_cw",
+                 "marco_flash_ccw", "marco_line_cw", "marco_line_ccw", "marco_dline_cw", "marco_dline_ccw"]
+
+
+def _const_array(name):
+    start = JS.index(f"const {name} = [")
+    return JS[start:JS.index("];", start)]
+
+
+def test_timer_style_select_offers_every_style():
+    assert re.findall(r"\['([a-z_]+)', 'fk", _const_array("FK_TIMER_EXACT")) == EXACT_STYLES
+    assert re.findall(r"\['([a-z_]+)', 'fk", _const_array("FK_TIMER_BORDERS")) == BORDER_STYLES
+    assert "const FK_TIMER_NONE = 'ninguno';" in JS
+    patterns = re.findall(r"\['([a-z0-9]+)', 'fk", _const_array("FK_BORDER_PATTERNS"))
+    assert patterns == ["dash", "solid", "dot", "dot1"]
+    # Tres familias en <optgroup> y los campos se guardan con el PUT.
+    assert JS.count("<optgroup label=") >= 3
+    for field in ("timer_style:", "border_pattern:", "border_speed:"):
+        assert field in JS
+    assert "startsWith('marco_')" in JS
+
+
+def test_timer_i18n_keys_in_every_language():
+    blocks = _i18n_blocks()
+    keys = set(re.findall(r"'(fk(?:Timer|Border|Pattern)[A-Z]\w*)'", JS)) | {"fkViewsLabel", "fkViewFixed"}
+    assert len(keys) >= 25
+    for lang in LANGS:
+        defined = _fk_keys(blocks[lang])
+        assert keys <= defined, (lang, keys - defined)
+
+
+def test_status_shows_views():
+    assert "s.views" in JS and "fkViewsText" in JS
+
+
+def test_live_preview_reloads_only_when_signature_changes():
+    tick = JS[JS.index("function fkTick()"):]
+    tick = tick[:tick.index("\n    }\n")]
+    assert "fkRefreshPreview" not in tick and ".src" not in tick
+    maybe = JS[JS.index("function fkMaybeRefreshPreview("):]
+    maybe = maybe[:maybe.index("\n    }\n")]
+    assert re.search(r"sig !== fk\.previewSig\) fkRefreshPreview\(\)", maybe)
+    signature = JS[JS.index("function fkPreviewSignature("):]
+    signature = signature[:signature.index("\n    }\n")]
+    for part in ("views", "current", "last_sent_at"):
+        assert part in signature

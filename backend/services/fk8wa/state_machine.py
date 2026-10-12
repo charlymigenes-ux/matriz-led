@@ -33,6 +33,8 @@ class Memory:
     last_job: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     done: Optional[Dict[str, Any]] = None          # {printer, file, until}
     printing_since: Optional[float] = None
+    print_views: Optional[Tuple[Dict[str, Any], Dict[str, Any]]] = None   # datos de vista 1 y 2
+    many_groups: List[List[Dict[str, Any]]] = field(default_factory=list)  # activas de 3 en 3
 
 
 def _elapsed(seconds: Any) -> Optional[str]:
@@ -125,13 +127,44 @@ def select(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[
         job = e["job"] or {}
         view = int((now - memory.printing_since) // view_seconds) % 2
         data = {"printer": e["label"], "file": job.get("filename") or "", "pct": _pct(job.get("percent"))}
-        if view == 0:
-            return "print1", data
-        return "print2", {**data, "elapsed": _elapsed(job.get("elapsed_s")) or "--:--"}
+        memory.print_views = (data, {**data, "elapsed": _elapsed(job.get("elapsed_s")) or "--:--"})
+        return ("print1", memory.print_views[0]) if view == 0 else ("print2", memory.print_views[1])
     if len(active) > 1:
-        return "many", {"machines": [{"label": e["label"], "state": e["state"]} for e in active[:3]]}
+        tags = [{"label": e["label"], "state": e["state"]} for e in active]
+        memory.many_groups = [tags[i:i + 3] for i in range(0, len(tags), 3)]
+        return "many", {"machines": tags[:3]}
 
     if entries and all(e["state"] in QUIET_STATES for e in entries):
         return "idle", {"total": len(entries), "time": time_text}
     online = sum(1 for e in entries if e["state"] != "offline")
     return "normal", {"online": online, "time": time_text}
+
+
+def playlist(machines: Optional[Sequence[Dict[str, Any]]], selected_ids: Sequence[str], now: float,
+             memory: Memory, clock: datetime, message: Optional[str] = None,
+             view_seconds: float = 15.0, done_seconds: float = 60.0,
+             message_seconds: Optional[float] = None) -> List[Tuple[str, Dict[str, Any], Optional[float]]]:
+    """Serie de vistas que el panel recorre solo, cada una con su duración
+    (None = pantalla fija, sin contador). Misma prioridad que select():
+    - impresión: vista 1 y vista 2, `view_seconds` cada una;
+    - varias: grupos de 3 activas, `view_seconds` cada grupo;
+    - terminado y mensaje especial: lo que les falta por mostrarse."""
+    name, data = select(machines, selected_ids, now, memory, clock, message, view_seconds, done_seconds)
+    if name in ("print1", "print2") and memory.print_views:
+        return [("print1", memory.print_views[0], view_seconds), ("print2", memory.print_views[1], view_seconds)]
+    if name == "many":
+        return [("many", {"machines": group}, view_seconds) for group in memory.many_groups]
+    if name == "done" and memory.done:
+        return [("done", data, max(1.0, memory.done["until"] - now))]
+    if name == "special":
+        return [("special", data, message_seconds or None)]
+    return [(name, data, None)]
+
+
+def signature(segments: Sequence[Tuple[str, Dict[str, Any], Optional[float]]]) -> Tuple:
+    """Lo que cambia lo que se ve, sin el tiempo restante (que avanza solo y
+    no debe provocar una nueva subida)."""
+    import json
+
+    return tuple((name, json.dumps(data, sort_keys=True, default=str), seconds is not None)
+                 for name, data, seconds in segments)
