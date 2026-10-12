@@ -220,7 +220,6 @@
             fkFamScroll: 'Desplazar',
             fkFamSector: 'Sector',
             fkFamShadow: 'Sombra',
-            fkFaster: 'Más rápido',
             fkFxAll: 'Todas las pantallas',
             fkFxHelp: 'Así aparece una pantalla nueva: entrando, cubriendo, con persiana, con parpadeo... Cada recuadro repite el efecto. Toca uno para usarlo; "Probar en mi panel" lo manda un momento al panel real para que lo veas de verdad.',
             fkFxReset: 'Quitar todos los efectos',
@@ -643,7 +642,6 @@
             fkFamScroll: 'Scroll',
             fkFamSector: 'Sector',
             fkFamShadow: 'Shadow',
-            fkFaster: 'Faster',
             fkFxAll: 'All screens',
             fkFxHelp: 'This is how a new screen appears: sliding in, covering, with blinds, blinking... Each box repeats the effect. Tap one to use it; "Try on my panel" sends it to the real panel for a moment so you can see it for real.',
             fkFxReset: 'Remove all effects',
@@ -1066,7 +1064,6 @@
             fkFamScroll: 'Scrollen',
             fkFamSector: 'Sektor',
             fkFamShadow: 'Schatten',
-            fkFaster: 'Schneller',
             fkFxAll: 'Alle Bildschirme',
             fkFxHelp: 'So erscheint ein neuer Bildschirm: hereinfahrend, überdeckend, mit Jalousie, mit Blinken... Jedes Kästchen wiederholt den Effekt. Tippe auf eines, um es zu verwenden; „Auf meinem Panel testen“ sendet es kurz an das echte Panel, damit du es richtig siehst.',
             fkFxReset: 'Alle Effekte entfernen',
@@ -1489,7 +1486,6 @@
             fkFamScroll: 'Défiler',
             fkFamSector: 'Secteur',
             fkFamShadow: 'Ombre',
-            fkFaster: 'Plus vite',
             fkFxAll: 'Tous les écrans',
             fkFxHelp: 'Voici comment apparaît un nouvel écran : en entrant, en couvrant, en store, en clignotant... Chaque case répète l\'effet. Touchez-en une pour l\'utiliser ; « Essayer sur mon panneau » l\'envoie un instant au vrai panneau pour le voir en vrai.',
             fkFxReset: 'Retirer tous les effets',
@@ -1912,7 +1908,6 @@
             fkFamScroll: 'Rolar',
             fkFamSector: 'Setor',
             fkFamShadow: 'Sombra',
-            fkFaster: 'Mais rápido',
             fkFxAll: 'Todas as telas',
             fkFxHelp: 'Assim aparece uma tela nova: entrando, cobrindo, com persiana, piscando... Cada quadro repete o efeito. Toque em um para usá-lo; "Testar no meu painel" o envia por um momento ao painel real para você ver de verdade.',
             fkFxReset: 'Remover todos os efeitos',
@@ -4218,7 +4213,9 @@
         ctx.shadowBlur = 0;
     }
 
-    // border_speed 1..60: menor = más rápido (igual que el panel).
+    // border_speed 1..60: menor = más rápido (igual que el panel). La barra de la pestaña lo muestra al revés
+    // (derecha = más rápido), por eso este cambio de sentido de ida y vuelta.
+    function fkBorderSpeedFlip(value) { return 61 - Math.max(1, Math.min(60, Number(value) || 10)); }
     function fkRingInterval(speed) {
         return Math.max(60, 20 + (Number(speed) || 10) * 15);
     }
@@ -5058,9 +5055,10 @@
             }
         });
         const speed = root.querySelector('#mled-fk-marco-speed');
+        // La barra va de lento (izquierda) a rápido (derecha); el panel guarda lo contrario (menor = más rápido).
         speed.addEventListener('input', () => { root.querySelector('#mled-fk-marco-speed-val').textContent = speed.value; });
         speed.addEventListener('change', async () => {
-            if (await fkSavePartial({ border_speed: Number(speed.value) }, '#mled-fk-sit-msg')) fkAfterStyleSaved();
+            if (await fkSavePartial({ border_speed: fkBorderSpeedFlip(Number(speed.value)) }, '#mled-fk-sit-msg')) fkAfterStyleSaved();
         });
         root.querySelector('#mled-fk-fx-reset').addEventListener('click', () => fkSetEffect('all', null, '#mled-fk-sit-msg'));
     }
@@ -5166,8 +5164,9 @@
         const opts = root.querySelector('#mled-fk-marco-opts');
         opts.hidden = !anyMarco;
         root.querySelector('#mled-fk-marco-pattern').value = fk.config?.border_pattern || 'dash';
-        root.querySelector('#mled-fk-marco-speed').value = fk.config?.border_speed ?? 10;
-        root.querySelector('#mled-fk-marco-speed-val').textContent = String(fk.config?.border_speed ?? 10);
+        const slider = fkBorderSpeedFlip(fk.config?.border_speed ?? 10);
+        root.querySelector('#mled-fk-marco-speed').value = slider;
+        root.querySelector('#mled-fk-marco-speed-val').textContent = String(slider);
         const reset = root.querySelector('#mled-fk-fx-reset');
         if (reset) reset.disabled = !fk.isAdmin;
         fkSyncSitNow();
@@ -5695,7 +5694,7 @@
                         <div class="mled-fk-marco-opts" id="mled-fk-marco-opts" hidden>
                             <div class="mled-fk-field"><label for="mled-fk-marco-pattern">${esc(tr('fkMarcoPattern'))}</label><select id="mled-fk-marco-pattern" data-fk-admin-input disabled>${patterns}</select></div>
                             <div class="mled-fk-field"><label for="mled-fk-marco-speed">${esc(tr('fkMarcoSpeed'))}</label>
-                                <div class="mled-fk-bright"><span class="mled-fk-muted">${esc(tr('fkFaster'))}</span><input type="range" id="mled-fk-marco-speed" min="1" max="60" step="1" value="10" data-fk-admin-input disabled><span class="mled-fk-mono" id="mled-fk-marco-speed-val">10</span></div>
+                                <div class="mled-fk-bright"><span aria-hidden="true">🐢</span><input type="range" id="mled-fk-marco-speed" min="1" max="60" step="1" value="51" aria-label="${esc(tr('fkMarcoSpeed'))}" data-fk-admin-input disabled><span aria-hidden="true">🐇</span><span class="mled-fk-mono" id="mled-fk-marco-speed-val">51</span></div>
                             </div>
                             <div class="mled-fk-hint">${esc(tr('fkMarcoShared'))}</div>
                         </div>
