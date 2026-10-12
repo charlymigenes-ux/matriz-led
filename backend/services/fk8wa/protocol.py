@@ -41,8 +41,15 @@ CMD_BRIGHTNESS = b"\x01\x15"
 
 OK = b"\x01\x21\x00\x00"           # respuesta a 01 02 y 01 01
 CHUNK_ACK = b"\x01\x21\x03\x00"    # + u32 offset
-END_DATA_ACK = b"\x01\x38"         # + u32 total
+# Respuesta real del panel a 01 37 (vista en el panel físico el 2026-10-11):
+# 01 38 00 00 + u32 total. PROTOCOL.md decía "01 38 + u32 total", sin los dos ceros.
+END_DATA_ACK = b"\x01\x38\x00\x00"  # + u32 total
 BRIGHTNESS_ACK = b"\x01\x15\x00\x00"
+# Aún no vistas en el panel físico: 01 01 (aplicar) y 01 15 (brillo). Se
+# exige solo el código de respuesta documentado (los 2 primeros bytes) para
+# no abortar por un detalle de relleno como el que tenía 01 37.
+APPLY_CODE = OK[:2]
+BRIGHTNESS_CODE = BRIGHTNESS_ACK[:2]
 
 
 class Fk8waError(Exception):
@@ -164,7 +171,7 @@ class Fk8waClient:
                 payload = b"\x00\x10" + struct.pack("<IIII", idx, total, off, len(part)) + part + b"\x00"
                 _expect(self._call(sock, CMD_CHUNK, payload), CHUNK_ACK + struct.pack("<I", off), "01 1b")
             _expect(self._call(sock, CMD_END_DATA), END_DATA_ACK + struct.pack("<I", total), "01 37")
-            _expect(self._call(sock, CMD_APPLY), OK, "01 01")
+            _expect(self._call(sock, CMD_APPLY), APPLY_CODE, "01 01")
             return info
         finally:
             sock.close()
@@ -177,7 +184,7 @@ class Fk8waClient:
             info = parse_info(self._call(sock, CMD_INFO))
             if (info["width"], info["height"]) != EXPECTED_SIZE:
                 raise SizeMismatch(info["width"], info["height"])
-            _expect(self._call(sock, CMD_BRIGHTNESS, b"\x00\x00" + struct.pack("<I", level)), BRIGHTNESS_ACK, "01 15")
+            _expect(self._call(sock, CMD_BRIGHTNESS, b"\x00\x00" + struct.pack("<I", level)), BRIGHTNESS_CODE, "01 15")
             return level
         finally:
             sock.close()

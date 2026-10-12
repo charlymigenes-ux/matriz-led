@@ -122,7 +122,7 @@ class TestUpload:
 
     @pytest.mark.parametrize("cmd", ["CMD_BEGIN", "CMD_CHUNK", "CMD_END_DATA", "CMD_APPLY"])
     def test_unexpected_reply_aborts(self, cmd):
-        panel = FakePanel(replies={getattr(protocol, cmd): b"\x01\x21\x09\x09"})
+        panel = FakePanel(replies={getattr(protocol, cmd): b"\x01\x99\x00\x00"})
         with pytest.raises(protocol.ProtocolError, match="inesperada"):
             client_for(panel).upload(PROGRAM)
         assert panel.closed
@@ -205,3 +205,18 @@ class TestInfoAndBrightness:
         with pytest.raises(protocol.SizeMismatch):
             client_for(panel).brightness(8)
         assert panel.cmds() == [protocol.CMD_INFO]
+
+
+def test_end_of_data_reply_seen_on_the_real_panel():
+    """Respuesta real a 01 37 con un programa de 1130 bytes (0x046a): 01 38 00 00 6a 04 00 00."""
+    panel = FakePanel()
+    body = bytes.fromhex("0138 0000 6a040000")
+    panel.replies[protocol.CMD_END_DATA] = body
+    client_for(panel).upload(bytes(1130))
+    assert panel.cmds()[-1] == protocol.CMD_APPLY
+
+
+def test_end_of_data_with_wrong_total_aborts():
+    panel = FakePanel(replies={protocol.CMD_END_DATA: bytes.fromhex("0138 0000 01000000")})
+    with pytest.raises(protocol.ProtocolError, match="01 37"):
+        client_for(panel).upload(bytes(1130))
