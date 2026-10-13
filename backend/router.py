@@ -9,10 +9,17 @@ import asyncio
 from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 
 from backend.auth_deps import require_auth, require_role
 
 from .services import screen_service
+from .services.fk8wa import config as fk8wa_config
+from .services.fk8wa import effects as fk8wa_effects
+from .services.fk8wa import messages as fk8wa_messages
+from .services.fk8wa import screens as fk8wa_screens
+from .services.fk8wa import service as fk8wa
+from .services.fk8wa.protocol import Fk8waError
 
 router = APIRouter()
 
@@ -264,3 +271,129 @@ async def save_machine_alerts_endpoint(machine_id: str, payload: Dict[str, Any],
         return screen_service.save_machine_alerts(machine_id, payload)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+# ── Panel FK-8Wa (96x16) ──
+# Ganchos de ciclo de vida que llama NOPAL core (plugin_loader_service): el
+# panel se actualiza solo, aunque nadie tenga NOPAL abierto.
+
+async def on_startup():
+    await fk8wa.start()
+
+
+async def on_shutdown():
+    await fk8wa.stop()
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/status")
+async def fk8wa_status_endpoint(user: dict = Depends(require_auth)):
+    return fk8wa.status()
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/preview")
+async def fk8wa_preview_endpoint(screen: str = "", scale: int = 6, user: dict = Depends(require_auth)):
+    if screen and screen not in fk8wa_screens.SCREENS:
+        raise HTTPException(status_code=400, detail="Pantalla desconocida")
+    content, media = await asyncio.to_thread(fk8wa.preview, screen or None, scale)
+    return Response(content=content, media_type=media, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/frames")
+async def fk8wa_frames_endpoint(style: str = "", screen: str = "", user: dict = Depends(require_auth)):
+    """Páginas del panel como datos (1 bit por LED) para dibujarlas en la pestaña."""
+    if screen and screen not in fk8wa_screens.SCREENS:
+        raise HTTPException(status_code=400, detail="Pantalla desconocida")
+    try:
+        return await asyncio.to_thread(fk8wa.frames, style or None, screen or None)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/effects")
+async def fk8wa_effects_endpoint(user: dict = Depends(require_auth)):
+    """Catálogo de efectos de entrada (con cuáles están probados) y las situaciones."""
+    return fk8wa.effects_catalog()
+
+
+@router.post("/api/plugins/matriz-led/fk8wa/effects/test")
+async def fk8wa_effect_test_endpoint(payload: Dict[str, Any], user: dict = Depends(require_role("admin"))):
+    """"Probar en mi panel": manda un ejemplo con el efecto unos segundos y luego restaura."""
+    try:
+        await fk8wa.test_effect(str(payload.get("effect") or ""))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Fk8waError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {"ok": True}
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/machines")
+async def fk8wa_machines_endpoint(user: dict = Depends(require_auth)):
+    """Máquinas conocidas con su nombre corto para el panel."""
+    return {"machines": await fk8wa.machine_list()}
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/scroll-preview")
+async def fk8wa_scroll_preview_endpoint(text: str = "", dir: str = "l1", level: int = 5,
+                                        user: dict = Depends(require_auth)):
+    """Cómo correría un texto, para la prueba de la pestaña (no toca el panel)."""
+    try:
+        return await asyncio.to_thread(fk8wa.scroll_payload, text[:200] or " ", dir, max(1, min(10, level)))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/config")
+async def fk8wa_get_config_endpoint(user: dict = Depends(require_auth)):
+    return fk8wa_config.load()
+
+
+@router.put("/api/plugins/matriz-led/fk8wa/config")
+async def fk8wa_save_config_endpoint(payload: Dict[str, Any], user: dict = Depends(require_role("admin"))):
+    try:
+        return fk8wa.save_config(payload)
+    except fk8wa_config.ConfigError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/api/plugins/matriz-led/fk8wa/test")
+async def fk8wa_test_endpoint(user: dict = Depends(require_role("admin"))):
+    """Solo lectura (01 09): IP, puerto y tamaño. Nunca SSID ni claves."""
+    try:
+        return await fk8wa.test_connection()
+    except Fk8waError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.post("/api/plugins/matriz-led/fk8wa/brightness")
+async def fk8wa_brightness_endpoint(payload: Dict[str, Any], user: dict = Depends(require_role("admin"))):
+    try:
+        return fk8wa.save_config({**fk8wa_config.load(), "brightness": payload.get("level")})
+    except fk8wa_config.ConfigError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.get("/api/plugins/matriz-led/fk8wa/message")
+async def fk8wa_get_message_endpoint(user: dict = Depends(require_auth)):
+    return {"message": fk8wa_messages.current()}
+
+
+@router.post("/api/plugins/matriz-led/fk8wa/message")
+async def fk8wa_set_message_endpoint(payload: Dict[str, Any], user: dict = Depends(require_auth)):
+    """Texto libre o un anuncio (se muestra su nombre). Operador y admin."""
+    try:
+        if payload.get("announcement_id"):
+            message = fk8wa.show_announcement(str(payload["announcement_id"]), payload.get("minutes"))
+        else:
+            message = fk8wa.show_message(payload.get("text"), payload.get("minutes"), "manual")
+    except fk8wa_messages.MessageError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except ValueError as exc:   # anuncio inexistente
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"message": message}
+
+
+@router.delete("/api/plugins/matriz-led/fk8wa/message")
+async def fk8wa_clear_message_endpoint(user: dict = Depends(require_auth)):
+    fk8wa.clear_message()
+    return {"message": None}

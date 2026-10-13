@@ -124,3 +124,11 @@ def isolated_config(tmp_path, monkeypatch):
     monkeypatch.setattr(screen_service, "MACHINE_ALERTS_PATH", tmp_path / "machine_alerts.json")
     monkeypatch.setattr(screen_service, "LAST_ERROR_PATH", tmp_path / "last_error.json")
     monkeypatch.setattr(screen_service, "_last_known_connected", False)
+
+
+def fk8wa_module(name):
+    """Módulo `services.fk8wa.<name>` del plugin, cargado en el mismo paquete
+    que el router (así comparte imports relativos con producción)."""
+    import importlib
+
+    return importlib.import_module(f"{_NAMESPACE}.pkg.services.fk8wa.{name}")

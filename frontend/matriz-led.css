@@ -15,6 +15,7 @@
     min-height: 0;
     overflow: auto;
     box-sizing: border-box;
+    padding-top: 6px;
 }
 
 .mled-view {
@@ -36,28 +37,99 @@
     display: none;
 }
 
+/* Pestañas como fichas (mismo lenguaje que las fichas de máquinas del
+   dashboard de NOPAL): ícono en recuadro, título, pastilla de estado y
+   subtítulo; la activa lleva el borde y el brillo del color de acento. */
 .mled-view-tabs {
-    display: flex;
-    gap: 8px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 12px;
 }
 
 .mled-view-tab {
-    border: none;
-    background: none;
-    color: var(--text-secondary);
-    padding: 8px 4px;
-    font-size: 13px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    margin: 0;
+    padding: 12px 14px;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--text) 8%, transparent);
     cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -5px;
+}
+
+.mled-view-tab:hover {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.mled-view-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 .mled-view-tab.is-active {
-    color: var(--text);
-    border-bottom-color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent),
+        0 8px 24px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.mled-tab-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel-bg);
+    color: var(--text-secondary);
+}
+
+.mled-view-tab.is-active .mled-tab-icon {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.mled-tab-copy {
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+    min-width: 0;
+}
+
+.mled-tab-title {
+    font-size: 15px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.mled-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 9px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel-bg);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mled-tab-pill .mled-status-dot {
+    width: 7px;
+    height: 7px;
+}
+
+.mled-tab-sub {
+    color: var(--text-secondary);
+    font-size: 12px;
+    overflow-wrap: anywhere;
 }
 
 .mled-shell {
@@ -75,12 +147,36 @@
     top: 0;
 }
 
+/* El core pinta todo <header> con el fondo de tarjeta; aquí queda
+   TRANSPARENTE para que se vea la foto del taller detrás. Se conserva la
+   línea inferior que lo separa de las fichas, el espaciado y la
+   alineación. El título y el subtítulo llevan una sombra suave del color
+   del tema para leerse sobre la foto; las pastillas y botones de la
+   derecha conservan su propio fondo. */
 .mled-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    /* Compacto: el core pinta todo <header> con 24px arriba y abajo y el
+       subtítulo traía 14px de margen; aquí quedan unos 10px arriba y
+       13px abajo (el gap de la sección se compensa con el margen negativo). */
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-bottom: -8px;
+}
+
+.mled-header .mled-sub {
+    margin: 0;
+}
+
+.mled-header h1,
+.mled-header .mled-sub {
+    text-shadow: 0 1px 4px color-mix(in srgb, var(--bg) 85%, transparent),
+        0 0 2px color-mix(in srgb, var(--bg) 70%, transparent);
 }
 
 .mled-header h1 {
@@ -1145,6 +1241,7 @@
 @media (max-width: 760px) {
     .mled-section {
         padding: 14px;
+        padding-top: 6px;
     }
 
     .mled-top-fields {
@@ -1154,6 +1251,7 @@
     .mled-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 8px;
     }
 
     .mled-grid {
@@ -1168,4 +1266,1050 @@
     #mled-machine-alerts-states {
         grid-template-columns: 1fr;
     }
+}
+
+/* ── Panel FK-8Wa ──
+   Pestaña "Panel LED del taller". Solo variables del tema de NOPAL, salvo
+   las tres --mled-fk-led-* de abajo: representan el panel físico (LEDs
+   blancos sobre fondo negro) y no cambian con el tema, igual que
+   --mled-cell-* en la matriz. Son los únicos colores fijos de este bloque. */
+
+.mled-fk-view {
+    --mled-fk-led-on: 255, 255, 255;
+    --mled-fk-led-off: 38, 40, 44;
+    --mled-fk-led-bg: #050505;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* Varias piezas tienen display propio: sin esto el atributo hidden no las
+   ocultaría. */
+.mled-fk-view[hidden],
+.mled-fk-view [hidden] {
+    display: none !important;
+}
+
+.mled-fk-view button:focus-visible,
+.mled-fk-view input:focus-visible,
+.mled-fk-view select:focus-visible,
+.mled-fk-view summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.mled-fk-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+}
+
+.mled-fk-head,
+.mled-fk-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mled-fk-head {
+    justify-content: space-between;
+}
+
+.mled-fk-card h2 {
+    margin: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--text-secondary);
+}
+
+.mled-fk-card h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.mled-fk-muted {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.mled-fk-mono {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+.mled-fk-head-end {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mled-fk-alert {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--orange);
+    border-left-width: 4px;
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-readonly {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Panel LED dibujado LED por LED */
+.mled-fk-led {
+    background: var(--mled-fk-led-bg);
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid var(--border);
+}
+
+.mled-fk-led canvas,
+.mled-fk-mini canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+.mled-fk-mini {
+    display: block;
+    background: var(--mled-fk-led-bg);
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.mled-fk-now {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.mled-fk-views {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mled-fk-view-chip {
+    font-size: 12.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.mled-fk-view-chip.is-on {
+    border-color: var(--accent);
+    color: var(--text);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* ¿Por qué muestra esto? */
+.mled-fk-prio {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.mled-fk-step {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    justify-items: center;
+    padding: 8px 4px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    color: var(--text-secondary);
+}
+
+.mled-fk-step i {
+    font-style: normal;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.mled-fk-step span {
+    font-size: 12.5px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-step.is-on {
+    color: var(--text);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, var(--card-bg));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mled-fk-step.is-on::after {
+    content: attr(data-now);
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--card-bg);
+    padding: 1px 6px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.mled-fk-step.is-cycle {
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    border-style: dashed;
+    background: color-mix(in srgb, var(--accent) 7%, var(--card-bg));
+}
+
+.mled-fk-step.is-cycle::after {
+    content: attr(data-cycle);
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+    padding: 0 6px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.mled-fk-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Mensaje */
+.mled-fk-msg {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.mled-fk-view input[type="text"],
+.mled-fk-view input[type="number"],
+.mled-fk-view select {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 14px;
+}
+
+.mled-fk-view input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+}
+
+.mled-fk-mins {
+    display: flex;
+    gap: 4px;
+}
+
+.mled-fk-mins button {
+    padding: 7px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mled-fk-mins button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, var(--panel-bg));
+}
+
+.mled-fk-ann {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.mled-fk-current {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    overflow-wrap: anywhere;
+}
+
+/* Impresoras y brillo */
+.mled-fk-machines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.mled-fk-machine {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.mled-fk-machine[draggable="true"] {
+    cursor: grab;
+}
+
+.mled-fk-machine.is-dragging {
+    opacity: .5;
+}
+
+.mled-fk-machine.is-missing {
+    border-color: var(--orange);
+}
+
+.mled-fk-machine b {
+    flex-shrink: 0;
+    min-width: 2.2em;
+    color: var(--accent);
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+
+.mled-fk-machine-name {
+    flex: 1 1 8em;
+    min-width: 8em;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.mled-fk-maint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.mled-fk-maint input:disabled + span {
+    opacity: .6;
+}
+
+.mled-fk-machine.is-maint {
+    border-style: dashed;
+}
+
+.mled-fk-machine.is-maint .mled-fk-machine-name,
+.mled-fk-machine.is-maint .mled-fk-badge:not(.mled-fk-badge-maint),
+.mled-fk-machine.is-maint .mled-fk-short {
+    opacity: .55;
+}
+
+.mled-fk-maint-note {
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--orange);
+    border-radius: var(--radius-sm, 8px);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.mled-fk-machine-actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.mled-fk-machine-actions button {
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+.mled-fk-machine-actions button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.mled-fk-empty {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.mled-fk-add,
+.mled-fk-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.mled-fk-add select,
+.mled-fk-row input {
+    flex: 1 1 140px;
+}
+
+.mled-fk-bright {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.mled-fk-marco-opts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+}
+
+.mled-fk-marco-opts > .mled-fk-hint {
+    grid-column: 1 / -1;
+}
+
+
+/* Pestañas internas de la ficha del panel (distintas de las fichas del
+   plugin) y cuadrícula de 12 columnas por pestaña. Las tarjetas de una fila
+   se estiran al mismo alto (align-items: stretch), así no quedan huecos. La
+   barra de pestañas se queda pegada arriba al desplazarse; si no caben, se
+   acomodan en dos renglones en vez de desplazarse de lado. */
+.mled-fk-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 6px 0;
+    /* Sin fondo, borde ni sombra de barra: solo se ven los botones con su
+       resplandor (cada uno conserva su propio fondo para leerse). */
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    /* Color de resplandor de cada pestaña, declarado una sola vez con los
+       colores semánticos del tema de NOPAL (cambian solos con dark/green/
+       red/custom/light). */
+    --mled-fk-tab-glow-1: var(--status-danger, var(--red));
+    --mled-fk-tab-glow-2: var(--status-warn, var(--orange));
+    --mled-fk-tab-glow-3: var(--status-ok, var(--green));
+    --mled-fk-tab-glow-4: var(--status-info, var(--accent));
+    --mled-fk-tab-glow-5: var(--accent, var(--status-info));
+}
+
+.mled-fk-tab {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    --mled-fk-glow: var(--accent);
+    box-shadow: 0 0 6px 0 color-mix(in srgb, var(--mled-fk-glow) 30%, transparent);
+    transition: border-color 0.2s ease;
+    /* Latido copiado de NOPAL (.sidebar-settings-btn / sidebarSettingsPulse:
+       2.2 s, ease-in-out, infinito), adaptado al color de cada pestaña. */
+    animation: mledFkTabPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes mledFkTabPulse {
+    0%, 100% { box-shadow: 0 0 6px 0 color-mix(in srgb, var(--mled-fk-glow) 25%, transparent); }
+    50% { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--mled-fk-glow) 65%, transparent); }
+}
+
+@keyframes mledFkTabPulseActive {
+    0%, 100% { box-shadow: 0 0 10px 1px color-mix(in srgb, var(--mled-fk-glow) 45%, transparent); }
+    50% { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--mled-fk-glow) 90%, transparent); }
+}
+
+/* Desfase escalonado para que no latan todas al unísono. */
+#mled-fk-tab-panel { animation-delay: 0s; }
+#mled-fk-tab-mach { animation-delay: -0.44s; }
+#mled-fk-tab-clock { animation-delay: -0.88s; }
+#mled-fk-tab-fx { animation-delay: -1.32s; }
+#mled-fk-tab-screens { animation-delay: -1.76s; }
+
+#mled-fk-tab-panel { --mled-fk-glow: var(--mled-fk-tab-glow-1); }
+#mled-fk-tab-mach { --mled-fk-glow: var(--mled-fk-tab-glow-2); }
+#mled-fk-tab-clock { --mled-fk-glow: var(--mled-fk-tab-glow-3); }
+#mled-fk-tab-fx { --mled-fk-glow: var(--mled-fk-tab-glow-4); }
+#mled-fk-tab-screens { --mled-fk-glow: var(--mled-fk-tab-glow-5); }
+
+.mled-fk-tab:hover,
+.mled-fk-tab:focus-visible {
+    border-color: color-mix(in srgb, var(--mled-fk-glow) 70%, var(--border));
+    box-shadow: 0 0 12px 1px color-mix(in srgb, var(--mled-fk-glow) 55%, transparent);
+}
+
+.mled-fk-tab[aria-selected="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 18%, var(--panel-bg));
+    color: var(--text);
+    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--mled-fk-glow) 75%, transparent);
+    animation-name: mledFkTabPulseActive;
+}
+
+.mled-fk-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+
+.mled-fk-grid > .mled-fk-card {
+    align-self: stretch;
+}
+
+.mled-fk-s4 { grid-column: span 4; }
+.mled-fk-s5 { grid-column: span 5; }
+.mled-fk-s6 { grid-column: span 6; }
+.mled-fk-s7 { grid-column: span 7; }
+.mled-fk-s8 { grid-column: span 8; }
+.mled-fk-s12 { grid-column: span 12; }
+
+/* La tira de prioridad reparte el alto sobrante de su tarjeta. */
+.mled-fk-fill {
+    grid-template-rows: auto 1fr;
+}
+
+.mled-fk-fill .mled-fk-prio {
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+/* Máquinas: asa, tipo, nombre, nombre corto y acciones */
+.mled-fk-grip {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.mled-fk-badge {
+    flex-shrink: 0;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.mled-fk-badge.k3d {
+    color: var(--green);
+    border-color: color-mix(in srgb, var(--green) 50%, transparent);
+}
+
+.mled-fk-badge.klaser {
+    color: var(--orange);
+    border-color: color-mix(in srgb, var(--orange) 50%, transparent);
+}
+
+.mled-fk-badge.kcnc {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.mled-fk-view input.mled-fk-short {
+    width: 64px;
+    flex-shrink: 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-weight: 700;
+    padding: 5px 6px;
+}
+
+.mled-fk-hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Cómo se ve cada situación: una ficha por situación */
+.mled-fk-sitcards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 10px;
+}
+
+.mled-fk-sitcard {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+}
+
+.mled-fk-sitcard.is-on {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mled-fk-sitcard h4 {
+    margin: 0;
+    font-size: 14.5px;
+}
+
+.mled-fk-sitcard p {
+    margin: 0;
+    font-size: 12.5px;
+}
+
+.mled-fk-sitcard select {
+    width: 100%;
+    min-width: 0;
+}
+
+.mled-fk-generalstyle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.mled-fk-generalstyle select {
+    width: auto;
+    min-width: 180px;
+}
+
+.mled-fk-sitsels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.mled-fk-sitcard.is-off [data-fk-sit-fx] {
+    opacity: .55;
+}
+
+.mled-fk-sitnote {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.mled-fk-sitnote:empty {
+    display: none;
+}
+
+.mled-fk-new {
+    color: var(--accent);
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+/* Galería de efectos */
+.mled-fk-fxbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.mled-fk-fxbar label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mled-fk-view .mled-fk-fxbar select {
+    width: auto;
+    min-width: 200px;
+    max-width: 100%;
+}
+
+.mled-fk-fam,
+.mled-fk-dirs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mled-fk-fam button {
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mled-fk-dirs button {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mled-fk-fam button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 22%, var(--panel-bg));
+}
+
+.mled-fk-dirs button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, var(--panel-bg));
+}
+
+.mled-fk-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+}
+
+.mled-fk-legend i {
+    font-style: normal;
+    color: var(--accent);
+}
+
+.mled-fk-fxgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+    gap: 10px;
+}
+
+.mled-fk-fx {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    padding: 8px;
+    text-align: left;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--panel-bg);
+    cursor: pointer;
+}
+
+.mled-fk-fx[aria-pressed="true"] {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.mled-fk-fx[aria-disabled="true"] {
+    cursor: default;
+}
+
+.mled-fk-fx strong {
+    font-size: 13.5px;
+    line-height: 1.25;
+}
+
+.mled-fk-fx-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.mled-fk-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.mled-fk-tag.is-ok {
+    color: var(--accent);
+}
+
+.mled-fk-try {
+    white-space: nowrap;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mled-fk-try:hover:not(:disabled) {
+    border-color: var(--accent);
+}
+
+/* Velocidad del texto: tortuga (lento) a liebre (rápido) */
+.mled-fk-gallery figcaption {
+    display: grid;
+    gap: 2px;
+}
+
+.mled-fk-gallery figcaption strong {
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* Conexión y tiempos */
+.mled-fk-inner {
+    display: grid;
+    gap: 10px;
+}
+
+.mled-fk-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 10px;
+}
+
+.mled-fk-field {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.mled-fk-field-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mled-fk-field label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mled-fk-unit {
+    display: grid;
+    grid-template-columns: 90px auto;
+    gap: 6px;
+    align-items: center;
+}
+
+.mled-fk-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.mled-fk-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 14px;
+}
+
+.mled-fk-gallery figure {
+    margin: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.mled-fk-gallery figcaption {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+}
+
+/* Globos de ayuda "?" */
+.mled-fk-help {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.mled-fk-help > button {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--panel-bg);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mled-fk-tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(280px, 70vw);
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--text);
+    color: var(--card-bg);
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .12s;
+}
+
+/* Los que están al borde derecho abren hacia la izquierda para no salirse. */
+.mled-fk-help-end .mled-fk-tip {
+    left: auto;
+    right: -4px;
+    transform: none;
+}
+
+.mled-fk-help:hover .mled-fk-tip,
+.mled-fk-help.is-open .mled-fk-tip,
+.mled-fk-help > button:focus-visible + .mled-fk-tip {
+    opacity: 1;
+}
+
+@media (max-width: 720px) {
+    .mled-fk-marco-opts,
+    .mled-fk-sitsels {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .mled-fk-msg,
+    .mled-fk-ann {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .mled-fk-prio {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Pantallas angostas: va al final del bloque para ganar a las reglas base
+   de la galería y de los globos de ayuda. */
+@media (max-width: 980px) {
+    .mled-fk-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mled-fk-grid > .mled-fk-card {
+        grid-column: auto;
+    }
+
+    /* Los globos de ayuda se anclan a su encabezado y ocupan su ancho, así
+       nunca se salen de la página. */
+    .mled-fk-head,
+    .mled-fk-title,
+    .mled-fk-field-label {
+        position: relative;
+    }
+
+    .mled-fk-help,
+    .mled-fk-help-end {
+        position: static;
+    }
+
+    .mled-fk-help .mled-fk-tip,
+    .mled-fk-help-end .mled-fk-tip {
+        left: 0;
+        right: 0;
+        top: calc(100% + 6px);
+        bottom: auto;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .mled-fk-tab {
+        padding: 6px 11px;
+        font-size: 13px;
+    }
+
+    .mled-fk-gallery,
+    .mled-fk-fxgrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mled-fk-tab {
+        transition: none;
+        animation: none;
+    }
+
+    .mled-fk-tip {
+        transition: none;
+    }
+}
+/* ── fin Panel FK-8Wa ── */
+
+/* ── Panel FK-8Wa: casilla y marca en las reglas ── */
+.mled-fk-rule-check {
+    margin: 6px 0 0;
+    font-size: 12px;
+}
+
+.mled-fk-rule-badge {
+    display: inline-flex;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+/* ── fin Panel FK-8Wa: reglas ── */
+
+.mled-fk-badge-maint {
+    color: var(--orange);
+    border-color: var(--orange);
 }

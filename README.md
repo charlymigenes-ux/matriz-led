@@ -2,7 +2,9 @@
 
 Plugin de NOPAL para conectar una pantalla LED matriz BLE (probado contra
 una **iPixel Color 16x32**) y mandarle texto y animaciones según el estado
-de tus máquinas.
+de tus máquinas. Desde v0.10.0 maneja además un **panel FK-8Wa de 96x16**
+(monocromo, por red), con su propia configuración: ver
+["Panel FK-8Wa"](#panel-fk-8wa-v0100).
 
 ## Cómo funciona
 
@@ -128,6 +130,127 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
   (`GET /api/plugins/matriz-led/stats`, contados dentro de
   `send_windows`, se resetea solo al cambiar de día). Uso de CPU/RAM no
   se incluye -- no hay ninguna fuente real de esos datos en NOPAL.
+
+## Panel FK-8Wa (v0.10.0)
+
+Panel LED de **96x16 monocromo (rojo)** con controlador **FK-8Wa** (3 módulos
+P10 de 32x16), en la **misma red que NOPAL**, por TCP al puerto 5858. Muestra
+el estado de las máquinas que elijas con 12 pantallas (arranque, todo
+normal, impresión vista 1 y 2, varias, pausa, error, desconectada, todas
+detenidas, terminado, mensaje especial, apagado). Convive con la iPixel:
+cada una tiene su configuración y su estado.
+
+**Configurar** (pestaña "Panel FK-8Wa", solo admin):
+1. Conecta el panel a la red con **FKShow** (la red y el Wi-Fi del panel no
+   se configuran desde NOPAL, a propósito) y anota su IP.
+2. Escribe la IP y presiona **Probar conexión**: debe leer 96x16.
+3. Elige las máquinas en orden (P1, P2, P3...), el brillo (1-16) y activa
+   el panel.
+
+**Cómo decide qué mostrar** (prioridad): error y pausa (una vista por cada
+máquina afectada, tapan todo) > mensaje especial > terminado (60 s) > trabajando
+(una sola vista por máquina, con archivo, barra y porcentaje; con dos o más activas, "varias", de 3 en 3),
+junto con una vista por cada máquina que calienta / está en temperatura /
+enfría o está **desconectada** (no tapan nada, entran al ciclo) > todo
+normal / todas en reposo (alternan).
+"Apagado" (HASTA PRONTO) se muestra al detener NOPAL. La pantalla de error
+dice "ERROR": el estado de las máquinas no trae el texto del error.
+
+**Nombres de las máquinas**: en el panel cada máquina usa un **nombre corto de
+hasta 4 caracteres** que sale solo del nombre real (Klipper ET4 → ET4,
+TTS 55 PRO → TTS, CNC 3018 → CNC); se puede cambiar en la pestaña. Las
+impresoras 3D, los láser y los CNC entran igual. Un láser o CNC no informa
+el tiempo transcurrido (la pantalla "vista 2", con porcentaje grande y hora o LASER/CNC, ya no se muestra sola: el ciclo usa una sola vista de trabajo).
+
+**Calentando, en temperatura y enfriando** (solo impresoras 3D que no imprimen;
+láser y CNC nunca calientan; va debajo de "trabajando" en la prioridad):
+- *Calentando*: tiene temperatura objetivo y aún le faltan más de 3 °C
+  (boquilla o cama): muestra temperatura actual/objetivo con una barra.
+- *En temperatura*: ya llegó (a menos de 3 °C) y espera. La pantalla **se
+  mantiene** hasta que se mande imprimir o se apague el calentador.
+- *Enfriando*: el calentador está apagado (objetivo 0) y aún pasa de 50 °C:
+  muestra la temperatura bajando; al llegar a 50 °C vuelve a lo normal.
+Si otra máquina está trabajando, la que calienta, está en temperatura o se enfría
+**no se oculta**: su pantalla entra al ciclo y alterna con las vistas de trabajo
+(15 s cada una). Error, pausa, desconectada, mensaje y terminado siguen tapando todo.
+Con todo en reposo, "Todo normal" y "Todas en reposo" se alternan cada 15 s.
+
+**Contorno por situación** (`situation_styles`): cada situación puede tener su
+propio contorno. Las que tienen reloj (reposo, trabajando, terminó, mensaje)
+usan los de siempre (contorno, contorno encima, barra, sin contorno o marco
+animado); calentando, en temperatura y enfriando pueden usar además
+*contorno según la temperatura* (`temp`: se llena al calentar y se vacía al
+enfriar; NOPAL vuelve a subir la pantalla cuando cambia la temperatura, cada
+`min_interval_s` como mínimo); pausa, error y desconectada solo marco animado
+o ninguno. Lo que no se elige usa `timer_style`. Por omisión: calentando y
+enfriando `temp`, en temperatura marco horario.
+
+**Modo mantenimiento** (`maintenance`): en "Máquinas y conexión", cada máquina del panel
+tiene un interruptor "En mantenimiento" (lo cambia el admin). Una máquina en
+mantenimiento desaparece del panel por completo: no avisa desconectada, error,
+calentando ni trabajando. Sirve para equipos desarmados o en reparación.
+
+**Rotación de pantallas**: en el panel real los programas de varias pantallas NO
+avanzan solos (probado con efectos de entrada y de desplazamiento). Por eso NOPAL
+rota las vistas: sube una pantalla fija por vez, cada `view_seconds` (no menos que
+`min_interval_s`). Cada vista usa el efecto y el contorno de su propia situación.
+Consecuencia: los contornos que marcan el tiempo (contorno, contorno encima, barra)
+ya no avanzan, porque dependían de que el panel pasara páginas; el texto que corre
+sí funciona (es un programa del propio panel). El marco animado del panel y el
+contorno según la temperatura siguen igual.
+
+**Efectos de entrada**: el panel solo anima cómo APARECE cada pantalla (36
+efectos de FKShow en 8 familias: Desplazar, Entrar, Cubrir, Persiana,
+Sombra, Parpadeo, Extender y Sector; no hay efectos de salida documentados y
+no se inventan). Se elige uno por situación (Error, Pausa, Terminó...). Están
+marcados como "probados" los que ya se vieron en el panel real
+(`PROTOCOL.md`); el botón "Probar en mi panel" manda un ejemplo unos 12 s y
+luego restaura, y anota el efecto como probado en esa instalación
+(`data/plugins/matriz-led/fk8wa_effects_tested.json`). Un programa lleva un
+solo efecto, así que las situaciones con reloj de cada vista (todo tranquilo,
+trabajando, terminó, mensaje corto) no lo usan con el reloj de **contorno,
+contorno encima o barra** (son varias imágenes y el efecto se repetiría en
+cada una); con "Sin reloj" o "Marco del panel" sí.
+
+**Texto corrido**: un mensaje que no cabe quieto (más de unos 13 caracteres
+en letra normal) corre por la pantalla con letra al doble de tamaño: de
+derecha a izquierda, de izquierda a derecha, continuo, o por páginas hacia
+arriba o hacia abajo. Dirección y velocidad (1 lento a 10 rápido) en la
+pestaña; la relación exacta entre la velocidad y los píxeles por segundo no
+está medida y se ajusta viendo el panel.
+
+**Mensaje especial**: texto libre o un anuncio (se muestra su nombre) desde
+la pestaña (operador y admin), las reglas con la casilla "También mostrar en
+el panel FK-8Wa" y NOPAL Intelligence (acción `show_panel_message`, en NOPAL
+core). Vence solo (por omisión 5 min).
+
+**Cómo envía**: el panel atiende **una sola sesión TCP** y cada subida
+recarga el programa completo, así que NOPAL solo envía cuando la imagen
+cambia y como mucho cada "intervalo mínimo" (15 s por omisión). Si el panel
+no responde, reintenta a los 15, 30, 60, 120 y 300 s sin afectar a NOPAL ni
+a la iPixel, y al reconectar reenvía el brillo.
+
+> **Aviso importante: el botón de prueba de la placa.** Mantenerlo 15 s
+> restaura el Wi-Fi **y los parámetros de pantalla**: la placa pasa a creer
+> que mide 288x16 y dibuja puntitos y texto cortado. NOPAL **lee el tamaño
+> antes de cada envío y no envía nada si no es 96x16**; la pestaña lo avisa.
+> Reconfigura la placa con FKShow y presiona "Probar conexión".
+
+**Reglas que respeta el código**: no configura la red ni el Wi-Fi del panel
+ni guarda claves; no cambia sus parámetros de pantalla; nunca abre dos
+sesiones TCP a la vez; solo usa los comandos documentados en el protocolo
+(`01 09`, `01 02`, `01 1b`, `01 37`, `01 01`, `01 15`).
+
+**Código**: `backend/services/fk8wa/` (protocolo, generador de programas
+copiado de la referencia y verificado byte a byte contra capturas de
+FKShow, fuente de píxeles en código, pantallas, máquina de estados, ciclo de
+fondo). La spec, el plan y las tareas están en `specs/`. Configuración en
+`data/plugins/matriz-led/fk8wa.json` (no se sube a git).
+
+**Probar sin panel**: `pytest tests/fk8wa` (panel y máquinas simulados; nada
+abre la red). Las 12 pantallas se comparan píxel a píxel con
+`tests/fixtures/fk8wa/`; para actualizarlas tras una nueva aprobación:
+`FK8WA_UPDATE_FIXTURES=1 pytest tests/fk8wa/test_screens_approved.py`.
 
 ## Estado actual (v0.4.0)
 
