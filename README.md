@@ -6,6 +6,25 @@ de tus máquinas. Desde v0.10.0 maneja además un **panel FK-8Wa de 96x16**
 (monocromo, por red), con su propia configuración: ver
 ["Panel FK-8Wa"](#panel-fk-8wa-v0100).
 
+<table>
+  <tr>
+    <td><img width="630" alt="PANEL Principal" src="https://github.com/user-attachments/assets/90e396d8-e5c0-412b-ac70-bc3be3306967" />
+</td>
+    <td><img width="630" alt="Escenas y configuración" src="https://github.com/user-attachments/assets/285d472f-a29d-40d6-98bd-31da1def86d6" />
+</td>
+    <td><img width="630" alt="Panel led" src="https://github.com/user-attachments/assets/b3a37998-8555-477f-be36-25ee400ebb47" />
+</td>
+  </tr>
+  <tr>
+    <td><img width="630" alt="Materials (Spoolman) panel" src="https://github.com/user-attachments/assets/c6c9d723-fe4f-41c0-a54a-cbd9febacba4" />
+</td>
+    <td><img width="630" alt="Quoting tool" src="https://github.com/user-attachments/assets/1c5532dd-090f-4b06-98e2-24fd54708ef8" />
+</td>
+    <td><img width="630" alt="Camera viewer" src="https://github.com/user-attachments/assets/b6fe33b6-133b-4bee-8c6f-ba7796befdda" />
+</td>
+  </tr> 
+</table>
+
 ## Cómo funciona
 
 La pantalla no se conecta directo a NOPAL ni a esta computadora -- BLE
@@ -133,7 +152,11 @@ humo): ninguna existe en el firmware ni en ningún accesorio de NOPAL hoy.
 
 ## Panel FK-8Wa (v0.10.0)
 
-Panel LED de **96x16 monocromo (rojo)** con controlador **FK-8Wa** (3 módulos
+<img width="1647" height="760" alt="image" src="https://github.com/user-attachments/assets/537326d9-bf4c-441a-9bb1-b355ef2c79cc" />
+
+
+
+Panel LED de **96x16 monocromo (blanco)** con controlador **FK-8Wa** (3 módulos
 P10 de 32x16), en la **misma red que NOPAL**, por TCP al puerto 5858. Muestra
 el estado de las máquinas que elijas con 12 pantallas (arranque, todo
 normal, impresión vista 1 y 2, varias, pausa, error, desconectada, todas
